@@ -40,3 +40,6 @@ pyr-blobs-color:	pyr-blobs-color.cpp
 
 lsd-lines:	lsd-lines.cpp
 	g++ -std=c++11 lsd-lines.cpp -o lsd-lines $(LIBS)
+
+clean:
+	rm -f edges hough contours bounding segment1 harris shi-tomasi find-colors pyramid pyr-blobs pyr-edges pyr-blobs-color lsd-lines

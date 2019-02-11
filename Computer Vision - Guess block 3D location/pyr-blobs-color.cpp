@@ -46,7 +46,7 @@ Mat src_canny, src_gray_canny;
 Mat dst_canny, detected_edges_canny;
 int lowThreshold = 100;
 const int max_lowThreshold = 350;
-const int ratio = 3;
+const int ratio1 = 3;
 const int kernel_size = 3;
 const char* canny_window_name = "Canny edges based on variance";
 
@@ -54,7 +54,7 @@ static void CannyThreshold(int, void*)
 {
     blur( src_gray_canny, detected_edges_canny, Size(3,3) );
     Canny( detected_edges_canny, detected_edges_canny,
-	   lowThreshold, lowThreshold*ratio, kernel_size );
+	   lowThreshold, lowThreshold*ratio1, kernel_size );
     dst_canny = Scalar::all(0);
     src_canny.copyTo( dst_canny, detected_edges_canny );
     imshow( canny_window_name, dst_canny );
