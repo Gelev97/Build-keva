@@ -1,13 +1,19 @@
-import cv2
 import numpy as np
-from matplotlib import pyplot as plt
+import cv2 as cv
 
-img = cv2.imread('planks1.jpg',0)
-edges = cv2.Canny(img,100,200)
+THRES = 160;
 
-plt.subplot(121),plt.imshow(img,cmap = 'gray')
-plt.title('Original Image'), plt.xticks([]), plt.yticks([])
-plt.subplot(122),plt.imshow(edges,cmap = 'gray')
-plt.title('Edge Image'), plt.xticks([]), plt.yticks([])
+#threshold
+img = cv.imread('test.JPG')
+gray = cv.cvtColor(img, cv.COLOR_BGR2GRAY)
 
-plt.show()
+#Find countours
+rett, thresh = cv.threshold(gray, THRES , 255, cv.THRESH_BINARY)
+cv.imshow('thresh',thresh)
+cv.waitKey(0)
+cv.destroyAllWindows()
+thresh, contours, hierarchy = cv.findContours(thresh, cv.RETR_LIST,cv.CHAIN_APPROX_SIMPLE)
+cv.drawContours(img, contours, -1, (0,255,0), 3)
+cv.imshow('image',img)
+cv.waitKey(0)
+cv.destroyAllWindows()
