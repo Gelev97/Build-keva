@@ -7,6 +7,8 @@ MAX_LINE_GAP = 30
 NUMBER_OF_INTERSECTION = 20# The probability value for the hough line transform
 
 ANGLE_GAP = 2# Degree difference, we make angles same wihtin these gap
+PERPENDICULAR_THRES = 0.1# Threshold tolerance for perpendiculars
+INTERSECT_THRES = 50# Distance threshold to determine if two line intersect
 
 MAX_LINE_LENGTH = 300
 WIDTH_HEIGHT_DIST_MIN = 50.0
@@ -23,41 +25,56 @@ def detect_block(edges):
     # array that contains all lines
     lines = []
 
+    # A dictionary that maps every line with an unique index
+    line_index_dict = dict()
+    index_dict = 0
+
     # Hashmap all lines with its angle
     if linesP is not None:
         for i in range(0, len(linesP)):
             l = linesP[i][0]
             lines.append(list(l))
+            line_index_dict[index_dict] = l
+            index_dict += 1
             cv.line(edges_BGR, (l[0], l[1]), (l[2], l[3]), (0, 255, 0), 1, cv.LINE_AA)
 
     # [[(line, angle), (line, angle)], [(line, angle), (line, angle)], ...]
     parallel_line_group = angle_approximation(lines)
-    # print(parallel_line_group)
+    perpendicular_line_group = perpendicular_approximation(line_index_dict, lines)
 
-    # Delete parallel lines that not form keva block
-    for group_index in range(0,len(parallel_line_group)):
-        group = parallel_line_group[group_index]
-        if (len(group) > 1):
-            line_angle_arr = group.copy()
-            for pair in line_angle_arr:
-                line = pair[0]
-                if (not line_distance(line, line_angle_arr)):
-                    #not witin the line distance we delete it
-                    group.remove(pair)
+    # # Delete parallel lines that not form keva block
+    # for group_index in range(0,len(parallel_line_group)):
+    #     group = parallel_line_group[group_index]
+    #     if (len(group) > 1):
+    #         line_angle_arr = group.copy()
+    #         for pair in line_angle_arr:
+    #             line = pair[0]
+    #             if (not line_distance(line, line_angle_arr)):
+    #                 #not witin the line distance we delete it
+    #                 group.remove(pair)
 
-    print(parallel_line_group)
     # draw lines
-    for group in parallel_line_group:
-        if(len(group) > 1):
-            for pair in group:
-                line = pair[0]
-                print(line)
-                cv.line(edges_BGR_modified, (line[0], line[1]), (line[2], line[3]), (0, 255, 0), 1, cv.LINE_AA)
+    # for group in parallel_line_group:
+    #     if(len(group) > 1):
+    #         for pair in group:
+    #             line = pair[0]
+    #             cv.line(edges_BGR_modified, (line[0], line[1]), (line[2], line[3]), (0, 255, 0), 1, cv.LINE_AA)
+    #
+    print(perpendicular_line_group)
+    for key in perpendicular_line_group:
+        line = line_index_dict[key]
+        cv.line(edges_BGR_modified, (line[0], line[1]), (line[2], line[3]), (0, 0, 255), 1, cv.LINE_AA)
+        for line_perpendicular in perpendicular_line_group[key]:
+            cv.line(edges_BGR_modified, (line_perpendicular[0], line_perpendicular[1]), (line_perpendicular[2], line_perpendicular[3]), (0, 255, 0), 1, cv.LINE_AA)
+        cv.imshow('img', edges_BGR_modified)
+        cv.waitKey(0)
+        cv.destroyAllWindows()
+        edges_BGR_modified = cv.cvtColor(edges, cv.COLOR_GRAY2BGR)
 
-    imstack = np.hstack((edges_BGR_modified, edges_BGR))
-    cv.imshow('stack', imstack)
-    cv.waitKey(0)
-    cv.destroyAllWindows()
+    # imstack = np.hstack((edges_BGR_modified, edges_BGR))
+    # cv.imshow('stack', imstack)
+    # cv.waitKey(0)
+    # cv.destroyAllWindows()
     return
 
 def line_distance(line, line_angle_arr):
@@ -105,103 +122,50 @@ def angle_approximation(lines):
     # [[(line, angle), (line, angle)], [(line, angle), (line, angle)], ...]
     return parallel_line_group
 
+def perpendicular_approximation(line_index_dict, lines):
+    perpendicular_line_group = dict()
+    for unique_index in line_index_dict:
+        #create a new dict for this line
+        perpendicular_line_group[unique_index] = []
+        slope_arr = [0,0]
+        line = line_index_dict[unique_index]
+        for line_to_compare in lines:
+            slope_arr[0] = (line[1] - line[3]) / (line[0] - line[2])
+            slope_arr[1] = (line_to_compare[1] - line_to_compare[3]) / (line_to_compare[0] - line_to_compare[2])
+            threshold_value = slope_arr[0] * slope_arr[1]
+            if(threshold_value > -1 - PERPENDICULAR_THRES and threshold_value < -1 + PERPENDICULAR_THRES):
+               if(two_line_close(line,line_to_compare)):
+                   perpendicular_line_group[unique_index].append(line_to_compare)
+    return perpendicular_line_group
+
 def detect_angle_difference(angle, angle_arr):
     for angle_compare in angle_arr:
         if(abs(angle - angle_compare[1]) > ANGLE_GAP):
             return False
     return True
 
-def test_find_line(edges):
-    # edge with three channel used to display
-    edges_BGR = cv.cvtColor(edges, cv.COLOR_GRAY2BGR)
+def two_line_close(line,line_to_compare):
+    (line_x_1, line_y_1) = (line[0], line[1])
+    (line_x_2, line_y_2) = (line[2], line[3])
+    (line_to_compare_x_1, line_to_compare_y_1) = (line_to_compare[0], line_to_compare[1])
+    (line_to_compare_x_2, line_to_compare_y_2) = (line_to_compare[2], line_to_compare[3])
+    #Calculate distance between them
+    print(line)
+    print(line_to_compare)
+    print(distance(line_x_1, line_to_compare_x_1, line_y_1, line_to_compare_y_1))
+    print(distance(line_x_1, line_to_compare_x_1, line_y_1, line_to_compare_y_1))
+    print(distance(line_x_2, line_to_compare_x_1, line_y_2, line_to_compare_y_1))
+    print(distance(line_x_2, line_to_compare_x_2, line_y_2, line_to_compare_y_2))
+    if(distance(line_x_1, line_to_compare_x_1, line_y_1, line_to_compare_y_1) < INTERSECT_THRES):
+        return True
+    if(distance(line_x_1, line_to_compare_x_2, line_y_1, line_to_compare_y_2) < INTERSECT_THRES):
+        return True
+    if(distance(line_x_2, line_to_compare_x_1, line_y_2, line_to_compare_y_1) < INTERSECT_THRES):
+        return True
+    if(distance(line_x_2, line_to_compare_x_2, line_y_2, line_to_compare_y_2) < INTERSECT_THRES):
+        return True
+    return False
+    return True
 
-    # find lines using hough lines transform with probability
-    linesP = cv.HoughLinesP(edges, 1, np.pi / 180, NUMBER_OF_INTERSECTION, None, MIN_LINE_LENGTH, MAX_LINE_GAP)
-
-    # Hashmap all parallel lines
-    if linesP is not None:
-        for i in range(0, len(linesP)):
-            l = linesP[i][0]
-            #draw line
-            edges_BGR_copy = np.copy(edges_BGR)
-            cv.line(edges_BGR_copy, (l[0], l[1]), (l[2], l[3]), (0, 255, 0), 1, cv.LINE_AA)
-            #show each line
-            cv.imshow('test_find_line', edges_BGR_copy)
-            cv.waitKey(0)
-            cv.destroyAllWindows()
-
-def test_find_parallel_line(edges):
-    # edge with three channel used to display
-    edges_BGR = cv.cvtColor(edges, cv.COLOR_GRAY2BGR)
-
-    # find lines using hough lines transform with probability
-    linesP = cv.HoughLinesP(edges, 1, np.pi / 180, NUMBER_OF_INTERSECTION, None, MIN_LINE_LENGTH, MAX_LINE_GAP)
-
-    # array that contains all lines
-    lines = []
-
-    # Hashmap all lines with its angle
-    if linesP is not None:
-        for i in range(0, len(linesP)):
-            l = linesP[i][0]
-            lines.append(list(l))
-
-    # [[(line, angle), (line, angle)], [(line, angle), (line, angle)], ...]
-    parallel_line_group = angle_approximation(lines)
-
-    for group_index in range(0, len(parallel_line_group)):
-        group = parallel_line_group[group_index]
-        if (len(group) > 1):
-            edges_BGR_copy = np.copy(edges_BGR)
-            for pair in group:
-                line = pair[0]
-                cv.line(edges_BGR_copy, (line[0], line[1]), (line[2], line[3]), (0, 255, 0), 1, cv.LINE_AA)
-            cv.imshow('test_find_parallel_line', edges_BGR_copy)
-            cv.waitKey(0)
-            cv.destroyAllWindows()
-
-def test_find_line_pair(edges):
-    # edge with three channel used to display
-    edges_BGR = cv.cvtColor(edges, cv.COLOR_GRAY2BGR)
-
-    # find lines using hough lines transform with probability
-    linesP = cv.HoughLinesP(edges, 1, np.pi / 180, NUMBER_OF_INTERSECTION, None, MIN_LINE_LENGTH, MAX_LINE_GAP)
-
-    # array that contains all lines
-    lines = []
-
-    # Hashmap all lines with its angle
-    if linesP is not None:
-        for i in range(0, len(linesP)):
-            l = linesP[i][0]
-            lines.append(list(l))
-
-    # [[(line, angle), (line, angle)], [(line, angle), (line, angle)], ...]
-    parallel_line_group = angle_approximation(lines)
-    print(parallel_line_group)
-
-    # Delete parallel lines that not form keva block
-    for group_index in range(0, len(parallel_line_group)):
-        group = parallel_line_group[group_index]
-        if (len(group) > 1):
-            line_angle_arr = group.copy()
-            for pair in line_angle_arr:
-                line = pair[0]
-                if (not line_distance(line, line_angle_arr)):
-                    # not witin the line distance we delete it
-                    group.remove(pair)
-
-    # draw lines
-    for group in parallel_line_group:
-        if (len(group) > 1):
-            edges_BGR_copy = np.copy(edges_BGR)
-            for pair in group:
-                line = pair[0]
-                cv.line(edges_BGR_copy, (line[0], line[1]), (line[2], line[3]), (0, 255, 0), 1, cv.LINE_AA)
-            cv.imshow('test_find_parallel_line', edges_BGR_copy)
-            cv.waitKey(0)
-            cv.destroyAllWindows()
-
-
-def test_find_rectangle(edges):
-    return
+def distance(p0, p1, p2, p3):
+    return math.sqrt((p0 - p1) ** 2 + (p2 - p3) ** 2)
