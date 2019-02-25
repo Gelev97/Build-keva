@@ -1,9 +1,18 @@
 import numpy as np
 import cv2 as cv
 
+'''
+Define Macro and Tunable Variable
+'''
 THRES = 1.2
 BLUR_LEVEL = 3
 
+CANNY_EDGE_LOWER_THRES = 100
+CANNY_EDGE_UPPER_THRES = 120
+
+'''
+Main Function
+'''
 def find_edge(image_name):
     #threshold
     img = cv.imread(image_name)
@@ -23,10 +32,13 @@ def find_edge(image_name):
     blur = cv.blur(threshold, (BLUR_LEVEL, BLUR_LEVEL))
 
     #Detect edges using canny method and show the result
-    edges = cv.Canny(blur, 100, 200)
+    edges = cv.Canny(blur, CANNY_EDGE_LOWER_THRES, CANNY_EDGE_UPPER_THRES)
 
     return [img, threshold, blur, edges]
 
+'''
+Draw Function
+'''
 def show_edge(img, threshold, blur, edges):
     edges = cv.cvtColor(edges, cv.COLOR_GRAY2BGR)
     imstack_horizontal1 = np.hstack((img, threshold))

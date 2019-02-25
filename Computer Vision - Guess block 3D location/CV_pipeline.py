@@ -11,18 +11,6 @@ def main():
 
     #find and show edges
     [img, threshold, blur, edges] = find_edge(image_name)
-    # cv.imshow('img', img)
-    # cv.waitKey(0)
-    # cv.destroyAllWindows()
-    # cv.imshow('threshold', threshold)
-    # cv.waitKey(0)
-    # cv.destroyAllWindows()
-    # cv.imshow('blur', blur)
-    # cv.waitKey(0)
-    # cv.destroyAllWindows()
-    # cv.imshow('edges', edges)
-    # cv.waitKey(0)
-    # cv.destroyAllWindows()
     # show_edge(img, threshold, blur, edges)
 
     #detect block and find their places
