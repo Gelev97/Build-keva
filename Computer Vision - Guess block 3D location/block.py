@@ -1,9 +1,10 @@
 import numpy as np
 import cv2 as cv
+import matplotlib.pyplot as plt
 import math
 
-D_MIN = 50 # search internal radius
-D_MAX = 100 #search external radius
+D_MIN = 30 # search internal radius
+D_MAX = 230 #search external radius
 '''
 Helper Function for search in circle
 '''
@@ -24,6 +25,11 @@ def create_search_region(center, width, height):
             if(is_in_bound(center, direction_radius, width, height)):
                 region.append([center[0]+direction_radius[0], center[1]+direction_radius[1]])
     return region
+
+def draw_search_region(img, center, D_MIN, D_MAX):
+    cv.circle(img, center, D_MIN, (0,255,0), thickness=1, lineType=8, shift=0)
+    cv.circle(img, center, D_MAX, (0, 255, 0), thickness=1, lineType=8, shift=0)
+
 
 '''
 Helper function for Hough Transform
@@ -149,22 +155,44 @@ def detect_block(edges):
     width = edges.shape[0]
     height = edges.shape[1]
 
-    (x,y) = (width/2.0, height/2.0)
+    (x,y) = (height/2.0, width/2.0)
     (x,y) = (int(x), int(y))
     center = (x,y)
+    draw_search_region(edges_BGR, center,  D_MIN, D_MAX)
     search_region = create_search_region(center, width, height)
     print(search_region)
 
     #Hough Transform
     rho_resolution = 3/4
     theta_resolution = (3*np.pi)/(4*D_MAX)
-    H, rhos, thetas = hough_lines_acc(search_region, rho_resolution, theta_resolution, height, width)
-    # indicies, H = hough_peaks(H, 3, nhood_size=11)  # find peaks
-    plot_hough_acc(H)  # plot hough space, brighter spots have higher votes
-    # hough_lines_draw(edges_BGR, indicies, rhos, thetas)
+    # H, rhos, thetas = hough_lines_acc(search_region, rho_resolution, theta_resolution, height, width)
+    # # indicies, H = hough_peaks(H, 3, nhood_size=11)  # find peaks
+    # plot_hough_acc(H)  # plot hough space, brighter spots have higher votes
+    # # hough_lines_draw(edges_BGR, indicies, rhos, thetas)
     #
     # imstack = np.hstack((edges_BGR_modified, edges_BGR))
-    # cv.imshow('edges_BGR', edges_BGR)
-    # cv.waitKey(0)
-    # cv.destroyAllWindows()
+
+
+    rectX = (x - D_MAX)
+    rectY = (y - D_MAX)
+    crop_img = edges[rectX:(rectX + 2 * D_MAX), rectY:(rectY + 2 * D_MAX)]
+
+    lines = cv.HoughLines(crop_img, rho_resolution, theta_resolution, 100)
+    for line in lines:
+        (rho, theta) = (line[0][0], line[0][1])
+        a = np.cos(theta)
+        b = np.sin(theta)
+        x0 = a * rho
+        y0 = b * rho
+        x1 = int(x0 + 1000 * (-b))
+        y1 = int(y0 + 1000 * (a))
+        x2 = int(x0 - 1000 * (-b))
+        y2 = int(y0 - 1000 * (a))
+
+        cv.line(edges_BGR_modified, (x1, y1), (x2, y2), (0, 0, 255), 2)
+    cv.rectangle(edges_BGR_modified,(rectX,rectY),(rectX+2*D_MAX, rectY+2*D_MAX),(0,255,0))
+    crop_img_BGR = cv.cvtColor(crop_img, cv.COLOR_GRAY2BGR)
+    cv.imshow('edges_BGR_modified', edges_BGR_modified)
+    cv.waitKey(0)
+    cv.destroyAllWindows()
     return
