@@ -79,7 +79,6 @@ def detect_angle_difference(angle, angle_compare):
 def angle_approximation(lines):
     # find parallel line
     parallel_line_group = dict()
-    line_index = 0
     for line_index in range(0,len(lines)):
         # calculate angle of each line
         line = lines[line_index]
@@ -189,14 +188,14 @@ def intersectLines(line, line_to_compare):
     # in component form:
     x1, y1 = (line[0], line[1])
     x2, y2 = (line[2], line[3])
-    dx1 = x2 - x1;
+    dx1 = x2 - x1
     dy1 = y2 - y1
 
     # the second line is ptA + s*(ptB-ptA)
-    x, y = (line_to_compare[0], line_to_compare[1]);
-    xB, yB = (line_to_compare[2], line_to_compare[3]);
-    dx = xB - x;
-    dy = yB - y;
+    x, y = (line_to_compare[0], line_to_compare[1])
+    xB, yB = (line_to_compare[2], line_to_compare[3])
+    dx = xB - x
+    dy = yB - y
 
     # we need to find the (typically unique) values of r and s
     # that will satisfy
@@ -341,8 +340,6 @@ def find_rectangle(edges, parallel_line_group, perpendicular_line_group, line_in
     # filter out not keva block
     for raw_block in raw_blocks:
         # check each perpendicular group
-        intersection = [[0,0],[0,0],[0,0],[0,0]]
-        intersection_count = 0
         for block_common_2 in raw_block[2]:
             # four intersections of the rectangle
             intersections = [block_common_2[0][1], block_common_2[0][2], block_common_2[1][1], block_common_2[1][2]]
@@ -632,10 +629,6 @@ def detect_block(edges):
     edges_BGR = cv.cvtColor(edges, cv.COLOR_GRAY2BGR)
     edges_BGR_modified = cv.cvtColor(edges, cv.COLOR_GRAY2BGR)
 
-    width = edges.shape[0]
-    height = edges.shape[1]
-    block= []
-
     # find lines using hough lines transform with probability
     linesP = cv.HoughLinesP(edges, 1, np.pi / 180, NUMBER_OF_INTERSECTION, None, MIN_LINE_LENGTH, MAX_LINE_GAP)
 
@@ -670,7 +663,6 @@ def detect_block(edges):
 
     # Delete parallel lines that not form keva block
     for line_set in parallel_line_group:
-        line = line_index_dict[line_set[0]]
         group = parallel_line_group[line_set]
         if (len(group) > 1):
             line_parallel_index = 0
@@ -692,7 +684,6 @@ def detect_block(edges):
 
 
     # Delete alone parallel line or empty group after above operation
-    index_remove_group = 0
     for line_set in list(parallel_line_group.keys()):
         if(len(parallel_line_group[line_set]) <= 1):
             del parallel_line_group[line_set]
