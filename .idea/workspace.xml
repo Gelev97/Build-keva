@@ -1,11 +1,12 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <project version="4">
   <component name="BookmarkManager">
-    <bookmark url="file://$PROJECT_DIR$/Computer Vision - Guess block 3D location/block.py" line="599" />
-    <bookmark url="file://$PROJECT_DIR$/Computer Vision - Guess block 3D location/block.py" line="301" />
+    <bookmark url="file://$PROJECT_DIR$/Computer Vision - Guess block 3D location/block.py" line="647" />
+    <bookmark url="file://$PROJECT_DIR$/Computer Vision - Guess block 3D location/block.py" line="293" />
   </component>
   <component name="ChangeListManager">
     <list default="true" id="c44b08b5-b55f-4503-a123-40ff5800eb1a" name="Default" comment="">
+      <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/Computer Vision - Guess block 3D location/block.py" beforeDir="false" afterPath="$PROJECT_DIR$/Computer Vision - Guess block 3D location/block.py" afterDir="false" />
     </list>
     <option name="EXCLUDED_CONVERTED_TO_IGNORED" value="true" />
@@ -16,7 +17,7 @@
   </component>
   <component name="CoverageDataManager">
     <SUITE FILE_PATH="coverage/Build_keva$edge.coverage" NAME="edge Coverage Results" MODIFIED="1552771580498" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="coverage.py" COVERAGE_BY_TEST_ENABLED="true" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="$PROJECT_DIR$/Computer Vision - Guess block 3D location" />
-    <SUITE FILE_PATH="coverage/Build_keva$block.coverage" NAME="block Coverage Results" MODIFIED="1552934902687" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="coverage.py" COVERAGE_BY_TEST_ENABLED="true" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="$PROJECT_DIR$/Computer Vision - Guess block 3D location" />
+    <SUITE FILE_PATH="coverage/Build_keva$block.coverage" NAME="block Coverage Results" MODIFIED="1553031851071" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="coverage.py" COVERAGE_BY_TEST_ENABLED="true" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="$PROJECT_DIR$/Computer Vision - Guess block 3D location" />
     <SUITE FILE_PATH="coverage/Build_keva$CV_pipeline.coverage" NAME="CV_pipeline Coverage Results" MODIFIED="1551904947649" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="coverage.py" COVERAGE_BY_TEST_ENABLED="true" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="$PROJECT_DIR$/Computer Vision - Guess block 3D location" />
   </component>
   <component name="FileEditorManager">
@@ -24,8 +25,8 @@
       <file pinned="false" current-in-tab="true">
         <entry file="file://$PROJECT_DIR$/Computer Vision - Guess block 3D location/block.py">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="968">
-              <caret line="477" column="20" selection-start-line="477" selection-start-column="20" selection-end-line="477" selection-end-column="20" />
+            <state relative-caret-position="690">
+              <caret line="561" lean-forward="true" selection-start-line="561" selection-end-line="561" />
               <folding>
                 <element signature="e#0#18#0" expanded="true" />
               </folding>
@@ -39,6 +40,7 @@
     <findStrings>
       <find>a</find>
       <find>print</find>
+      <find>slope</find>
     </findStrings>
   </component>
   <component name="Git.Settings">
@@ -68,6 +70,7 @@
       <foldersAlwaysOnTop value="true" />
     </navigator>
     <panes>
+      <pane id="Scope" />
       <pane id="ProjectPane">
         <subPane>
           <expand>
@@ -84,7 +87,6 @@
           <select />
         </subPane>
       </pane>
-      <pane id="Scope" />
     </panes>
   </component>
   <component name="PropertiesComponent">
@@ -210,18 +212,20 @@
       <workItem from="1551903226253" duration="1305000" />
       <workItem from="1552771549426" duration="6443000" />
       <workItem from="1552846659293" duration="15118000" />
-      <workItem from="1552919776293" duration="13992000" />
+      <workItem from="1552919776293" duration="17154000" />
+      <workItem from="1552963867690" duration="6912000" />
+      <workItem from="1553016868868" duration="13138000" />
     </task>
     <servers />
   </component>
   <component name="TimeTrackingManager">
-    <option name="totallyTimeSpent" value="52562000" />
+    <option name="totallyTimeSpent" value="75774000" />
   </component>
   <component name="ToolWindowManager">
     <frame x="134" y="35" width="2426" height="1565" extended-state="6" />
     <editor active="true" />
     <layout>
-      <window_info content_ui="combo" id="Project" order="0" visible="true" weight="0.1471343" />
+      <window_info content_ui="combo" id="Project" order="0" visible="true" weight="0.15226689" />
       <window_info id="Structure" order="1" side_tool="true" weight="0.25" />
       <window_info id="Favorites" order="2" side_tool="true" />
       <window_info anchor="bottom" id="Message" order="0" />
@@ -236,6 +240,7 @@
       <window_info anchor="bottom" id="Event Log" order="9" sideWeight="0.50080776" side_tool="true" weight="0.32905984" />
       <window_info anchor="bottom" id="Version Control" order="10" />
       <window_info anchor="bottom" id="Python Console" order="11" />
+      <window_info anchor="bottom" id="Concurrent Activities Diagram" order="12" weight="0.32948422" />
       <window_info anchor="right" id="Commander" order="0" weight="0.4" />
       <window_info anchor="right" id="Ant Build" order="1" weight="0.25" />
       <window_info anchor="right" content_ui="combo" id="Hierarchy" order="2" weight="0.25" />
@@ -259,8 +264,8 @@
     <entry file="file://$PROJECT_DIR$/Computer Vision - Guess block 3D location/CV_pipeline.py" />
     <entry file="file://$PROJECT_DIR$/Computer Vision - Guess block 3D location/block.py">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="968">
-          <caret line="477" column="20" selection-start-line="477" selection-start-column="20" selection-end-line="477" selection-end-column="20" />
+        <state relative-caret-position="690">
+          <caret line="561" lean-forward="true" selection-start-line="561" selection-end-line="561" />
           <folding>
             <element signature="e#0#18#0" expanded="true" />
           </folding>
