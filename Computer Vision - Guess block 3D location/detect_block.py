@@ -837,4 +837,3 @@ def main():
     detect_block(edges)
 
 main()
-
