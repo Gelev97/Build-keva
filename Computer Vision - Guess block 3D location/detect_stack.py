@@ -4,7 +4,7 @@ import math
 import sys
 from operator import itemgetter
 
-PARAM_LIST = "./Params/Test_Param.txt"
+PARAM_LIST = "./Params/Stack_Param.txt"
 
 # Load Params
 param_groups = []
@@ -36,36 +36,25 @@ MAX_LINE_LENGTH = param_groups[5]
 WIDTH_HEIGHT_DIST_MIN = param_groups[6]
 WIDTH_HEIGHT_DIST_MAX = param_groups[7]
 
-# Params to check block length
-WIDTH_MIN = param_groups[8]
-WIDTH_MAX = param_groups[9]
-HEIGHT_MIN = param_groups[10]
-HEIGHT_MAX = param_groups[11]
-
 # Params to filter the line
-FAKE_RANGE = param_groups[12]
-FAKE_PARALLEL_GAP = param_groups[13]
+FAKE_RANGE = param_groups[8]
+FAKE_PARALLEL_GAP = param_groups[9]
 
 # Same Center threshold
-CENTER_SAME_THRESHOLD = param_groups[14]
+CENTER_SAME_THRESHOLD = param_groups[10]
 
 # Check fake length
-FAKE_LENGTH_THRE = param_groups[15]
-SIMILARITY = param_groups[16]
+FAKE_LENGTH_THRE = param_groups[11]
+SIMILARITY = param_groups[12]
 
 # Threshold used to get edges
-THRES = param_groups[17]
-BLUR_LEVEL = param_groups[18]
-CANNY_EDGE_LOWER_THRES = param_groups[19]
-CANNY_EDGE_UPPER_THRES = param_groups[20]
+THRES = param_groups[13]
+BLUR_LEVEL = param_groups[14]
+CANNY_EDGE_LOWER_THRES = param_groups[15]
+CANNY_EDGE_UPPER_THRES = param_groups[16]
 
-'''
-Edge Detection
-'''
-def find_edge(image_name):
+def find_edge(img):
     #threshold
-    img = cv.imread(image_name)
-    img = cv.resize(img, (1000, 750))
     threshold = np.copy(img)
 
     #threshold out white and black background
@@ -85,6 +74,7 @@ def find_edge(image_name):
     edges = cv.Canny(blur, CANNY_EDGE_LOWER_THRES, CANNY_EDGE_UPPER_THRES)
 
     return [img, threshold, blur, edges]
+
 
 '''
 Find Parallel line
@@ -290,64 +280,22 @@ def check_parallel(line_1, line_2, parallel_line_group, index1, index2):
 def distance(p0, p1, p2, p3):
     return math.sqrt((p0 - p1) ** 2 + (p2 - p3) ** 2)
 
-def check_intersections(intersections):
-    # find if the intersections are forming a rectangle
-    # sort the array ascending in x
-    intersection_X = intersections.copy()
-    intersection_X.sort(key=itemgetter(0))
-    left = [intersection_X[0], intersection_X[1]]
-    right = [intersection_X[2], intersection_X[3]]
-
-    if(left[0][1] > left[1][1]):
-        top_left = left[1]
-        bottom_left = left[0]
-    else:
-        top_left = left[0]
-        bottom_left = left[1]
-
-    if (right[0][1] > right[1][1]):
-        top_right = right[1]
-        bottom_right = right[0]
-    else:
-        top_right = right[0]
-        bottom_right = right[1]
-
-    # calculate four side length
-    lenght_left = distance(top_left[0],bottom_left[0],top_left[1],bottom_left[1])
-    lenght_right = distance(top_right[0], bottom_right[0], top_right[1], bottom_right[1])
-    lenght_top = distance(top_left[0], top_right[0], top_left[1], top_right[1])
-    lenght_bottom = distance(bottom_left[0], bottom_right[0], bottom_left[1], bottom_right[1])
-    #print(lenght_left, lenght_right, lenght_top, lenght_bottom)
-    # check length
-    if(lenght_left <= lenght_top and lenght_right <= lenght_bottom):
-        if(lenght_left > WIDTH_MAX or lenght_left < WIDTH_MIN ): return False
-        if(lenght_top > HEIGHT_MAX or lenght_top < HEIGHT_MIN): return False
-        if(lenght_right > WIDTH_MAX or lenght_right < WIDTH_MIN): return False
-        if(lenght_bottom > HEIGHT_MAX or lenght_bottom < HEIGHT_MIN): return False
-    else:
-        if(lenght_left > HEIGHT_MAX or lenght_left < HEIGHT_MIN ): return False
-        if(lenght_top > WIDTH_MAX or lenght_top < WIDTH_MIN): return False
-        if(lenght_right > HEIGHT_MAX or lenght_right < HEIGHT_MIN): return False
-        if(lenght_bottom > WIDTH_MAX or lenght_bottom < WIDTH_MIN): return False
-
-    return True
-
-
 def find_rectangle(edges, parallel_line_group, perpendicular_line_group, line_index_dict):
     raw_blocks = []
     blocks = []
     for key in perpendicular_line_group:
         if (len(perpendicular_line_group[key]) > 1):
             for key_compare in perpendicular_line_group:
-                if(key_compare != key and len(perpendicular_line_group[key_compare]) > 1):
-                    common_perpendicular = find_common(perpendicular_line_group[key], perpendicular_line_group[key_compare])
-                    if(len(common_perpendicular) > 1):
+                if (key_compare != key and len(perpendicular_line_group[key_compare]) > 1):
+                    common_perpendicular = find_common(perpendicular_line_group[key],
+                                                       perpendicular_line_group[key_compare])
+                    if (len(common_perpendicular) > 1):
                         # find common perpendicular lines of two different line
                         permute_common = permute_in_two(common_perpendicular)
                         # test whether these lines with same perpendiculars are parallel
                         line_1 = line_index_dict[key[0]]
                         line_2 = line_index_dict[key_compare[0]]
-                        if(check_parallel(line_1, line_2, parallel_line_group, key[0], key_compare[0])):
+                        if (check_parallel(line_1, line_2, parallel_line_group, key[0], key_compare[0])):
                             raw_blocks.append((line_1, line_2, permute_common))
                     else:
                         continue
@@ -361,16 +309,7 @@ def find_rectangle(edges, parallel_line_group, perpendicular_line_group, line_in
         for block_common_2 in raw_block[2]:
             # four intersections of the rectangle
             intersections = [block_common_2[0][1], block_common_2[0][2], block_common_2[1][1], block_common_2[1][2]]
-            # edges_BGR_modified = cv.cvtColor(edges, cv.COLOR_GRAY2BGR)
-            # cv.circle(edges_BGR_modified, intersections[0], 2, (255, 0, 0), 2)
-            # cv.circle(edges_BGR_modified, intersections[1], 2, (255, 0, 0), 2)
-            # cv.circle(edges_BGR_modified, intersections[2], 2, (255, 0, 0), 2)
-            # cv.circle(edges_BGR_modified, intersections[3], 2, (255, 0, 0), 2)
-            # cv.imshow('perpendicular', edges_BGR_modified)
-            # cv.waitKey(0)
-            # cv.destroyAllWindows()
-            if(check_intersections(intersections)):
-               blocks.append((raw_block[0], raw_block[1], intersections))
+            blocks.append((raw_block[0], raw_block[1], intersections))
 
     # test blocks after filter
     # draw_blocks(edges, blocks)
@@ -642,7 +581,7 @@ def clear_fake_block(block,line_not_extend, edges):
 '''
 Pipeline to find block
 '''
-def detect_block(edges):
+def detect_stack(edges):
     # edge with three channel used to display
     edges_BGR = cv.cvtColor(edges, cv.COLOR_GRAY2BGR)
     edges_BGR_modified = cv.cvtColor(edges, cv.COLOR_GRAY2BGR)
@@ -710,8 +649,8 @@ def detect_block(edges):
     perpendicular_line_group = perpendicular_approximation(parallel_line_group, line_index_dict, lines, edges)
 
     # Draw functions used to debug
-    # draw_parallel_line(edges, parallel_line_group, line_index_dict)
-    # draw_perpendicular_line(edges, perpendicular_line_group, line_index_dict)
+    #draw_parallel_line(edges, parallel_line_group, line_index_dict)
+    #draw_perpendicular_line(edges, perpendicular_line_group, line_index_dict)
 
     block = find_rectangle(edges, parallel_line_group, perpendicular_line_group, line_index_dict)
 
@@ -841,17 +780,50 @@ def draw_result(img, block):
     cv.destroyAllWindows()
 
 '''
+Get rid of same pixels under certain threshold
+'''
+def get_same_pixel(img_lower, img_higher, threshold):
+    for i in range(img_lower.shape[0]):
+        for j in range(img_lower.shape[1]):
+            pixel1 = (int(img_lower[i, j, 0]), int(img_lower[i, j, 1]), int(img_lower[i, j, 2]))
+            pixel2 = (int(img_higher[i, j, 0]), int(img_higher[i, j, 1]), int(img_higher[i, j, 2]))
+            if(abs(pixel1[0] - pixel2[0]) < threshold and abs(pixel1[1] - pixel2[1]) < threshold \
+                    and abs(pixel1[2] - pixel2[2]) < threshold):
+                img_higher[i,j] = (0,0,0)
+
+    # cv.imshow('img_higher', img_higher)
+    # cv.waitKey(0)
+    # cv.destroyAllWindows()
+    return img_higher
+'''
 Main function
 '''
 def main():
-    image_name = sys.argv[1]
+    # get argument
+    image_name1 = sys.argv[1]
+    image_name2 = sys.argv[2]
+    image_name3 = sys.argv[3]
+    image_name4 = sys.argv[4]
+
+    # process images
+    img1 = cv.imread(image_name1)
+    img2 = cv.imread(image_name2)
+    img3 = cv.imread(image_name3)
+    img4 = cv.imread(image_name4)
+
+    img2_process = get_same_pixel(img1.copy(), img2.copy(), 35)
+    img3_process = get_same_pixel(img2.copy(), img3.copy(), 35)
+    img4_process = get_same_pixel(img3.copy(), img4.copy(), 35)
 
     #find and show edges
-    [img, threshold, blur, edges] = find_edge(image_name)
-    #show_edge(img, threshold, blur, edges)
+    [img_1, threshold_1, blur_1, edges_1] = find_edge(img1)
+    [img_2, threshold_2, blur_2, edges_2] = find_edge(img2_process)
 
-    #detect block and find their places
-    block = detect_block(edges)
-    draw_result(img, block)
+    # detect stack block's position
+    block = detect_stack(edges_1)
+    draw_result(img_1, block)
+    block = detect_stack(edges_2)
+    draw_result(img_2, block)
+
 
 main()
