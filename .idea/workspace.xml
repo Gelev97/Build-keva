@@ -6,7 +6,6 @@
   <component name="ChangeListManager">
     <list default="true" id="c44b08b5-b55f-4503-a123-40ff5800eb1a" name="Default" comment="">
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/Computer Vision - Guess block 3D location/Params/Stack_Param.txt" beforeDir="false" afterPath="$PROJECT_DIR$/Computer Vision - Guess block 3D location/Params/Stack_Param.txt" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/Computer Vision - Guess block 3D location/detect_stack.py" beforeDir="false" afterPath="$PROJECT_DIR$/Computer Vision - Guess block 3D location/detect_stack.py" afterDir="false" />
     </list>
     <option name="EXCLUDED_CONVERTED_TO_IGNORED" value="true" />
@@ -41,8 +40,8 @@
       <file pinned="false" current-in-tab="false">
         <entry file="file://$PROJECT_DIR$/Computer Vision - Guess block 3D location/detect_block.py">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="4440">
-              <caret line="300" column="26" selection-start-line="300" selection-start-column="26" selection-end-line="300" selection-end-column="26" />
+            <state relative-caret-position="785">
+              <caret line="892" column="1" selection-start-line="892" selection-start-column="1" selection-end-line="892" selection-end-column="1" />
               <folding>
                 <element signature="e#0#18#0" expanded="true" />
               </folding>
@@ -53,8 +52,8 @@
       <file pinned="false" current-in-tab="true">
         <entry file="file://$PROJECT_DIR$/Computer Vision - Guess block 3D location/detect_stack.py">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="619">
-              <caret line="936" column="21" selection-start-line="936" selection-start-column="21" selection-end-line="936" selection-end-column="21" />
+            <state relative-caret-position="335">
+              <caret line="915" column="4" selection-start-line="915" selection-start-column="4" selection-end-line="915" selection-end-column="4" />
               <folding>
                 <element signature="e#0#18#0" expanded="true" />
               </folding>
@@ -65,8 +64,8 @@
       <file pinned="false" current-in-tab="false">
         <entry file="file://$PROJECT_DIR$/Computer Vision - Guess block 3D location/Params/Stack_Param.txt">
           <provider selected="true" editor-type-id="text-editor">
-            <state>
-              <caret column="20" selection-start-column="20" selection-end-column="20" />
+            <state relative-caret-position="255">
+              <caret line="17" column="17" selection-start-line="17" selection-start-column="17" selection-end-line="17" selection-end-column="17" />
             </state>
           </provider>
         </entry>
@@ -104,8 +103,8 @@
         <option value="$PROJECT_DIR$/Computer Vision - Guess block 3D location/CV_pipeline.py" />
         <option value="$PROJECT_DIR$/Computer Vision - Guess block 3D location/block.py" />
         <option value="$PROJECT_DIR$/Computer Vision - Guess block 3D location/Params/Test_Param.txt" />
-        <option value="$PROJECT_DIR$/Computer Vision - Guess block 3D location/detect_block.py" />
         <option value="$PROJECT_DIR$/Computer Vision - Guess block 3D location/Params/Stack_Param.txt" />
+        <option value="$PROJECT_DIR$/Computer Vision - Guess block 3D location/detect_block.py" />
         <option value="$PROJECT_DIR$/Computer Vision - Guess block 3D location/detect_stack.py" />
       </list>
     </option>
@@ -165,7 +164,7 @@
     <property name="last_opened_file_path" value="$PROJECT_DIR$" />
     <property name="nodejs_interpreter_path.stuck_in_default_project" value="/usr/local/bin/node" />
     <property name="nodejs_npm_path_reset_for_default_project" value="true" />
-    <property name="settings.editor.selected.configurable" value="editor.preferences.fonts.default" />
+    <property name="settings.editor.selected.configurable" value="com.jetbrains.python.configuration.PyActiveSdkModuleConfigurable" />
   </component>
   <component name="RecentsManager">
     <key name="MoveFile.RECENT_KEYS">
@@ -345,17 +344,20 @@
       <workItem from="1553700022692" duration="1259000" />
       <workItem from="1553701553801" duration="5344000" />
       <workItem from="1553707805850" duration="3127000" />
+      <workItem from="1553736613491" duration="2071000" />
+      <workItem from="1553739391315" duration="1247000" />
+      <workItem from="1553741078580" duration="743000" />
     </task>
     <servers />
   </component>
   <component name="TimeTrackingManager">
-    <option name="totallyTimeSpent" value="135954000" />
+    <option name="totallyTimeSpent" value="140015000" />
   </component>
   <component name="ToolWindowManager">
-    <frame x="67" y="17" width="1853" height="1062" extended-state="6" />
+    <frame x="67" y="25" width="1853" height="1175" extended-state="6" />
     <editor active="true" />
     <layout>
-      <window_info content_ui="combo" id="Project" order="0" visible="true" weight="0.1793027" />
+      <window_info content_ui="combo" id="Project" order="0" visible="true" weight="0.19867183" />
       <window_info id="Structure" order="1" side_tool="true" weight="0.25" />
       <window_info id="Favorites" order="2" side_tool="true" />
       <window_info anchor="bottom" id="Message" order="0" />
@@ -376,14 +378,14 @@
       <window_info anchor="right" content_ui="combo" id="Hierarchy" order="2" weight="0.25" />
       <window_info anchor="right" id="SciView" order="3" weight="0.6602103" />
       <window_info anchor="right" id="Database" order="4" weight="0.32982844" />
-      <window_info active="true" anchor="right" id="Run" order="5" sideWeight="0.49919224" visible="true" weight="0.23076923" />
+      <window_info active="true" anchor="right" id="Run" order="5" sideWeight="0.49919224" visible="true" weight="0.31211954" />
     </layout>
   </component>
   <component name="TypeScriptGeneratedFilesManager">
     <option name="version" value="1" />
   </component>
   <component name="com.intellij.coverage.CoverageDataManagerImpl">
-    <SUITE FILE_PATH="coverage/Build_keva$detect_stack.coverage" NAME="detect_stack Coverage Results" MODIFIED="1553711010634" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="coverage.py" COVERAGE_BY_TEST_ENABLED="true" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="$PROJECT_DIR$/Computer Vision - Guess block 3D location" />
+    <SUITE FILE_PATH="coverage/Build_keva$detect_stack.coverage" NAME="detect_stack Coverage Results" MODIFIED="1553741902718" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="coverage.py" COVERAGE_BY_TEST_ENABLED="true" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="$PROJECT_DIR$/Computer Vision - Guess block 3D location" />
   </component>
   <component name="editorHistoryManager">
     <entry file="file://$PROJECT_DIR$/Computer Vision - Guess block 3D location/hi.png" />
@@ -415,8 +417,8 @@
     </entry>
     <entry file="file://$PROJECT_DIR$/Computer Vision - Guess block 3D location/detect_block.py">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="4440">
-          <caret line="300" column="26" selection-start-line="300" selection-start-column="26" selection-end-line="300" selection-end-column="26" />
+        <state relative-caret-position="785">
+          <caret line="892" column="1" selection-start-line="892" selection-start-column="1" selection-end-line="892" selection-end-column="1" />
           <folding>
             <element signature="e#0#18#0" expanded="true" />
           </folding>
@@ -425,15 +427,15 @@
     </entry>
     <entry file="file://$PROJECT_DIR$/Computer Vision - Guess block 3D location/Params/Stack_Param.txt">
       <provider selected="true" editor-type-id="text-editor">
-        <state>
-          <caret column="20" selection-start-column="20" selection-end-column="20" />
+        <state relative-caret-position="255">
+          <caret line="17" column="17" selection-start-line="17" selection-start-column="17" selection-end-line="17" selection-end-column="17" />
         </state>
       </provider>
     </entry>
     <entry file="file://$PROJECT_DIR$/Computer Vision - Guess block 3D location/detect_stack.py">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="619">
-          <caret line="936" column="21" selection-start-line="936" selection-start-column="21" selection-end-line="936" selection-end-column="21" />
+        <state relative-caret-position="335">
+          <caret line="915" column="4" selection-start-line="915" selection-start-column="4" selection-end-line="915" selection-end-column="4" />
           <folding>
             <element signature="e#0#18#0" expanded="true" />
           </folding>

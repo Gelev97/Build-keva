@@ -913,7 +913,7 @@ def main():
 
     #find and show edges
     [img_1, threshold_1, blur_1, edges_1] = find_edge(img1)
-    # show_edge(img_1, threshold_1, blur_1, edges_1)
+    show_edge(img_1, threshold_1, blur_1, edges_1)
     [img_2, threshold_2, blur_2, edges_2] = find_edge(img2)
     # show_edge(img_2, threshold_2, blur_2, edges_2)
     [img_3, threshold_3, blur_3, edges_3] = find_edge(img3)
