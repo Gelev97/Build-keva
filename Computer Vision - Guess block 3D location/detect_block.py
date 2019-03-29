@@ -57,8 +57,10 @@ BLUR_LEVEL = param_groups[16]
 CANNY_EDGE_LOWER_THRES = param_groups[17]
 CANNY_EDGE_UPPER_THRES = param_groups[18]
 
-# Rate to determine whether a side is background or not
-BACKGROUND_PIXEL_RATE = param_groups[19]
+# Rate to determine whether its an edge or not
+SIMILARITY = param_groups[19]
+PIXEL_SIMILAR_TRHES = param_groups[20]
+
 '''
 Edge Detection
 '''
@@ -319,27 +321,29 @@ def check_intersections(intersections):
 
     # check length
     if(lenght_left <= lenght_top and lenght_right <= lenght_bottom):
-        if(lenght_left > WIDTH_MAX or lenght_left < WIDTH_MIN ): return False
-        if(lenght_top > HEIGHT_MAX or lenght_top < HEIGHT_MIN): return False
-        if(lenght_right > WIDTH_MAX or lenght_right < WIDTH_MIN): return False
-        if(lenght_bottom > HEIGHT_MAX or lenght_bottom < HEIGHT_MIN): return False
+        if(lenght_left > 600 or lenght_left < 20 ): return False
+        if(lenght_top > 600 or lenght_top < 20): return False
+        if(lenght_right > 600 or lenght_right < 20): return False
+        if(lenght_bottom > 600 or lenght_bottom < 20): return False
     else:
-        if(lenght_left > HEIGHT_MAX or lenght_left < HEIGHT_MIN ): return False
-        if(lenght_top > WIDTH_MAX or lenght_top < WIDTH_MIN): return False
-        if(lenght_right > HEIGHT_MAX or lenght_right < HEIGHT_MIN): return False
-        if(lenght_bottom > WIDTH_MAX or lenght_bottom < WIDTH_MIN): return False
+        if(lenght_left > 600 or lenght_left < 20 ): return False
+        if(lenght_top > 600 or lenght_top < 20): return False
+        if(lenght_right > 600 or lenght_right < 20): return False
+        if(lenght_bottom > 600 or lenght_bottom < 20): return False
 
     return True
 
 # This function is used to test the distance between two rectangles
 # based on the distance of four corners
 def check_distance(intersections, intersections_compare):
+    distance_total = 0
     for vertex_index in range(0,len(intersections)):
         intersections_vertex = intersections[vertex_index]
         intersections_compare_vertex = intersections_compare[vertex_index]
-        if(distance(intersections_vertex[0],intersections_compare_vertex[0], \
-                    intersections_vertex[1], intersections_compare_vertex[1]) > CENTER_SAME_THRESHOLD):
-            return True
+        distance_total += distance(intersections_vertex[0],intersections_compare_vertex[0], \
+                    intersections_vertex[1], intersections_compare_vertex[1])
+    if(distance_total/len(intersections) > CENTER_SAME_THRESHOLD):
+        return True
     return False
 
 # measure the angle between two lines
@@ -366,6 +370,107 @@ def measure_angle(intersection_group):
         result[(top_left, bottom_left, top_right, bottom_right)].append(angle([bottom_left,bottom_right],[bottom_right,top_right]))
         result[(top_left, bottom_left, top_right, bottom_right)].append(angle([bottom_right,top_right],[top_right,top_left]))
         result[(top_left, bottom_left, top_right, bottom_right)].append(angle([top_right,top_left],[top_left,bottom_left]))
+    return result
+
+def remove_duplicate(blocks):
+    block_dict = dict()
+    duplicate_group_index = 0
+    for block in blocks:
+        # get the current block intersection in given sequence
+        new_flag = 1
+        intersections = block
+        intersections.sort(key=itemgetter(0))
+        left = [intersections[0], intersections[1]]
+        right = [intersections[2], intersections[3]]
+
+        if (left[0][1] > right[0][1] and left[0][1] > right[1][1] and \
+                left[1][1] > right[0][1] and left[1][1] > right[1][1]):
+            top_left = right[0]
+            top_right = right[1]
+            bottom_left = left[0]
+            bottom_right = left[1]
+        elif (left[0][1] < right[0][1] and left[0][1] < right[1][1] and \
+              left[1][1] < right[0][1] and left[1][1] < right[1][1]):
+            top_left = left[0]
+            top_right = left[1]
+            bottom_left = right[0]
+            bottom_right = right[1]
+        else:
+            if (left[0][1] > left[1][1]):
+                top_left = left[1]
+                bottom_left = left[0]
+            else:
+                top_left = left[0]
+                bottom_left = left[1]
+
+            if (right[0][1] > right[1][1]):
+                top_right = right[1]
+                bottom_right = right[0]
+            else:
+                top_right = right[0]
+                bottom_right = right[1]
+
+        intersections = [top_left, bottom_left, top_right, bottom_right]
+        for center_index in block_dict:
+            # compare it with all center in this group
+            qualify_flag = 1
+            for intersection_compare in block_dict[center_index]:
+                if (check_distance(intersections, intersection_compare)):
+                    qualify_flag = 0
+            if (qualify_flag == 1):
+                block_dict[center_index].append(intersections)
+                new_flag = 0
+        # If no group fit, just create a new group
+        if (new_flag == 1):
+            block_dict[duplicate_group_index] = [intersections]
+            duplicate_group_index += 1
+    return block_dict
+
+def merge_duplicate(block_dict):
+    result = []
+    for center in block_dict:
+        intersection_group = block_dict[center]
+        angle_dict = measure_angle(intersection_group)
+        perfect = 1000
+        intersection_to_add = (0, 0, 0, 0)
+        perfect_group = []
+        for intersection in angle_dict:
+            # choose the most perpendicular one to be the one that needed
+            angles = angle_dict[intersection]
+            distance_to_perfect = abs(90 - angles[0]) + abs(90 - angles[1]) + abs(90 - angles[2]) + abs(90 - angles[3])
+            if (distance_to_perfect < perfect):
+                intersection_to_add = intersection
+                perfect = distance_to_perfect
+            if (distance_to_perfect == perfect):
+                perfect_group.append(intersection)
+        if (len(perfect_group) == 0):
+            result.append(intersection_to_add)
+        else:
+            perfect_group.append(intersection_to_add)
+            intersection = [[0, 0], [0, 0], [0, 0], [0, 0]]
+            intersections = [(0, 0), (0, 0), (0, 0), (0, 0)]
+            intersection_count = 0
+            for intersection_merge in intersection_group:
+                [top_left, bottom_left, top_right, bottom_right] = intersection_merge
+                intersection[0][0] += top_left[0]
+                intersection[0][1] += top_left[1]
+                intersection[1][0] += bottom_left[0]
+                intersection[1][1] += bottom_left[1]
+                intersection[2][0] += top_right[0]
+                intersection[2][1] += top_right[1]
+                intersection[3][0] += bottom_right[0]
+                intersection[3][1] += bottom_right[1]
+
+                intersection_count += 1
+            intersections[0] = (
+                round(intersection[0][0] / intersection_count), round(intersection[0][1] / intersection_count))
+            intersections[1] = (
+                round(intersection[1][0] / intersection_count), round(intersection[1][1] / intersection_count))
+            intersections[2] = (
+                round(intersection[2][0] / intersection_count), round(intersection[2][1] / intersection_count))
+            intersections[3] = (
+                round(intersection[3][0] / intersection_count), round(intersection[3][1] / intersection_count))
+            result.append(intersections)
     return result
 
 def find_rectangle(edges, parallel_line_group, perpendicular_line_group, line_index_dict):
@@ -396,106 +501,24 @@ def find_rectangle(edges, parallel_line_group, perpendicular_line_group, line_in
         for block_common_2 in raw_block[2]:
             # four intersections of the rectangle
             intersections = [block_common_2[0][1], block_common_2[0][2], block_common_2[1][1], block_common_2[1][2]]
-            # edges_BGR_modified = cv.cvtColor(edges, cv.COLOR_GRAY2BGR)
-            # cv.circle(edges_BGR_modified, intersections[0], 2, (255, 0, 0), 2)
-            # cv.circle(edges_BGR_modified, intersections[1], 2, (255, 0, 0), 2)
-            # cv.circle(edges_BGR_modified, intersections[2], 2, (255, 0, 0), 2)
-            # cv.circle(edges_BGR_modified, intersections[3], 2, (255, 0, 0), 2)
-            # cv.imshow('perpendicular', edges_BGR_modified)
-            # cv.waitKey(0)
-            # cv.destroyAllWindows()
-            if(check_intersections(intersections)):
-               blocks.append((raw_block[0], raw_block[1], intersections))
+            if (check_intersections(intersections)):
+                blocks.append(intersections)
 
     # test blocks after filter
     # draw_blocks(edges, blocks)
 
     # remove duplicate
-    block_dict = dict()
-    duplicate_group_index = 0
-    for block in blocks:
-        # get the current block intersection in given sequence
-        new_flag = 1
-        intersections = block[2]
-        intersections.sort(key=itemgetter(0))
-        left = [intersections[0], intersections[1]]
-        right = [intersections[2], intersections[3]]
-
-        if (left[0][1] > left[1][1]):
-            top_left = left[1]
-            bottom_left = left[0]
-        else:
-            top_left = left[0]
-            bottom_left = left[1]
-
-        if (right[0][1] > right[1][1]):
-            top_right = right[1]
-            bottom_right = right[0]
-        else:
-            top_right = right[0]
-            bottom_right = right[1]
-
-        intersections = [top_left, bottom_left, top_right, bottom_right]
-        for center_index in block_dict:
-            # compare it with all center in this group
-            qualify_flag = 1
-            for intersection_compare in block_dict[center_index]:
-                if(check_distance(intersections,intersection_compare)):
-                    qualify_flag = 0
-            if(qualify_flag == 1):
-                block_dict[center_index].append(intersections)
-                new_flag = 0
-        # If no group fit, just create a new group
-        if(new_flag == 1):
-            block_dict[duplicate_group_index]  = [intersections]
-            duplicate_group_index += 1
-
+    block_dict = remove_duplicate(blocks)
     # merge duplicate
-    result = []
-    for center in block_dict:
-        intersection_group = block_dict[center]
-        angle_dict = measure_angle(intersection_group)
-        perfect = 1000
-        intersection_to_add = (0,0,0,0)
-        perfect_group = []
-        for intersection in angle_dict:
-            # choose the most perpendicular one to be the one that needed
-            angles = angle_dict[intersection]
-            distance_to_perfect = abs(90 - angles[0]) + abs(90 - angles[1]) + abs(90 - angles[2]) + abs(90 - angles[3])
-            if(distance_to_perfect < perfect):
-                intersection_to_add = intersection
-                perfect = distance_to_perfect
-            if(distance_to_perfect == perfect):
-                perfect_group.append(intersection)
-        if(len(perfect_group) == 0):
-            result.append(intersection_to_add)
-        else:
-            perfect_group.append(intersection_to_add)
-            intersection = [[0, 0], [0, 0], [0, 0], [0, 0]]
-            intersections = [(0, 0), (0, 0), (0, 0), (0, 0)]
-            intersection_count = 0
-            for intersection_merge in intersection_group:
-                [top_left, bottom_left, top_right, bottom_right] = intersection_merge
-                intersection[0][0] += top_left[0]
-                intersection[0][1] += top_left[1]
-                intersection[1][0] += bottom_left[0]
-                intersection[1][1] += bottom_left[1]
-                intersection[2][0] += top_right[0]
-                intersection[2][1] += top_right[1]
-                intersection[3][0] += bottom_right[0]
-                intersection[3][1] += bottom_right[1]
+    result = merge_duplicate(block_dict)
+    # print(len(blocks))
+    # print(len(result))
+    # double check for duplication
+    while(len(blocks) > len(result)):
+        blocks = result.copy()
+        block_dict = remove_duplicate(blocks)
+        result = merge_duplicate(block_dict)
 
-                intersection_count += 1
-            intersections[0] = (
-            round(intersection[0][0] / intersection_count), round(intersection[0][1] / intersection_count))
-            intersections[1] = (
-            round(intersection[1][0] / intersection_count), round(intersection[1][1] / intersection_count))
-            intersections[2] = (
-            round(intersection[2][0] / intersection_count), round(intersection[2][1] / intersection_count))
-            intersections[3] = (
-            round(intersection[3][0] / intersection_count), round(intersection[3][1] / intersection_count))
-            result.append(intersections)
-    #
     # for intersection in result:
     #     draw_rectangular(edges, intersection)
     return result
@@ -518,9 +541,7 @@ def create_line_arr_height(line, img):
                 if (x >= 0 and x < img.shape[1]):
                     line_arr.append((x, line[1]))
         return line_arr
-
     slope = (line[0] - line[2]) / (line[1] - line[3])
-
     intercept = line[0] - line[1]*slope
     if (line[0] >= 0 and line[0] < img.shape[1] and line[1] >= 0 and line[1] < img.shape[0]):
         line_arr = [(line[0], line[1])]
@@ -579,24 +600,21 @@ def create_line_arr_width(line, img):
         line_arr.append((line[2], line[3]))
     return line_arr
 
-def check_background_or_color(points, img):
-    pixel_background = 0
-    background_flag = 0
-    color_flag = 0
-    for point in points:
-        pixel = img[(point[1],point[0])]
-        pixel = [int(pixel[0]), int(pixel[1]), int(pixel[2])]
-        pixel_avg = (pixel[0] + pixel[1] + pixel[2]) / 3.0
-        if (pixel_avg == 0): pixel_avg = 1;
-        pixel_normalized = (pixel[0] / pixel_avg, pixel[1] / pixel_avg, pixel[2] / pixel_avg)
-        if (pixel_normalized[0] < THRES and pixel_normalized[1] < THRES and pixel_normalized[2] < THRES):
-            pixel_background += 1
-    print(pixel_background / FAKE_RANGE)
-    if (pixel_background / FAKE_RANGE > BACKGROUND_PIXEL_RATE):
-        background_flag = 1
+def check_background_or_color(points_1, points_2, img):
+    point_similar = 0
+    for point_index in range (0,len(points_1)):
+        point_1 = points_1[point_index]
+        point_2 = points_2[point_index]
+        pixel_1 = img[(point_1[1],point_1[0])]
+        pixel_2 = img[(point_2[1], point_2[0])]
+        average_difference = (abs(int(pixel_1[0]) - int(pixel_2[0])) + abs(int(pixel_1[1]) - int(pixel_2[1])) \
+                                            + abs(int(pixel_1[2]) - int(pixel_2[2])))
+        if(average_difference < PIXEL_SIMILAR_TRHES):
+            point_similar += 1
+    if(point_similar/len(points_1) > SIMILARITY):
+        return 0
     else:
-        color_flag = 1
-    return (background_flag, color_flag)
+        return 1
 
 def clear_fake_block(block, img):
     result = []
@@ -624,7 +642,7 @@ def clear_fake_block(block, img):
             lines.append((0, [top_right[0], top_right[1], bottom_right[0], bottom_right[1]]))
             lines.append((1, [top_left[0], top_left[1], top_right[0], top_right[1]]))
 
-        img_display = img.copy()
+        # img_display = img.copy()
         for qualified_line_set in lines:
             qualified_line = qualified_line_set[1]
             # extend the line by 1
@@ -635,56 +653,49 @@ def clear_fake_block(block, img):
 
             qualified_point = []
             for point in qualified_line_arr:
+                # print(point)
                 # check for both directions
-                print(point)
                 # the first direction, gather points
                 points_dir_1_side_1 = []
                 points_dir_1_side_2 = []
-                for positive_dir_1 in range(1,FAKE_RANGE+1):
-                    if((point[0] + positive_dir_1) < img.shape[1]):
-                        points_dir_1_side_1.append((point[0] + positive_dir_1, point[1]))
-                for negative_dir_1 in range(1, FAKE_RANGE + 1):
-                    if ((point[0] - negative_dir_1) >= 0):
-                        points_dir_1_side_2.append((point[0] - negative_dir_1, point[1]))
+                for dir_1 in range(1,FAKE_RANGE+1):
+                    if((point[0] + dir_1) < img.shape[1] or (point[0] - dir_1) >= 0):
+                        points_dir_1_side_1.append((point[0] + dir_1, point[1]))
+                        points_dir_1_side_2.append((point[0] - dir_1, point[1]))
 
                 # check the point for this direction
                 # whether it follows one side of backgroud and one side of color
-                dir1_check = 0
-                (background_flag_d1s1, color_flag_d1s1) = check_background_or_color(points_dir_1_side_1, img)
-                (background_flag_d1s2, color_flag_d1s2) = check_background_or_color(points_dir_1_side_2, img)
-                if((background_flag_d1s1 != background_flag_d1s2) and (color_flag_d1s1 != color_flag_d1s2)):
-                    dir1_check = 1
+                dir1_check = check_background_or_color(points_dir_1_side_1, points_dir_1_side_2, img)
 
                 points_dir_2_side_1 = []
                 points_dir_2_side_2 = []
-                dir2_check = 0
-                for positive_dir_2 in range(1,FAKE_RANGE+1):
-                    if ((point[1] + positive_dir_2) < img.shape[0]):
-                        points_dir_2_side_1.append((point[0], point[1] + positive_dir_2))
-                for negative_dir_2 in range(1, FAKE_RANGE + 1):
-                    if ((point[1] - negative_dir_2) >= 0):
-                        points_dir_2_side_2.append((point[0], point[1] - negative_dir_2))
-                (background_flag_d2s1, color_flag_d2s1) = check_background_or_color(points_dir_2_side_1, img)
-                (background_flag_d2s2, color_flag_d2s2) = check_background_or_color(points_dir_2_side_2, img)
-                if ((background_flag_d2s1 != background_flag_d2s2) and (color_flag_d2s1 != color_flag_d2s2)):
-                    dir2_check = 1
+                for dir_2 in range(1, FAKE_RANGE + 1):
+                    if ((point[1] + dir_2) < img.shape[1] or (point[1] - dir_2) >= 0):
+                        points_dir_2_side_1.append((point[0], point[1] + dir_2))
+                        points_dir_2_side_2.append((point[0], point[1] - dir_2))
+
+
+                dir2_check = check_background_or_color(points_dir_2_side_1, points_dir_2_side_2, img)
 
                 if(dir1_check == 1 or dir2_check == 1):
                     qualified_point.append(point)
-            print(len(qualified_point)/len(qualified_line_arr))
-            if (len(qualified_point) / len(qualified_line_arr) > QUALIFY_RATE):
-                if (qualified_line not in line_test):
+
+            # print(len(qualified_point)/len(qualified_line_arr))
+
+            if(len(qualified_point)/len(qualified_line_arr) > QUALIFY_RATE):
+                if(qualified_line not in line_test):
                     line_test.append(qualified_line)
-                    cv.line(img_display, (qualified_line[0], qualified_line[1]), (qualified_line[2], qualified_line[3]),(0, 255, 255), 4, cv.LINE_AA)
-            else:
-                cv.line(img_display, (qualified_line[0], qualified_line[1]), (qualified_line[2], qualified_line[3]),(255, 255, 0), 4, cv.LINE_AA)
-        cv.imshow('img', img_display)
-        cv.waitKey(0)
-        cv.destroyAllWindows()
+                    #cv.line(img_display, (qualified_line[0], qualified_line[1]), (qualified_line[2], qualified_line[3]),(0, 255, 255), 4, cv.LINE_AA)
+            # else:
+            #     cv.line(img_display, (qualified_line[0], qualified_line[1]), (qualified_line[2], qualified_line[3]),(255, 255, 0), 4, cv.LINE_AA)
+        # cv.imshow('img', img_display)
+        # cv.waitKey(0)
+        # cv.destroyAllWindows()
         if(len(line_test) == 4): result.append(intersections)
         count += 1
         print(str(round(count/length*100)) + "%")
     return result
+
 '''
 Pipeline to find block
 '''
@@ -747,7 +758,7 @@ def detect_block(edges, img):
     # Delete alone parallel line or empty group after above operation
     for line_set in list(parallel_line_group.keys()):
         if(len(parallel_line_group[line_set]) < 1):
-            del parallel_line_group[line_set]
+            del parallel_line_group[lineq_set]
 
     perpendicular_line_group = perpendicular_approximation(parallel_line_group, line_index_dict, lines, edges)
 
@@ -818,7 +829,7 @@ def draw_rectangular(edges, intersections):
         cv.circle(edges_BGR_modified, intersections[1], 2, (255, 0, 0), 10)
         cv.circle(edges_BGR_modified, intersections[2], 2, (255, 0, 0), 10)
         cv.circle(edges_BGR_modified, intersections[3], 2, (255, 0, 0), 10)
-        cv.imshow('perpendicular', edges_BGR_modified)
+        cv.imshow('draw_rectangular', edges_BGR_modified)
         cv.waitKey(0)
         cv.destroyAllWindows()
 
@@ -844,23 +855,19 @@ def  draw_raw_blocks(edges, raw_blocks):
             cv.circle(edges_BGR_modified, intersections[1], 2, (255, 0, 0), 10)
             cv.circle(edges_BGR_modified, intersections[2], 2, (255, 0, 0), 10)
             cv.circle(edges_BGR_modified, intersections[3], 2, (255, 0, 0), 10)
-            cv.imshow('perpendicular', edges_BGR_modified)
+            cv.imshow('draw_raw_blocks', edges_BGR_modified)
             k = cv.waitKey(1000)
             cv.destroyAllWindows()
 
 def draw_blocks(edges, blocks):
     for blockset in blocks:
-        line1 = blockset[0]
-        line2 = blockset[1]
-        intersections = blockset[2]
+        intersections = blockset
         edges_BGR_modified = cv.cvtColor(edges, cv.COLOR_GRAY2BGR)
-        cv.line(edges_BGR_modified, (line1[0], line1[1]), (line1[2], line1[3]), (255, 0, 0), 1, cv.LINE_AA)
-        cv.line(edges_BGR_modified, (line2[0], line2[1]), (line2[2], line2[3]), (255, 0, 0), 1, cv.LINE_AA)
         cv.circle(edges_BGR_modified, intersections[0], 2, (255, 0, 0), 10)
         cv.circle(edges_BGR_modified, intersections[1], 2, (255, 0, 0), 10)
         cv.circle(edges_BGR_modified, intersections[2], 2, (255, 0, 0), 10)
         cv.circle(edges_BGR_modified, intersections[3], 2, (255, 0, 0), 10)
-        cv.imshow('perpendicular', edges_BGR_modified)
+        cv.imshow('draw_blocks', edges_BGR_modified)
         k = cv.waitKey(1000)
         cv.destroyAllWindows()
 
@@ -878,7 +885,7 @@ def draw_result(img, block):
         cv.circle(img, intersections[1], 2, (255, 0, 0), 10)
         cv.circle(img, intersections[2], 2, (255, 0, 0), 10)
         cv.circle(img, intersections[3], 2, (255, 0, 0), 10)
-    cv.imshow('img', img)
+    cv.imshow('draw_result', img)
     cv.waitKey(0)
     cv.destroyAllWindows()
 
