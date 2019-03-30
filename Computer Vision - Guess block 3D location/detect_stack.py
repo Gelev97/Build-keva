@@ -535,8 +535,8 @@ def find_rectangle(edges, parallel_line_group, perpendicular_line_group, line_in
         result = merge_duplicate(block_dict)
 
     # for intersection in result:
-    #     draw_rectangular_specific_area(edges, intersection)
-    #     draw_rectangular(edges, intersection))
+        # draw_rectangular_specific_area(edges, intersection)
+        # draw_rectangular(edges, intersection)
     return result
 
 '''
@@ -632,6 +632,25 @@ def check_background_or_color(points_1, points_2, img):
     else:
         return 1
 
+# def check_inside_color(top_left, bottom_left, top_right, bottom_right, img):
+#     L = img.shape[1]
+#     H = img.shape[0]
+#     matrix = np.zeros((L, H),dtype=np.uint8)
+#     matrix[top_left] = 1
+#     matrix[bottom_left] = 1
+#     matrix[top_right] = 1
+#     matrix[bottom_right] = 1
+#     _, ContoursListe, hierarchy = cv.findContours(matrix, cv.RETR_TREE, cv.CHAIN_APPROX_SIMPLE)
+#     print(ContoursListe)
+#     cv.drawContours(matrix, ContoursListe, -1, (1), thickness=-1)
+#     for i in range(0,L):
+#         for j in range(0,H):
+#             if(matrix[i,j] != 0): print(i,j)
+#
+#     list_of_points_indices = np.nonzero(matrix)
+#     print(list_of_points_indices)
+#     return list_of_points_indices
+
 def clear_fake_block(block, img):
     result = []
     length = len(block)
@@ -646,6 +665,7 @@ def clear_fake_block(block, img):
         top_right = intersections[2]
         bottom_right = intersections[3]
 
+        # if(check_inside_color(top_left, bottom_left, top_right, bottom_right, img)):
         # check length (1 -> y+1, 0 -> x+1)
         if (abs(top_left[0] - bottom_left[0]) < abs(top_left[1] - bottom_left[1])):
             lines.append((1, [top_left[0], top_left[1], bottom_left[0], bottom_left[1]]))
@@ -658,7 +678,7 @@ def clear_fake_block(block, img):
             lines.append((0, [top_right[0], top_right[1], bottom_right[0], bottom_right[1]]))
             lines.append((1, [top_left[0], top_left[1], top_right[0], top_right[1]]))
 
-        # img_display = img.copy()
+        img_display = img.copy()
         for qualified_line_set in lines:
             qualified_line = qualified_line_set[1]
             # extend the line by 1
@@ -707,12 +727,12 @@ def clear_fake_block(block, img):
                 if(len(qualified_point)/len(qualified_line_arr) > QUALIFY_RATE):
                     if(qualified_line not in line_test):
                         line_test.append(qualified_line)
-        #                 cv.line(img_display, (qualified_line[0], qualified_line[1]), (qualified_line[2], qualified_line[3]),(0, 255, 255), 4, cv.LINE_AA)
-        #       else:
-        #           cv.line(img_display, (qualified_line[0], qualified_line[1]), (qualified_line[2], qualified_line[3]),(255, 255, 0), 4, cv.LINE_AA)
-        # cv.imshow('img', img_display)
-        # cv.waitKey(0)
-        # cv.destroyAllWindows()
+            #             cv.line(img_display, (qualified_line[0], qualified_line[1]), (qualified_line[2], qualified_line[3]),(0, 255, 255), 4, cv.LINE_AA)
+            #     else:
+            #         cv.line(img_display, (qualified_line[0], qualified_line[1]), (qualified_line[2], qualified_line[3]),(255, 255, 0), 4, cv.LINE_AA)
+            # cv.imshow('img', img_display)
+            # cv.waitKey(0)
+            # cv.destroyAllWindows()
         if(len(line_test) == 4): result.append(intersections)
         count += 1
         print(str(round(count/length*100)) + "%")
@@ -1084,24 +1104,24 @@ def main():
     image_name2 = sys.argv[2]
     image_name3 = sys.argv[3]
     image_name4 = sys.argv[4]
-    image_name5 = sys.argv[5]
+    # image_name5 = sys.argv[5]
 
     # process images
     img1 = cv.imread(image_name1)
     img2 = cv.imread(image_name2)
     img3 = cv.imread(image_name3)
     img4 = cv.imread(image_name4)
-    img5 = cv.imread(image_name5)
+    # img5 = cv.imread(image_name5)
 
     #find and show edges
     [img_1, threshold_1, blur_1, edges_1] = find_edge(img1)
-    show_edge(img_1, threshold_1, blur_1, edges_1)
+    # show_edge(img_1, threshold_1, blur_1, edges_1)
     [img_2, threshold_2, blur_2, edges_2] = find_edge(img2)
-    show_edge(img_2, threshold_2, blur_2, edges_2)
+    # show_edge(img_2, threshold_2, blur_2, edges_2)
     [img_3, threshold_3, blur_3, edges_3] = find_edge(img3)
-    show_edge(img_3, threshold_3, blur_3, edges_3)
+    # show_edge(img_3, threshold_3, blur_3, edges_3)
     [img_4, threshold_4, blur_4, edges_4] = find_edge(img4)
-    show_edge(img_4, threshold_4, blur_4, edges_4)
+    # show_edge(img_4, threshold_4, blur_4, edges_4)
 
     # detect stack block's position and create stack
     stack = []
