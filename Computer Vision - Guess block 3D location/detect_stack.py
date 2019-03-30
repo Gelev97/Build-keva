@@ -4,6 +4,8 @@ import math
 import sys
 from operator import itemgetter
 
+SPECIFIC_AREA = [488, 20, 488, 90, 755, 43, 757, 97]
+
 PARAM_LIST = "./Params/Stack_Param.txt"
 
 # Load Params
@@ -143,7 +145,8 @@ def line_distance(line, line_to_compare):
     (intersectionX, intersectionY, valid) = intersectLines([center_x, center_y, center_x1, center_y1], line_to_compare)
     distance_line = distance(center_x, intersectionX, center_y, intersectionY)
 
-    #print(distance_line)
+    # print("distance")
+    # print(distance_line)
     if(distance_line >= WIDTH_HEIGHT_DIST_MIN and distance_line <= WIDTH_HEIGHT_DIST_MAX):
         return True
     return False
@@ -169,8 +172,10 @@ def perpendicular_approximation(parallel_line_group, line_index_dict, lines, edg
             # cv.imshow('hough', edges_BGR)
             # cv.waitKey(0)
             # cv.destroyAllWindows()
+            # print("angle and angle compare")
             # print(angle, angle_compare)
             threshold_value = abs(angle - angle_compare)
+            # print("threshold_value")
             # print(threshold_value)
             if(threshold_value > 90 - PERPENDICULAR_THRES and threshold_value < 90 + PERPENDICULAR_THRES):
                 (intersectionX, intersectionY, valid) = intersectLines(line,line_compare)
@@ -297,19 +302,32 @@ def check_intersections(intersections):
     left = [intersection_X[0], intersection_X[1]]
     right = [intersection_X[2], intersection_X[3]]
 
-    if(left[0][1] > left[1][1]):
-        top_left = left[1]
-        bottom_left = left[0]
-    else:
-        top_left = left[0]
-        bottom_left = left[1]
-
-    if (right[0][1] > right[1][1]):
+    if (left[0][1] > right[0][1] and left[0][1] > right[1][1] and \
+            left[1][1] > right[0][1] and left[1][1] > right[1][1]):
+        top_left = right[0]
         top_right = right[1]
-        bottom_right = right[0]
-    else:
-        top_right = right[0]
+        bottom_left = left[0]
+        bottom_right = left[1]
+    elif (left[0][1] < right[0][1] and left[0][1] < right[1][1] and \
+          left[1][1] < right[0][1] and left[1][1] < right[1][1]):
+        top_left = left[0]
+        top_right = left[1]
+        bottom_left = right[0]
         bottom_right = right[1]
+    else:
+        if (left[0][1] > left[1][1]):
+            top_left = left[1]
+            bottom_left = left[0]
+        else:
+            top_left = left[0]
+            bottom_left = left[1]
+
+        if (right[0][1] > right[1][1]):
+            top_right = right[1]
+            bottom_right = right[0]
+        else:
+            top_right = right[0]
+            bottom_right = right[1]
 
     # calculate four side length
     lenght_left = distance(top_left[0],bottom_left[0],top_left[1],bottom_left[1])
@@ -509,8 +527,7 @@ def find_rectangle(edges, parallel_line_group, perpendicular_line_group, line_in
     block_dict = remove_duplicate(blocks)
     # merge duplicate
     result = merge_duplicate(block_dict)
-    # print(len(blocks))
-    # print(len(result))
+
     # double check for duplication
     while(len(blocks) > len(result)):
         blocks = result.copy()
@@ -518,7 +535,8 @@ def find_rectangle(edges, parallel_line_group, perpendicular_line_group, line_in
         result = merge_duplicate(block_dict)
 
     # for intersection in result:
-    #     draw_rectangular(edges, intersection)
+    #     draw_rectangular_specific_area(edges, intersection)
+    #     draw_rectangular(edges, intersection))
     return result
 
 '''
@@ -650,42 +668,48 @@ def clear_fake_block(block, img):
                 qualified_line_arr = create_line_arr_height(qualified_line, img)
 
             qualified_point = []
-            for point in qualified_line_arr:
-                # print(point)
-                # check for both directions
-                # the first direction, gather points
-                points_dir_1_side_1 = []
-                points_dir_1_side_2 = []
-                for dir_1 in range(1,FAKE_RANGE+1):
-                    if((point[0] + dir_1) < img.shape[1] or (point[0] - dir_1) >= 0):
-                        points_dir_1_side_1.append((point[0] + dir_1, point[1]))
-                        points_dir_1_side_2.append((point[0] - dir_1, point[1]))
 
-                # check the point for this direction
-                # whether it follows one side of backgroud and one side of color
-                dir1_check = check_background_or_color(points_dir_1_side_1, points_dir_1_side_2, img)
+            # avoid division by zero
+            if (len(qualified_line_arr) != 0):
+                for point in qualified_line_arr:
+                    # check for certain directions
+                    if (qualified_line_set[0] == 1):
+                        # the first direction, gather points
+                        points_dir_1_side_1 = []
+                        points_dir_1_side_2 = []
+                        for dir_1 in range(0, FAKE_RANGE + 1):
+                            if ((point[0] + dir_1) < img.shape[1] and (point[0] - dir_1) >= 0):
+                                if ((point[0] + dir_1, point[1]) not in points_dir_1_side_1):
+                                    points_dir_1_side_1.append((point[0] + dir_1, point[1]))
+                                if ((point[0] - dir_1, point[1]) not in points_dir_1_side_2):
+                                    points_dir_1_side_2.append((point[0] - dir_1, point[1]))
 
-                points_dir_2_side_1 = []
-                points_dir_2_side_2 = []
-                for dir_2 in range(1, FAKE_RANGE + 1):
-                    if ((point[1] + dir_2) < img.shape[1] or (point[1] - dir_2) >= 0):
-                        points_dir_2_side_1.append((point[0], point[1] + dir_2))
-                        points_dir_2_side_2.append((point[0], point[1] - dir_2))
+                        # check the point for this direction
+                        # whether it follows one side of backgroud and one side of color
+                        dir1_check = check_background_or_color(points_dir_1_side_1, points_dir_1_side_2, img)
+                        if (dir1_check == 1): qualified_point.append(point)
+                    else:
+                        points_dir_2_side_1 = []
+                        points_dir_2_side_2 = []
 
+                        for dir_2 in range(0, FAKE_RANGE + 1):
+                            if ((point[1] + dir_2) < img.shape[0] and (point[1] - dir_2) >= 0):
+                                if ((point[0], point[1] + dir_2) not in points_dir_2_side_1):
+                                    points_dir_2_side_1.append((point[0], point[1] + dir_2))
+                                if ((point[0], point[1] - dir_2) not in points_dir_2_side_2):
+                                    points_dir_2_side_2.append((point[0], point[1] - dir_2))
 
-                dir2_check = check_background_or_color(points_dir_2_side_1, points_dir_2_side_2, img)
+                        dir2_check = check_background_or_color(points_dir_2_side_1, points_dir_2_side_2, img)
+                        if (dir2_check == 1): qualified_point.append(point)
+                # print("Qualify rate")
+                # print(len(qualified_point)/len(qualified_line_arr))
 
-                if(dir1_check == 1 or dir2_check == 1):
-                    qualified_point.append(point)
-
-            # print(len(qualified_point)/len(qualified_line_arr))
-
-            if(len(qualified_point)/len(qualified_line_arr) > QUALIFY_RATE):
-                if(qualified_line not in line_test):
-                    line_test.append(qualified_line)
-                    #cv.line(img_display, (qualified_line[0], qualified_line[1]), (qualified_line[2], qualified_line[3]),(0, 255, 255), 4, cv.LINE_AA)
-            # else:
-            #     cv.line(img_display, (qualified_line[0], qualified_line[1]), (qualified_line[2], qualified_line[3]),(255, 255, 0), 4, cv.LINE_AA)
+                if(len(qualified_point)/len(qualified_line_arr) > QUALIFY_RATE):
+                    if(qualified_line not in line_test):
+                        line_test.append(qualified_line)
+        #                 cv.line(img_display, (qualified_line[0], qualified_line[1]), (qualified_line[2], qualified_line[3]),(0, 255, 255), 4, cv.LINE_AA)
+        #       else:
+        #           cv.line(img_display, (qualified_line[0], qualified_line[1]), (qualified_line[2], qualified_line[3]),(255, 255, 0), 4, cv.LINE_AA)
         # cv.imshow('img', img_display)
         # cv.waitKey(0)
         # cv.destroyAllWindows()
@@ -733,10 +757,9 @@ def check(x1, y1, x2, y2, x3, y3, x4, y4, x, y):
 
     # Check if sum of A1, A2, A3
     # and A4 is same as A
-    print(A)
-    print(A1+A2+A3+A4)
     if(abs(A - A1 - A2 - A3 - A4) < INSIDE_THRESHOLD):
         return True
+    return False
 
 '''
 Pipeline to find block
@@ -807,6 +830,8 @@ def detect_stack(edges, img, stack):
     # Draw functions used to debug
     # draw_parallel_line(edges, parallel_line_group, line_index_dict)
     # draw_perpendicular_line(edges, perpendicular_line_group, line_index_dict)
+    # draw_parallel_line_specific_area(edges, parallel_line_group, line_index_dict, extend_line_map_line)
+    # draw_perpendicular_line_specific_area(edges, perpendicular_line_group, line_index_dict, extend_line_map_line)
 
     block = find_rectangle(edges, parallel_line_group, perpendicular_line_group, line_index_dict)
 
@@ -858,7 +883,6 @@ def detect_stack(edges, img, stack):
                 result.remove(block_check)
     return result
 
-
 '''
 Draw functions
 '''
@@ -909,6 +933,56 @@ def draw_perpendicular_line(edges, perpendicular_line_group, line_index_dict):
             cv.destroyAllWindows()
             edges_BGR_modified = cv.cvtColor(edges, cv.COLOR_GRAY2BGR)
 
+def draw_parallel_line_specific_area(edges, parallel_line_group, line_index_dict, extend_line_map_line):
+    [x1, y1, x2, y2, x3, y3, x4, y4] = SPECIFIC_AREA
+    for key in parallel_line_group:
+        edges_BGR_modified = cv.cvtColor(edges, cv.COLOR_GRAY2BGR)
+        line = line_index_dict[key[0]]
+        print(line)
+        print("angle:" + str(key[1]))
+        line_to_check = extend_line_map_line[key[0]]
+        check1 = check(x1, y1, x2, y2, x3, y3, x4, y4, line_to_check[0], line_to_check[1])
+        check2 = check(x1, y1, x2, y2, x3, y3, x4, y4, line_to_check[2], line_to_check[3])
+        if (check1 or check2):
+            cv.line(edges_BGR_modified, (line[0], line[1]), (line[2], line[3]), (0, 0, 255), 5, cv.LINE_AA)
+            group = parallel_line_group[key]
+            if (len(group) >= 1):
+                for line_parallel in group:
+                    print(line_parallel)
+                    if (line_parallel[3] - line_parallel[1] == 0):
+                        angle_compare = 90
+                    else:
+                        angle_compare = round(math.atan(
+                            (line_parallel[2] - line_parallel[0]) / (line_parallel[3] - line_parallel[1])) * 180.0 / np.pi)
+                    print("angle_compare:" + str(angle_compare))
+                    cv.line(edges_BGR_modified, (line_parallel[0], line_parallel[1]), (line_parallel[2], line_parallel[3]),
+                            (0, 255, 0), 1, cv.LINE_AA)
+                cv.imshow('parallel', edges_BGR_modified)
+                cv.waitKey(0)
+                cv.destroyAllWindows()
+
+def draw_perpendicular_line_specific_area(edges, perpendicular_line_group, line_index_dict, extend_line_map_line):
+    [x1, y1, x2, y2, x3, y3, x4, y4] = SPECIFIC_AREA
+    edges_BGR_modified = cv.cvtColor(edges, cv.COLOR_GRAY2BGR)
+    for key in perpendicular_line_group:
+        if (len(perpendicular_line_group[key]) > 0):
+            line = line_index_dict[key[0]]
+            line_to_check = extend_line_map_line[key[0]]
+            check1 = check(x1, y1, x2, y2, x3, y3, x4, y4, line_to_check[0], line_to_check[1])
+            check2 = check(x1, y1, x2, y2, x3, y3, x4, y4, line_to_check[2], line_to_check[3])
+            if (check1 or check2):
+                cv.line(edges_BGR_modified, (line[0], line[1]), (line[2], line[3]), (0, 0, 255), 1, cv.LINE_AA)
+                for line_perpendicular_set in perpendicular_line_group[key]:
+                    line_perpendicular = line_perpendicular_set[0]
+                    intersection = line_perpendicular_set[1]
+                    cv.line(edges_BGR_modified, (line_perpendicular[0], line_perpendicular[1]),
+                            (line_perpendicular[2], line_perpendicular[3]), (0, 255, 0), 1, cv.LINE_AA)
+                    cv.circle(edges_BGR_modified, intersection, 2, (255, 0, 0), 10)
+                cv.imshow('perpendicular', edges_BGR_modified)
+                cv.waitKey(0)
+                cv.destroyAllWindows()
+                edges_BGR_modified = cv.cvtColor(edges, cv.COLOR_GRAY2BGR)
+
 def draw_rectangular(edges, intersections):
         edges_BGR_modified = cv.cvtColor(edges, cv.COLOR_GRAY2BGR)
         cv.circle(edges_BGR_modified, intersections[0], 2, (255, 0, 0), 10)
@@ -916,6 +990,31 @@ def draw_rectangular(edges, intersections):
         cv.circle(edges_BGR_modified, intersections[2], 2, (255, 0, 0), 10)
         cv.circle(edges_BGR_modified, intersections[3], 2, (255, 0, 0), 10)
         cv.imshow('draw_rectangular', edges_BGR_modified)
+        cv.waitKey(0)
+        cv.destroyAllWindows()
+
+def draw_rectangular_specific_area(edges, intersections):
+    [x1, y1, x2, y2, x3, y3, x4, y4] = SPECIFIC_AREA
+    check1 = check(x1, y1, x2, y2, x3, y3, x4, y4, intersections[0][0], intersections[0][1])
+    check2 = check(x1, y1, x2, y2, x3, y3, x4, y4, intersections[1][0], intersections[1][1])
+    check3 = check(x1, y1, x2, y2, x3, y3, x4, y4, intersections[2][0], intersections[2][1])
+    check4 = check(x1, y1, x2, y2, x3, y3, x4, y4, intersections[3][0], intersections[3][1])
+    if (check1 and check2 and check3 and check4):
+        draw_rectangular(edges, intersections)
+
+def draw_raw_blocks_specific_area(edges, intersections):
+    [x1, y1, x2, y2, x3, y3, x4, y4] = SPECIFIC_AREA
+    check1 = check(x1, y1, x2, y2, x3, y3, x4, y4, intersections[0][0], intersections[0][1])
+    check2 = check(x1, y1, x2, y2, x3, y3, x4, y4, intersections[1][0], intersections[1][1])
+    check3 = check(x1, y1, x2, y2, x3, y3, x4, y4, intersections[2][0], intersections[2][1])
+    check4 = check(x1, y1, x2, y2, x3, y3, x4, y4, intersections[3][0], intersections[3][1])
+    if (check1 and check2 and check3 and check4):
+        edges_BGR = cv.cvtColor(edges, cv.COLOR_GRAY2BGR)
+        cv.circle(edges_BGR, intersections[0], 2, (255, 0, 0), 10)
+        cv.circle(edges_BGR, intersections[1], 2, (255, 0, 0), 10)
+        cv.circle(edges_BGR, intersections[2], 2, (255, 0, 0), 10)
+        cv.circle(edges_BGR, intersections[3], 2, (255, 0, 0), 10)
+        cv.imshow('draw_raw_blocks', edges_BGR)
         cv.waitKey(0)
         cv.destroyAllWindows()
 
@@ -985,22 +1084,24 @@ def main():
     image_name2 = sys.argv[2]
     image_name3 = sys.argv[3]
     image_name4 = sys.argv[4]
+    image_name5 = sys.argv[5]
 
     # process images
     img1 = cv.imread(image_name1)
     img2 = cv.imread(image_name2)
     img3 = cv.imread(image_name3)
     img4 = cv.imread(image_name4)
+    img5 = cv.imread(image_name5)
 
     #find and show edges
     [img_1, threshold_1, blur_1, edges_1] = find_edge(img1)
-    # show_edge(img_1, threshold_1, blur_1, edges_1)
+    show_edge(img_1, threshold_1, blur_1, edges_1)
     [img_2, threshold_2, blur_2, edges_2] = find_edge(img2)
-    # show_edge(img_2, threshold_2, blur_2, edges_2)
+    show_edge(img_2, threshold_2, blur_2, edges_2)
     [img_3, threshold_3, blur_3, edges_3] = find_edge(img3)
-    # show_edge(img_3, threshold_3, blur_3, edges_3)
+    show_edge(img_3, threshold_3, blur_3, edges_3)
     [img_4, threshold_4, blur_4, edges_4] = find_edge(img4)
-    # show_edge(img_4, threshold_4, blur_4, edges_4)
+    show_edge(img_4, threshold_4, blur_4, edges_4)
 
     # detect stack block's position and create stack
     stack = []
@@ -1015,7 +1116,6 @@ def main():
     for block_add in block:
         stack.append(block_add)
     draw_result(img_2, block)
-    cv.imwrite('img_2.png', img_2)
 
     block = detect_stack(edges_3, img_3, stack)
     for block_add in block:
