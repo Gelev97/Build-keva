@@ -6,7 +6,7 @@ from operator import itemgetter
 
 SPECIFIC_AREA = [590, 30, 590, 80, 745, 53, 747, 87]
 
-PARAM_LIST = "./Params/TestAlign_Param.txt"
+PARAM_LIST = "./Params/Test4_Param.txt"
 
 # Load Params
 param_groups = []
@@ -731,12 +731,12 @@ def clear_fake_block(block, img):
                 if(len(qualified_point)/len(qualified_line_arr) > QUALIFY_RATE):
                     if(qualified_line not in line_test):
                         line_test.append(qualified_line)
-        #                 cv.line(img_display, (qualified_line[0], qualified_line[1]), (qualified_line[2], qualified_line[3]),(0, 255, 255), 4, cv.LINE_AA)
-        #         else:
-        #             cv.line(img_display, (qualified_line[0], qualified_line[1]), (qualified_line[2], qualified_line[3]),(255, 255, 0), 4, cv.LINE_AA)
-        # cv.imshow('img', img_display)
-        # cv.waitKey(0)
-        # cv.destroyAllWindows()
+                        cv.line(img_display, (qualified_line[0], qualified_line[1]), (qualified_line[2], qualified_line[3]),(0, 255, 255), 4, cv.LINE_AA)
+                else:
+                    cv.line(img_display, (qualified_line[0], qualified_line[1]), (qualified_line[2], qualified_line[3]),(255, 255, 0), 4, cv.LINE_AA)
+        cv.imshow('img', img_display)
+        cv.waitKey(0)
+        cv.destroyAllWindows()
         if(len(line_test) == 4): result.append(intersections)
         count += 1
         print(str(round(count/length*100)) + "%")
@@ -869,7 +869,6 @@ def draw_perpendicular_line(edges, perpendicular_line_group, line_index_dict):
             cv.imshow('perpendicular', edges_BGR_modified)
             cv.waitKey(0)
             cv.destroyAllWindows()
-            edges_BGR_modified = cv.cvtColor(edges, cv.COLOR_GRAY2BGR)
 
 def draw_parallel_line_specific_area(edges, parallel_line_group, line_index_dict, extend_line_map_line):
     [x1, y1, x2, y2, x3, y3, x4, y4] = SPECIFIC_AREA
