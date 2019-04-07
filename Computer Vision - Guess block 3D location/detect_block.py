@@ -6,7 +6,7 @@ from operator import itemgetter
 
 SPECIFIC_AREA = [590, 30, 590, 80, 745, 53, 747, 87]
 
-PARAM_LIST = "./Params/Test4_Param.txt"
+PARAM_LIST = "./Params/TestMany_Param.txt"
 
 # Load Params
 param_groups = []
@@ -337,8 +337,8 @@ def check_intersections(intersections):
     lenght_top = distance(top_left[0], top_right[0], top_left[1], top_right[1])
     lenght_bottom = distance(bottom_left[0], bottom_right[0], bottom_left[1], bottom_right[1])
 
-    print("check_intersection")
-    print(lenght_left, lenght_right, lenght_top, lenght_bottom)
+    # print("check_intersection")
+    # print(lenght_left, lenght_right, lenght_top, lenght_bottom)
     # check length
     if (lenght_left <= lenght_top and lenght_right <= lenght_bottom):
         if (lenght_left > WIDTH_MAX or lenght_left < WIDTH_MIN): return False
@@ -547,20 +547,45 @@ def find_rectangle(edges, parallel_line_group, perpendicular_line_group, line_in
     # test blocks after filter
     # draw_blocks(edges, blocks)
 
-    # remove duplicate
-    block_dict = remove_duplicate(blocks)
-    # merge duplicate
-    result = merge_duplicate(block_dict, edges)
+    # Re-order the intersecitons
+    result = []
+    for block in blocks:
+        # get the current block intersection in given sequence
+        intersections = block
+        intersections.sort(key=itemgetter(0))
+        left = [intersections[0], intersections[1]]
+        right = [intersections[2], intersections[3]]
 
-    # double check for duplication
-    while(len(blocks) > len(result)):
-        blocks = result.copy()
-        block_dict = remove_duplicate(blocks)
-        result = merge_duplicate(block_dict, edges)
+        if (left[0][1] > right[0][1] and left[0][1] > right[1][1] and \
+                left[1][1] > right[0][1] and left[1][1] > right[1][1]):
+            top_left = right[0]
+            top_right = right[1]
+            bottom_left = left[0]
+            bottom_right = left[1]
+        elif (left[0][1] < right[0][1] and left[0][1] < right[1][1] and \
+              left[1][1] < right[0][1] and left[1][1] < right[1][1]):
+            top_left = left[0]
+            top_right = left[1]
+            bottom_left = right[0]
+            bottom_right = right[1]
+        else:
+            if (left[0][1] > left[1][1]):
+                top_left = left[1]
+                bottom_left = left[0]
+            else:
+                top_left = left[0]
+                bottom_left = left[1]
 
-    for intersection in result:
-        draw_rectangular_specific_area(edges, intersection)
-    #     draw_rectangular(edges, intersection)
+            if (right[0][1] > right[1][1]):
+                top_right = right[1]
+                bottom_right = right[0]
+            else:
+                top_right = right[0]
+                bottom_right = right[1]
+
+        intersection = [top_left, bottom_left, top_right, bottom_right]
+        result.append(intersection)
+
     return result
 
 '''
@@ -731,12 +756,12 @@ def clear_fake_block(block, img):
                 if(len(qualified_point)/len(qualified_line_arr) > QUALIFY_RATE):
                     if(qualified_line not in line_test):
                         line_test.append(qualified_line)
-                        cv.line(img_display, (qualified_line[0], qualified_line[1]), (qualified_line[2], qualified_line[3]),(0, 255, 255), 4, cv.LINE_AA)
-                else:
-                    cv.line(img_display, (qualified_line[0], qualified_line[1]), (qualified_line[2], qualified_line[3]),(255, 255, 0), 4, cv.LINE_AA)
-        cv.imshow('img', img_display)
-        cv.waitKey(0)
-        cv.destroyAllWindows()
+        #                 cv.line(img_display, (qualified_line[0], qualified_line[1]), (qualified_line[2], qualified_line[3]),(0, 255, 255), 4, cv.LINE_AA)
+        #         else:
+        #             cv.line(img_display, (qualified_line[0], qualified_line[1]), (qualified_line[2], qualified_line[3]),(255, 255, 0), 4, cv.LINE_AA)
+        # cv.imshow('img', img_display)
+        # cv.waitKey(0)
+        # cv.destroyAllWindows()
         if(len(line_test) == 4): result.append(intersections)
         count += 1
         print(str(round(count/length*100)) + "%")
@@ -819,7 +844,20 @@ def detect_block(edges, img):
     # Clear fake block
     block = clear_fake_block(block, img)
 
-    return block
+    # remove duplicate
+    block_dict = remove_duplicate(block)
+    # merge duplicate
+    result = merge_duplicate(block_dict, edges)
+
+    blocks = block.copy()
+    # double check for duplication
+    while (len(blocks) > len(result)):
+        blocks = result.copy()
+        block_dict = remove_duplicate(blocks)
+        result = merge_duplicate(block_dict, edges)
+        print("block: " + str(len(blocks)) + "result: " + str(len(result)))
+
+    return result
 
 '''
 Draw functions

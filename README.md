@@ -9,5 +9,4 @@
 # Features
 1. Generate automatic ros script
 2. Pour it down inside Gazebo
-3. More picutres to test
-4. Well-defined pipeline
+
