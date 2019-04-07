@@ -6,7 +6,7 @@ from operator import itemgetter
 
 SPECIFIC_AREA = [488, 20, 488, 90, 755, 43, 757, 97]
 
-PARAM_LIST = "./Params/Stack2_Param.txt"
+PARAM_LIST = "./Params/Stack_Param.txt"
 
 # Load Params
 param_groups = []
@@ -65,7 +65,8 @@ INSIDE_THRESHOLD = param_groups[18]
 CHECK_COLOR_RANGE = param_groups[19]
 SAME_COLOR_THRES = param_groups[20]
 DIFF_COLOR_THRES = param_groups[21]
-
+DIFF_AREA_THRES = param_groups[22]
+COLOR_MAJOR_RATE = param_groups[23]
 
 '''
 Edge Detection
@@ -706,18 +707,40 @@ def check_inside_color(top_left, bottom_left, top_right, bottom_right, img):
                 color_dict[color_key] += 1
         if(new_flag): color_dict[(pixel[0], pixel[1], pixel[2])] = 0
     print(color_dict)
-    if(len(color_dict) > 1): return False
 
-    # Clear if the whole block is made of background color
-    for key in color_dict:
-        pixel = (int(key[0]), int(key[1]), int(key[2]))
-        pixel_avg = (pixel[0] + pixel[1] + pixel[2]) / 3.0
-        if (pixel_avg == 0): pixel_avg = 1;
-        pixel_normalized = (pixel[0] / pixel_avg, pixel[1] / pixel_avg, pixel[2] / pixel_avg)
-        if (pixel_normalized[0] < THRES and pixel_normalized[1] < THRES and pixel_normalized[2] < THRES):
+    if(len(color_dict) > 1):
+        # check relation
+        major_color = 0
+        major_key = (0, 0, 0)
+        total_color = 0
+        for key in color_dict:
+            total_color += color_dict[key]
+            if (color_dict[key] > major_color):
+                major_color = color_dict[key]
+                major_key = key
+        if((major_color / total_color) > COLOR_MAJOR_RATE):
+            pixel = (int(major_key[0]), int(major_key[1]), int(major_key[2]))
+            pixel_avg = (pixel[0] + pixel[1] + pixel[2]) / 3.0
+            if (pixel_avg == 0): pixel_avg = 1;
+            pixel_normalized = (pixel[0] / pixel_avg, pixel[1] / pixel_avg, pixel[2] / pixel_avg)
+            if (pixel_normalized[0] < THRES and pixel_normalized[1] < THRES and pixel_normalized[2] < THRES):
+                return False
+            else:
+                print(True)
+                return True
+        else:
             return False
-    print(True)
-    return True
+    else:
+        # Clear if the whole block is made of background color
+        for key in color_dict:
+            pixel = (int(key[0]), int(key[1]), int(key[2]))
+            pixel_avg = (pixel[0] + pixel[1] + pixel[2]) / 3.0
+            if (pixel_avg == 0): pixel_avg = 1;
+            pixel_normalized = (pixel[0] / pixel_avg, pixel[1] / pixel_avg, pixel[2] / pixel_avg)
+            if (pixel_normalized[0] < THRES and pixel_normalized[1] < THRES and pixel_normalized[2] < THRES):
+                return False
+        print(True)
+        return True
 
 
 def clear_fake_block(block, img):
@@ -887,7 +910,7 @@ def add_color(top_left, bottom_left, top_right, bottom_right, img):
 '''
 Pipeline to find block
 '''
-def detect_stack(edges, img, stack, stack_color_dict):
+def detect_stack(edges, img, stack, stack_color_dict, area_of_previous_level):
     # find lines using hough lines transform with probability
     linesP = cv.HoughLinesP(edges, 1, np.pi / 180, NUMBER_OF_INTERSECTION, None, MIN_LINE_LENGTH, MAX_LINE_GAP)
 
@@ -992,54 +1015,44 @@ def detect_stack(edges, img, stack, stack_color_dict):
         return result
     result = block.copy()
     for intersections in stack:
-        # img_display = img.copy()
         vertexes = [intersections[0], intersections[1], intersections[2], intersections[3]]
         color_stack = stack_color_dict[(vertexes[0],vertexes[1],vertexes[2],vertexes[3])]
-        # cv.circle(img_display, vertexes[0], 2, (255, 0, 0), 10)
-        # cv.circle(img_display, vertexes[1], 2, (0, 255, 0), 10)
-        # cv.circle(img_display, vertexes[2], 2, (0, 0, 255), 10)
-        # cv.circle(img_display, vertexes[3], 2, (0, 255, 255), 10)
         vertexes = expand(vertexes)
-        # cv.circle(img_display, vertexes[0], 2, (255, 255, 0), 10)
-        # cv.circle(img_display, vertexes[1], 2, (255, 255, 0), 10)
-        # cv.circle(img_display, vertexes[2], 2, (255, 255, 0), 10)
-        # cv.circle(img_display, vertexes[3], 2, (255, 255, 0), 10)
-        # cv.imshow('img', img_display)
-        # cv.waitKey(0)
-        # cv.destroyAllWindows()
         for block_check in block:
             if(block_check in result):
-                # img_display = img.copy()
-                # cv.circle(img_display, block_check[0], 2, (255, 255, 0), 10)
-                # cv.circle(img_display, block_check[1], 2, (255, 255, 0), 10)
-                # cv.circle(img_display, block_check[2], 2, (255, 255, 0), 10)
-                # cv.circle(img_display, block_check[3], 2, (255, 255, 0), 10)
-                # cv.imshow('img', img_display)
-                # cv.waitKey(0)
-                # cv.destroyAllWindows()
+                img_display = img.copy()
+                cv.circle(img_display, block_check[0], 2, (255, 255, 0), 10)
+                cv.circle(img_display, block_check[1], 2, (255, 255, 0), 10)
+                cv.circle(img_display, block_check[2], 2, (255, 255, 0), 10)
+                cv.circle(img_display, block_check[3], 2, (255, 255, 0), 10)
+                cv.imshow('img', img_display)
+                cv.waitKey(0)
+                cv.destroyAllWindows()
                 remove_flag = 1
+                (x1, y1) = (vertexes[0][0], vertexes[0][1])
+                (x2, y2) = (vertexes[1][0], vertexes[1][1])
+                (x3, y3) = (vertexes[2][0], vertexes[2][1])
+                (x4, y4) = (vertexes[3][0], vertexes[3][1])
+                area_check = (area(block_check[0][0], block_check[0][1], block_check[1][0], block_check[1][1], \
+                                block_check[3][0], block_check[3][1]) + area(block_check[0][0], \
+                                block_check[0][1], block_check[2][0], block_check[2][1], \
+                                block_check[3][0], block_check[3][1]))
+                print(area_check, area_of_previous_level)
                 for vertex in block_check:
-                    # cv.circle(img_display, vertex, 2, (0, 0, 255), 10)
-                    # cv.imshow('img', img_display)
-                    # cv.waitKey(0)
-                    # cv.destroyAllWindows()
                     (x,y) = vertex
-                    (x1, y1) = (vertexes[0][0], vertexes[0][1])
-                    (x2, y2) = (vertexes[1][0], vertexes[1][1])
-                    (x3, y3) = (vertexes[2][0], vertexes[2][1])
-                    (x4, y4) = (vertexes[3][0], vertexes[3][1])
                     if(not check(x1, y1, x2, y2, x3, y3, x4, y4, x, y)):
                         remove_flag = 0
                 if(remove_flag == 1 and block_check in result):
-                    # color_block_check = add_color(block_check[0], block_check[1], \
-                    #                 block_check[2], block_check[3], img)
+                    color_block_check = add_color(block_check[0], block_check[1], \
+                                    block_check[2], block_check[3], img)
                     # print(color_block_check)
                     # print(color_stack)
-                    # error = math.sqrt((color_stack[0] - color_block_check[0]) ** 2 + \
-                    #     (color_stack[1] - color_block_check[1]) ** 2 + (color_stack[2] - color_block_check[2]) ** 2)
+                    error = math.sqrt((color_stack[0] - color_block_check[0]) ** 2 + \
+                        (color_stack[1] - color_block_check[1]) ** 2 + (color_stack[2] - color_block_check[2]) ** 2)
                     # print(error)
-                    # if (error < DIFF_COLOR_THRES):
-                    result.remove(block_check)
+                    print(area_check, area_of_previous_level)
+                    if (error < DIFF_COLOR_THRES or abs(area_check - area_of_previous_level) > DIFF_AREA_THRES):
+                        result.remove(block_check)
     return result
 
 '''
@@ -1237,6 +1250,31 @@ def draw_result(img, block):
 '''
 Main function
 '''
+def pipeline(image_name, stack, stack_color_dict, area_of_previous_level, save_path):
+    # process images
+    img = cv.imread(image_name)
+
+    # find and show edges
+    [img_show, threshold, blur, edges] = find_edge(img)
+    # show_edge(img_show, threshold, blur, edges)
+
+    # detect stack block's position and create stack
+    area_of_this_level = 0
+    block = detect_stack(edges, img_show, stack, stack_color_dict, area_of_previous_level)
+    for block_add in block:
+        stack.append(block_add)
+        stack_color_dict[(block_add[0], block_add[1], block_add[2], block_add[3])] = \
+            add_color(block_add[0], block_add[1], block_add[2], block_add[3], img_show)
+        (x1, y1) = (block_add[0][0], block_add[0][1])
+        (x2, y2) = (block_add[1][0], block_add[1][1])
+        (x3, y3) = (block_add[2][0], block_add[2][1])
+        (x4, y4) = (block_add[3][0], block_add[3][1])
+        area_of_this_level += (area(x1, y1, x2, y2, x4, y4) + area(x1, y1, x3, y3, x4, y4))
+    area_of_this_level = area_of_this_level / len(block)
+    draw_result(img_show, block)
+    cv.imwrite(save_path, img_show)
+    return [stack, stack_color_dict, area_of_this_level]
+
 def main():
     # get argument
     image_name1 = sys.argv[1]
@@ -1244,56 +1282,18 @@ def main():
     image_name3 = sys.argv[3]
     image_name4 = sys.argv[4]
 
-    # process images
-    img1 = cv.imread(image_name1)
-    img2 = cv.imread(image_name2)
-    img3 = cv.imread(image_name3)
-    img4 = cv.imread(image_name4)
-
-    #find and show edges
-    [img_1, threshold_1, blur_1, edges_1] = find_edge(img1)
-    # show_edge(img_1, threshold_1, blur_1, edges_1)
-    [img_2, threshold_2, blur_2, edges_2] = find_edge(img2)
-    # show_edge(img_2, threshold_2, blur_2, edges_2)
-    [img_3, threshold_3, blur_3, edges_3] = find_edge(img3)
-    # show_edge(img_3, threshold_3, blur_3, edges_3)
-    [img_4, threshold_4, blur_4, edges_4] = find_edge(img4)
-    # show_edge(img_4, threshold_4, blur_4, edges_4)
-
-    # detect stack block's position and create stack
+    # Define params
     stack = []
     stack_color_dict = dict()
-    block = detect_stack(edges_1, img_1, stack, stack_color_dict)
-    for block_add in block:
-        stack.append(block_add)
-        stack_color_dict[(block_add[0],block_add[1],block_add[2],block_add[3])] = \
-            add_color(block_add[0],block_add[1],block_add[2],block_add[3], img_1)
-    draw_result(img_1, block)
-    cv.imwrite('img_1.png', img_1)
+    area_of_previous_level = 0
 
-    block = detect_stack(edges_2, img_2, stack, stack_color_dict)
-    for block_add in block:
-        stack.append(block_add)
-        stack_color_dict[(block_add[0], block_add[1], block_add[2], block_add[3])] = \
-            add_color(block_add[0], block_add[1], block_add[2], block_add[3], img_2)
-    draw_result(img_2, block)
-    cv.imwrite('img_2.png', img_2)
-
-    block = detect_stack(edges_3, img_3, stack, stack_color_dict)
-    for block_add in block:
-        stack.append(block_add)
-        stack_color_dict[(block_add[0], block_add[1], block_add[2], block_add[3])] = \
-            add_color(block_add[0], block_add[1], block_add[2], block_add[3], img_3)
-    draw_result(img_3, block)
-    cv.imwrite('img_3.png', img_3)
-
-    block = detect_stack(edges_4, img_4, stack, stack_color_dict)
-    for block_add in block:
-        stack.append(block_add)
-    stack_color_dict[(block_add[0], block_add[1], block_add[2], block_add[3])] = \
-        add_color(block_add[0], block_add[1], block_add[2], block_add[3], img_4)
-    draw_result(img_4, block)
-    cv.imwrite('img_4.png', img_4)
-
-
+    # run pipeline
+    [stack, stack_color_dict, area_of_previous_level] = pipeline(image_name1, stack, stack_color_dict, \
+                                                                area_of_previous_level, "stack_leve1.jpg")
+    [stack, stack_color_dict, area_of_previous_level] = pipeline(image_name2, stack, stack_color_dict,
+                                                                 area_of_previous_level, "stack_leve2.jpg")
+    [stack, stack_color_dict, area_of_previous_level] = pipeline(image_name3, stack, stack_color_dict,
+                                                                 area_of_previous_level, "stack_leve3.jpg")
+    [stack, stack_color_dict, area_of_previous_level] = pipeline(image_name4, stack, stack_color_dict,
+                                                                 area_of_previous_level, "stack_leve4.jpg")
 main()
