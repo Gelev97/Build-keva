@@ -9,3 +9,5 @@
 1. Generate automatic ros script
 2. Pour it down inside Gazebo
 
+# Kinematics
+1. Rasberry pi start with "`startx"
