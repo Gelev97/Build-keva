@@ -6,7 +6,7 @@ from operator import itemgetter
 
 SPECIFIC_AREA = [488, 20, 488, 90, 755, 43, 757, 97]
 
-PARAM_LIST = "./Params/Stack_Param.txt"
+PARAM_LIST = "./Params/Stack2_Param.txt"
 
 # Load Params
 param_groups = []
@@ -60,6 +60,11 @@ PIXEL_SIMILAR_TRHES = param_groups[16]
 # Expand Range for stack analysis
 RANGE_EXPAND = param_groups[17]
 INSIDE_THRESHOLD = param_groups[18]
+
+# Check inside color
+CHECK_COLOR_RANGE = param_groups[19]
+SAME_COLOR_THRES = param_groups[20]
+DIFF_COLOR_THRES = param_groups[21]
 
 
 '''
@@ -659,6 +664,12 @@ def check_background_or_color(points_1, points_2, img):
 
 def check_inside_color(top_left, bottom_left, top_right, bottom_right, img):
     # create an image with black background and white rectangle
+    new_vertex = []
+    new_vertex.append((top_left[0] + CHECK_COLOR_RANGE, top_left[1] + CHECK_COLOR_RANGE))
+    new_vertex.append((bottom_left[0] + CHECK_COLOR_RANGE, bottom_left[1] - CHECK_COLOR_RANGE))
+    new_vertex.append((top_right[0] - CHECK_COLOR_RANGE, top_right[1] + CHECK_COLOR_RANGE))
+    new_vertex.append((bottom_right[0] - CHECK_COLOR_RANGE, bottom_right[1] - CHECK_COLOR_RANGE))
+    [top_left, bottom_left, top_right, bottom_right] = new_vertex
     L = img.shape[1]
     H = img.shape[0]
     matrix = np.zeros((L, H), dtype=np.uint8)
@@ -666,44 +677,47 @@ def check_inside_color(top_left, bottom_left, top_right, bottom_right, img):
     pts = pts.reshape((-1, 1, 2))
     cv.fillConvexPoly(matrix, pts, (255))
 
+    # img_display = img.copy()
+    # cv.circle(img_display, top_left, 2, (255, 255, 0), 10)
+    # cv.circle(img_display, bottom_left, 2, (255, 255, 0), 10)
+    # cv.circle(img_display, top_right, 2, (255, 255, 0), 10)
+    # cv.circle(img_display, bottom_right, 2, (255, 255, 0), 10)
+    # cv.imshow('img_display', img_display)
+    # cv.waitKey(0)
+    # cv.destroyAllWindows()
+
     # find all these white pixels points
     list_of_points_indices = []
     for i in range(0, L):
         for j in range(0, H):
             if (matrix[i, j] != 0):
                 list_of_points_indices.append((i, j))
-
+    color_dict = dict()
     # check whether this rectangle contains similar color
-    pixel_0_same = []
-    pixel_0_not_same = []
-    pixel_0_same_flag = 1
-    pixel_1_same = []
-    pixel_1_not_same = []
-    pixel_1_same_flag = 1
-    pixel_2_same = []
-    pixel_2_not_same = []
-    pixel_2_same_flag = 1
-    for points in list_of_points_indices:
-        pixel = img[points[0], points[1]]
-        for pixel_0 in pixel_0_same:
-            if(abs(pixel[0] - pixel_0) > 10):
-                pixel_0_same_flag = 0
-                pixel_0_not_same.append(pixel[0])
-                break
-        if(pixel_0_same_flag): pixel_0_same.append(pixel[0])
-        for pixel_1 in pixel_1_same:
-            if(abs(pixel[1] - pixel_1) > 10):
-                pixel_1_same_flag = 0
-                pixel_1_not_same.append(pixel[0])
-                break
-        if(pixel_1_same_flag): pixel_1_same.append(pixel[0])
-        for pixel_2 in pixel_2_same:
-            if(abs(pixel[2] - pixel_2) > 10):
-                pixel_2_same_flag = 0
-                pixel_2_not_same.append(pixel[0])
-                break
-        if(pixel_2_same_flag): pixel_2_same.append(pixel[0])
-    
+    for points_index in range(0,len(list_of_points_indices)):
+        point = list_of_points_indices[points_index]
+        pixel = img[point[0], point[1]]
+        new_flag = 1
+        for color_key in color_dict:
+            error = math.sqrt((int(color_key[0]) - int(pixel[0])) ** 2 + \
+                (int(color_key[1]) - int(pixel[1])) ** 2 + (int(color_key[2]) - int(pixel[2])) ** 2)
+            if(error < SAME_COLOR_THRES):
+                new_flag = 0
+                color_dict[color_key] += 1
+        if(new_flag): color_dict[(pixel[0], pixel[1], pixel[2])] = 0
+    print(color_dict)
+    if(len(color_dict) > 1): return False
+
+    # Clear if the whole block is made of background color
+    for key in color_dict:
+        pixel = (int(key[0]), int(key[1]), int(key[2]))
+        pixel_avg = (pixel[0] + pixel[1] + pixel[2]) / 3.0
+        if (pixel_avg == 0): pixel_avg = 1;
+        pixel_normalized = (pixel[0] / pixel_avg, pixel[1] / pixel_avg, pixel[2] / pixel_avg)
+        if (pixel_normalized[0] < THRES and pixel_normalized[1] < THRES and pixel_normalized[2] < THRES):
+            return False
+    print(True)
+    return True
 
 
 def clear_fake_block(block, img):
@@ -720,75 +734,74 @@ def clear_fake_block(block, img):
         top_right = intersections[2]
         bottom_right = intersections[3]
 
-        if(check_inside_color(top_left, bottom_left, top_right, bottom_right, img)):
-            # check length (1 -> y+1, 0 -> x+1)
-            if (abs(top_left[0] - bottom_left[0]) < abs(top_left[1] - bottom_left[1])):
-                lines.append((1, [top_left[0], top_left[1], bottom_left[0], bottom_left[1]]))
-                lines.append((0, [bottom_left[0], bottom_left[1], bottom_right[0], bottom_right[1]]))
-                lines.append((1, [top_right[0], top_right[1], bottom_right[0], bottom_right[1]]))
-                lines.append((0, [top_left[0], top_left[1], top_right[0], top_right[1]]))
+        # check length (1 -> y+1, 0 -> x+1)
+        if (abs(top_left[0] - bottom_left[0]) < abs(top_left[1] - bottom_left[1])):
+            lines.append((1, [top_left[0], top_left[1], bottom_left[0], bottom_left[1]]))
+            lines.append((0, [bottom_left[0], bottom_left[1], bottom_right[0], bottom_right[1]]))
+            lines.append((1, [top_right[0], top_right[1], bottom_right[0], bottom_right[1]]))
+            lines.append((0, [top_left[0], top_left[1], top_right[0], top_right[1]]))
+        else:
+            lines.append((0, [top_left[0], top_left[1], bottom_left[0], bottom_left[1]]))
+            lines.append((1, [bottom_left[0], bottom_left[1], bottom_right[0], bottom_right[1]]))
+            lines.append((0, [top_right[0], top_right[1], bottom_right[0], bottom_right[1]]))
+            lines.append((1, [top_left[0], top_left[1], top_right[0], top_right[1]]))
+
+        img_display = img.copy()
+        for qualified_line_set in lines:
+            qualified_line = qualified_line_set[1]
+            # extend the line by 1
+            if(qualified_line_set[0] == 1):
+                qualified_line_arr = create_line_arr_width(qualified_line, img)
             else:
-                lines.append((0, [top_left[0], top_left[1], bottom_left[0], bottom_left[1]]))
-                lines.append((1, [bottom_left[0], bottom_left[1], bottom_right[0], bottom_right[1]]))
-                lines.append((0, [top_right[0], top_right[1], bottom_right[0], bottom_right[1]]))
-                lines.append((1, [top_left[0], top_left[1], top_right[0], top_right[1]]))
+                qualified_line_arr = create_line_arr_height(qualified_line, img)
 
-            img_display = img.copy()
-            for qualified_line_set in lines:
-                qualified_line = qualified_line_set[1]
-                # extend the line by 1
-                if(qualified_line_set[0] == 1):
-                    qualified_line_arr = create_line_arr_width(qualified_line, img)
-                else:
-                    qualified_line_arr = create_line_arr_height(qualified_line, img)
+            qualified_point = []
 
-                qualified_point = []
+            # avoid division by zero
+            if (len(qualified_line_arr) != 0):
+                for point in qualified_line_arr:
+                    # check for certain directions
+                    if (qualified_line_set[0] == 1):
+                        # the first direction, gather points
+                        points_dir_1_side_1 = []
+                        points_dir_1_side_2 = []
+                        for dir_1 in range(0, FAKE_RANGE + 1):
+                            if ((point[0] + dir_1) < img.shape[1] and (point[0] - dir_1) >= 0):
+                                if ((point[0] + dir_1, point[1]) not in points_dir_1_side_1):
+                                    points_dir_1_side_1.append((point[0] + dir_1, point[1]))
+                                if ((point[0] - dir_1, point[1]) not in points_dir_1_side_2):
+                                    points_dir_1_side_2.append((point[0] - dir_1, point[1]))
 
-                # avoid division by zero
-                if (len(qualified_line_arr) != 0):
-                    for point in qualified_line_arr:
-                        # check for certain directions
-                        if (qualified_line_set[0] == 1):
-                            # the first direction, gather points
-                            points_dir_1_side_1 = []
-                            points_dir_1_side_2 = []
-                            for dir_1 in range(0, FAKE_RANGE + 1):
-                                if ((point[0] + dir_1) < img.shape[1] and (point[0] - dir_1) >= 0):
-                                    if ((point[0] + dir_1, point[1]) not in points_dir_1_side_1):
-                                        points_dir_1_side_1.append((point[0] + dir_1, point[1]))
-                                    if ((point[0] - dir_1, point[1]) not in points_dir_1_side_2):
-                                        points_dir_1_side_2.append((point[0] - dir_1, point[1]))
+                        # check the point for this direction
+                        # whether it follows one side of backgroud and one side of color
+                        dir1_check = check_background_or_color(points_dir_1_side_1, points_dir_1_side_2, img)
+                        if (dir1_check == 1): qualified_point.append(point)
+                    else:
+                        points_dir_2_side_1 = []
+                        points_dir_2_side_2 = []
 
-                            # check the point for this direction
-                            # whether it follows one side of backgroud and one side of color
-                            dir1_check = check_background_or_color(points_dir_1_side_1, points_dir_1_side_2, img)
-                            if (dir1_check == 1): qualified_point.append(point)
-                        else:
-                            points_dir_2_side_1 = []
-                            points_dir_2_side_2 = []
+                        for dir_2 in range(0, FAKE_RANGE + 1):
+                            if ((point[1] + dir_2) < img.shape[0] and (point[1] - dir_2) >= 0):
+                                if ((point[0], point[1] + dir_2) not in points_dir_2_side_1):
+                                    points_dir_2_side_1.append((point[0], point[1] + dir_2))
+                                if ((point[0], point[1] - dir_2) not in points_dir_2_side_2):
+                                    points_dir_2_side_2.append((point[0], point[1] - dir_2))
 
-                            for dir_2 in range(0, FAKE_RANGE + 1):
-                                if ((point[1] + dir_2) < img.shape[0] and (point[1] - dir_2) >= 0):
-                                    if ((point[0], point[1] + dir_2) not in points_dir_2_side_1):
-                                        points_dir_2_side_1.append((point[0], point[1] + dir_2))
-                                    if ((point[0], point[1] - dir_2) not in points_dir_2_side_2):
-                                        points_dir_2_side_2.append((point[0], point[1] - dir_2))
+                        dir2_check = check_background_or_color(points_dir_2_side_1, points_dir_2_side_2, img)
+                        if (dir2_check == 1): qualified_point.append(point)
+                # print("Qualify rate")
+                # print(len(qualified_point)/len(qualified_line_arr))
 
-                            dir2_check = check_background_or_color(points_dir_2_side_1, points_dir_2_side_2, img)
-                            if (dir2_check == 1): qualified_point.append(point)
-                    # print("Qualify rate")
-                    # print(len(qualified_point)/len(qualified_line_arr))
-
-                    if(len(qualified_point)/len(qualified_line_arr) > QUALIFY_RATE):
-                        if(qualified_line not in line_test):
-                            line_test.append(qualified_line)
-                #             cv.line(img_display, (qualified_line[0], qualified_line[1]), (qualified_line[2], qualified_line[3]),(0, 255, 255), 4, cv.LINE_AA)
-                #     else:
-                #         cv.line(img_display, (qualified_line[0], qualified_line[1]), (qualified_line[2], qualified_line[3]),(255, 255, 0), 4, cv.LINE_AA)
-                # cv.imshow('img', img_display)
-                # cv.waitKey(0)
-                # cv.destroyAllWindows()
-            if(len(line_test) == 4): result.append(intersections)
+                if(len(qualified_point)/len(qualified_line_arr) > QUALIFY_RATE):
+                    if(qualified_line not in line_test):
+                        line_test.append(qualified_line)
+            #             cv.line(img_display, (qualified_line[0], qualified_line[1]), (qualified_line[2], qualified_line[3]),(0, 255, 255), 4, cv.LINE_AA)
+            #     else:
+            #         cv.line(img_display, (qualified_line[0], qualified_line[1]), (qualified_line[2], qualified_line[3]),(255, 255, 0), 4, cv.LINE_AA)
+            # cv.imshow('img', img_display)
+            # cv.waitKey(0)
+            # cv.destroyAllWindows()
+        if(len(line_test) == 4): result.append(intersections)
         count += 1
         print(str(round(count/length*100)) + "%")
     return result
@@ -836,10 +849,45 @@ def check(x1, y1, x2, y2, x3, y3, x4, y4, x, y):
         return True
     return False
 
+def add_color(top_left, bottom_left, top_right, bottom_right, img):
+    # create an image with black background and white rectangle
+    new_vertex = []
+    new_vertex.append((top_left[0] + CHECK_COLOR_RANGE, top_left[1] + CHECK_COLOR_RANGE))
+    new_vertex.append((bottom_left[0] + CHECK_COLOR_RANGE, bottom_left[1] - CHECK_COLOR_RANGE))
+    new_vertex.append((top_right[0] - CHECK_COLOR_RANGE, top_right[1] + CHECK_COLOR_RANGE))
+    new_vertex.append((bottom_right[0] - CHECK_COLOR_RANGE, bottom_right[1] - CHECK_COLOR_RANGE))
+    [top_left, bottom_left, top_right, bottom_right] = new_vertex
+    L = img.shape[1]
+    H = img.shape[0]
+    matrix = np.zeros((L, H), dtype=np.uint8)
+    pts = np.array([top_left, top_right, bottom_right, bottom_left], np.int32)
+    pts = pts.reshape((-1, 1, 2))
+    cv.fillConvexPoly(matrix, pts, (255))
+
+    # find all these white pixels points
+    list_of_points_indices = []
+    for i in range(0, L):
+        for j in range(0, H):
+            if (matrix[i, j] != 0):
+                list_of_points_indices.append((i, j))
+
+    pixel_1 = 0
+    pixel_2 = 0
+    pixel_3 = 0
+    # check whether this rectangle contains similar color
+    for points_index in range(0,len(list_of_points_indices)):
+        point = list_of_points_indices[points_index]
+        pixel = img[point[0], point[1]]
+        pixel_1 += int(pixel[0])
+        pixel_2 += int(pixel[1])
+        pixel_3 += int(pixel[2])
+    return (int(pixel_1/len(list_of_points_indices)), int(pixel_2/len(list_of_points_indices)), \
+                int(pixel_3/len(list_of_points_indices)))
+
 '''
 Pipeline to find block
 '''
-def detect_stack(edges, img, stack):
+def detect_stack(edges, img, stack, stack_color_dict):
     # find lines using hough lines transform with probability
     linesP = cv.HoughLinesP(edges, 1, np.pi / 180, NUMBER_OF_INTERSECTION, None, MIN_LINE_LENGTH, MAX_LINE_GAP)
 
@@ -852,6 +900,7 @@ def detect_stack(edges, img, stack):
     line_not_extend = []
     extend_line_map_line = dict()
 
+    edges_BGR = cv.cvtColor(edges, cv.COLOR_GRAY2BGR)
     # Hashmap all lines with its angle
     if linesP is not None:
         for i in range(0, len(linesP)):
@@ -863,11 +912,10 @@ def detect_stack(edges, img, stack):
             line_index_dict[index_dict] = l_extend
             extend_line_map_line[index_dict] = l
             index_dict += 1
-            # edges_BGR = cv.cvtColor(edges, cv.COLOR_GRAY2BGR)
-            # cv.line(edges_BGR, (l[0], l[1]), (l[2], l[3]), (0, 255, 0), 1, cv.LINE_AA)
-            # cv.imshow('hough', edges_BGR)
-            # cv.waitKey(0)
-            # cv.destroyAllWindows()
+            cv.line(edges_BGR, (l[0], l[1]), (l[2], l[3]), (0, 255, 0), 1, cv.LINE_AA)
+    cv.imshow('hough', edges_BGR)
+    cv.waitKey(0)
+    cv.destroyAllWindows()
 
     # [(line_index, angle) : [line,line,line], ...]
     parallel_line_group = angle_approximation(lines)
@@ -916,15 +964,25 @@ def detect_stack(edges, img, stack):
     # remove duplicate
     block_dict = remove_duplicate(block)
     # merge duplicate
-    result = merge_duplicate(block_dict, edges)
+    result = merge_duplicate(block_dict)
 
     blocks = block.copy()
     # double check for duplication
     while (len(blocks) > len(result)):
         blocks = result.copy()
         block_dict = remove_duplicate(blocks)
-        result = merge_duplicate(block_dict, edges)
+        result = merge_duplicate(block_dict)
         print("block: " + str(len(blocks)) + "result: " + str(len(result)))
+
+    # Check the color of the block
+    block = []
+    for block_to_check in result:
+        top_left = block_to_check[0]
+        bottom_left = block_to_check[1]
+        top_right = block_to_check[2]
+        bottom_right = block_to_check[3]
+        if(check_inside_color(top_left, bottom_left, top_right, bottom_right, img)):
+            block.append(block_to_check)
 
     # Clear previous level block
     result = []
@@ -936,6 +994,7 @@ def detect_stack(edges, img, stack):
     for intersections in stack:
         # img_display = img.copy()
         vertexes = [intersections[0], intersections[1], intersections[2], intersections[3]]
+        color_stack = stack_color_dict[(vertexes[0],vertexes[1],vertexes[2],vertexes[3])]
         # cv.circle(img_display, vertexes[0], 2, (255, 0, 0), 10)
         # cv.circle(img_display, vertexes[1], 2, (0, 255, 0), 10)
         # cv.circle(img_display, vertexes[2], 2, (0, 0, 255), 10)
@@ -949,26 +1008,38 @@ def detect_stack(edges, img, stack):
         # cv.waitKey(0)
         # cv.destroyAllWindows()
         for block_check in block:
-            # img_display = img.copy()
-            # cv.circle(img_display, block_check[0], 2, (255, 255, 0), 10)
-            # cv.circle(img_display, block_check[1], 2, (255, 255, 0), 10)
-            # cv.circle(img_display, block_check[2], 2, (255, 255, 0), 10)
-            # cv.circle(img_display, block_check[3], 2, (255, 255, 0), 10)
-            remove_flag = 1
-            for vertex in block_check:
-                # cv.circle(img_display, vertex, 2, (0, 0, 255), 10)
+            if(block_check in result):
+                # img_display = img.copy()
+                # cv.circle(img_display, block_check[0], 2, (255, 255, 0), 10)
+                # cv.circle(img_display, block_check[1], 2, (255, 255, 0), 10)
+                # cv.circle(img_display, block_check[2], 2, (255, 255, 0), 10)
+                # cv.circle(img_display, block_check[3], 2, (255, 255, 0), 10)
                 # cv.imshow('img', img_display)
                 # cv.waitKey(0)
                 # cv.destroyAllWindows()
-                (x,y) = vertex
-                (x1, y1) = (vertexes[0][0], vertexes[0][1])
-                (x2, y2) = (vertexes[1][0], vertexes[1][1])
-                (x3, y3) = (vertexes[2][0], vertexes[2][1])
-                (x4, y4) = (vertexes[3][0], vertexes[3][1])
-                if(not check(x1, y1, x2, y2, x3, y3, x4, y4, x, y)):
-                    remove_flag = 0
-            if(remove_flag == 1 and block_check in result):
-                result.remove(block_check)
+                remove_flag = 1
+                for vertex in block_check:
+                    # cv.circle(img_display, vertex, 2, (0, 0, 255), 10)
+                    # cv.imshow('img', img_display)
+                    # cv.waitKey(0)
+                    # cv.destroyAllWindows()
+                    (x,y) = vertex
+                    (x1, y1) = (vertexes[0][0], vertexes[0][1])
+                    (x2, y2) = (vertexes[1][0], vertexes[1][1])
+                    (x3, y3) = (vertexes[2][0], vertexes[2][1])
+                    (x4, y4) = (vertexes[3][0], vertexes[3][1])
+                    if(not check(x1, y1, x2, y2, x3, y3, x4, y4, x, y)):
+                        remove_flag = 0
+                if(remove_flag == 1 and block_check in result):
+                    # color_block_check = add_color(block_check[0], block_check[1], \
+                    #                 block_check[2], block_check[3], img)
+                    # print(color_block_check)
+                    # print(color_stack)
+                    # error = math.sqrt((color_stack[0] - color_block_check[0]) ** 2 + \
+                    #     (color_stack[1] - color_block_check[1]) ** 2 + (color_stack[2] - color_block_check[2]) ** 2)
+                    # print(error)
+                    # if (error < DIFF_COLOR_THRES):
+                    result.remove(block_check)
     return result
 
 '''
@@ -1191,27 +1262,36 @@ def main():
 
     # detect stack block's position and create stack
     stack = []
-
-    block = detect_stack(edges_1, img_1, stack)
+    stack_color_dict = dict()
+    block = detect_stack(edges_1, img_1, stack, stack_color_dict)
     for block_add in block:
         stack.append(block_add)
+        stack_color_dict[(block_add[0],block_add[1],block_add[2],block_add[3])] = \
+            add_color(block_add[0],block_add[1],block_add[2],block_add[3], img_1)
     draw_result(img_1, block)
     cv.imwrite('img_1.png', img_1)
 
-    block = detect_stack(edges_2, img_2, stack)
+    block = detect_stack(edges_2, img_2, stack, stack_color_dict)
     for block_add in block:
         stack.append(block_add)
+        stack_color_dict[(block_add[0], block_add[1], block_add[2], block_add[3])] = \
+            add_color(block_add[0], block_add[1], block_add[2], block_add[3], img_2)
     draw_result(img_2, block)
+    cv.imwrite('img_2.png', img_2)
 
-    block = detect_stack(edges_3, img_3, stack)
+    block = detect_stack(edges_3, img_3, stack, stack_color_dict)
     for block_add in block:
         stack.append(block_add)
+        stack_color_dict[(block_add[0], block_add[1], block_add[2], block_add[3])] = \
+            add_color(block_add[0], block_add[1], block_add[2], block_add[3], img_3)
     draw_result(img_3, block)
     cv.imwrite('img_3.png', img_3)
 
-    block = detect_stack(edges_4, img_4, stack)
+    block = detect_stack(edges_4, img_4, stack, stack_color_dict)
     for block_add in block:
         stack.append(block_add)
+    stack_color_dict[(block_add[0], block_add[1], block_add[2], block_add[3])] = \
+        add_color(block_add[0], block_add[1], block_add[2], block_add[3], img_4)
     draw_result(img_4, block)
     cv.imwrite('img_4.png', img_4)
 
