@@ -1,0 +1,66 @@
+**************************************************************************
+
+The directory xarm2 has the modified control code for the attached robot.
+sudo .xarm2
+runs the demo program. This robot has joints elbow=4, 5, 6=base.
+
+Try to leave the arm in the rest postion, with the black switch turned off
+(no lights on the servos of joints 4-5-6, and the USB to the Pololu Micro
+Maestro USB cable unplugged at the Raspberry Pi (this is the USB cable
+that comes out of the upper arm pipe).
+
+// rest position
+angles_d[ 4 ] = 600;
+angles_d[ 5 ] = 600;
+angles_d[ 6 ] = 500;
+
+// elbow straight up, forearm horizontal
+angles_d[ 4 ] = 500;
+angles_d[ 5 ] = 513;
+angles_d[ 6 ] = 500;
+
+// straight up (roughly)
+angles_d[ 4 ] = 167;
+angles_d[ 5 ] = 513;
+angles_d[ 6 ] = 500;
+
+If the arm starts beeping, unplug the USB cable from the RPI to the
+LOBOT controller at the RPI.
+
+**************************************************************************
+
+The directory maestro has the software for the Pololu Micro Maestro
+servo controller. The software has been installed.
+
+sudo ./MaestroControlCenter
+gets a graphical interface to control the servos.
+It types out
+WARNING: The runtime version supported by this application is unavailable.
+Using default runtime: v4.0.30319
+when started up. Ignore the error.
+Enable servos by checking the Enabled boxes
+1: wrist
+3: twist
+5: grasp
+and move the cursors
+
+Type
+./UscCmd
+To get info on how to use this command line interface.
+
+For example:
+./UscCmd --list
+./UscCmd --status
+
+Check out
+../other-code/pololu-usb-sdk-master.zip
+and
+../other-code/RapaPololuMaestro-master.zip
+to see examples of directly interfacing to the servo controller.
+
+**************************************************************************
+
+
+
+
+

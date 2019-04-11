@@ -1,0 +1,20 @@
+Try to leave the arm in the rest postion, with the black switch turned off
+(no lights on the servos of joints 4-5-6, and the USB to the Pololu Micro
+Maestro USB cable unplugged at the Raspberry Pi (this is the USB cable
+that comes out of the upper arm pipe).
+
+// rest position
+angles_d[ 4 ] = 600;
+angles_d[ 5 ] = 600;
+angles_d[ 6 ] = 500;
+
+// elbow straight up, forearm horizontal
+angles_d[ 4 ] = 500;
+angles_d[ 5 ] = 513;
+angles_d[ 6 ] = 500;
+
+// straight up (roughly)
+angles_d[ 4 ] = 167;
+angles_d[ 5 ] = 513;
+angles_d[ 6 ] = 500;
+    

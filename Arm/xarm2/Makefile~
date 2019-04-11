@@ -1,0 +1,3 @@
+xarm1:	xarm1.c
+	cc xarm1.c -o xarm1
+

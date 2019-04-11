@@ -1,0 +1,101 @@
+[  603.245647] usb 1-1.1.2: new full-speed USB device number 8 using dwc_otg
+[  603.379093] usb 1-1.1.2: New USB device found, idVendor=0483, idProduct=5750, bcdDevice= 2.01
+[  603.379110] usb 1-1.1.2: New USB device strings: Mfr=1, Product=2, SerialNumber=3
+[  603.379119] usb 1-1.1.2: Product: LOBOT
+[  603.379128] usb 1-1.1.2: Manufacturer: MyUSB_HID
+[  603.379137] usb 1-1.1.2: SerialNumber: 499124823033
+[  603.393126] hid-generic 0003:0483:5750.0004: hiddev96,hidraw3: USB HID v1.10 Device [MyUSB_HID LOBOT] on usb-3f980000.usb-1.1.2/input0
+
+*******************************************************************
+
+read() will read a queued report received from the HID device. On USB
+devices, the reports read using read() are the reports sent from the device
+on the INTERRUPT IN endpoint.  By default, read() will block until there is
+a report available to be read.  read() can be made non-blocking, by passing
+the O_NONBLOCK flag to open(), or by setting the O_NONBLOCK flag using
+fcntl().
+
+On a device which uses numbered reports, the first byte of the returned data
+will be the report number; the report data follows, beginning in the second
+byte.  For devices which do not use numbered reports, the report data
+will begin at the first byte.
+
+*******************************************************************
+
+The write() function will write a report to the device. For USB devices, if
+the device has an INTERRUPT OUT endpoint, the report will be sent on that
+endpoint. If it does not, the report will be sent over the control endpoint,
+using a SET_REPORT transfer.
+
+The first byte of the buffer passed to write() should be set to the report
+number.  If the device does not use numbered reports, the first byte should
+be set to 0. The report data itself should begin at the second byte.
+
+*******************************************************************
+/***************************************************************************
+packet:
+0x55
+0x55
+byte length = N + 2
+byte command
+byte param1
+...
+byte paramN
+
+Control the No.1 servo to turn to 2000 position within 1000ms
+0x55
+0x55
+0x08 length
+0x03 command = CMD_SERVO_MOVE
+0x01 number of servos
+0x00 low time
+0x40 high time
+0x01 servo id
+0x00 low pos
+0x70 high pos
+
+get battery
+0x55
+0x55
+0x02
+0x0F
+
+returns
+0x55
+0x55
+0x04
+0x0F
+0xXX
+0xXX
+
+
+
+***************************************************************************/
+
+ServoOffsetRead (28)
+Read the offset value of one or more servos.
+
+Request: (byte)count { (byte)id }
+
+Response: (byte)count { (byte)id (sbyte)offset }
+
+Parameters: count is the number of servos in id list. id is one or more servo ids. offset is a signed byte with valid range of -128 to 128.
+
+ServoMove             3  (byte)count (ushort)time { (byte)id (ushort)position }
+GroupRunRepeat        5  (byte)group[255=all] (byte)times
+GroupRun              6  (byte)group (ushort)count[0=continuous]
+GroupStop             7  -none-
+GroupErase            8  (byte)group[255=all]
+GroupSpeed           11  (byte)group (ushort)percentage
+xServoOffsetWrite    12  *** not sure
+xServoOffsetRead     13  *** not sure
+xServoOffsetAdjust   14  *** not sure
+GetBatteryVoltage    15  -none-; (ushort)millivolts
+ServoOff             20  (byte)count { (byte)id }
+ServoPositionRead    21  (byte)count { (byte)id }; (byte)count { (byte)id (ushort)position }
+ServoPositionWrite   22  (byte)count { (byte)id (ushort)position }
+ServoOffsetRead      23  (byte)count { (byte)id }; (byte)count { (byte)id (sbyte)offset }
+ServoOffsetWrite     24  (byte)id (sbyte)offset
+BusServoMoroCtrl     26  (byte)id (byte)??? (ushort)speed
+BusServoInfoWrite    27  (byte)id (ushort)pos_min (ushort)pos_max (ushort)volt_min (ushort)volt_max (ushort)temp_max (byte)led_status (byte)led_warning
+BusServoInfoRead     28  -none-; (byte)id (ushort)pos_min (ushort)pos_max (ushort)volt_min (ushort)volt_max (ushort)temp_max (byte)led_status (byte)led_warning (byte)dev_offset (ushort)pos (byte)temp (ushort)volt
