@@ -37,12 +37,16 @@ def forward_kinematics(thetas):
         d = d_arr[frame_index]
         theta = theta_arr[frame_index] + thetas[frame_index]
     
-        frames[frame_index] = frames[frame_index-1] * \
+        frames[frame_index] = np.matmul(frames[frame_index-1],\
                               np.array([[math.cos(theta),-math.sin(theta)*math.cos(alpha),math.sin(theta)*math.sin(alpha),a*math.cos(theta)],
                               [math.sin(theta),math.cos(theta)*math.cos(alpha),-math.cos(theta)*math.sin(alpha),a*math.sin(theta)],
                               [0,math.sin(alpha),math.cos(alpha),d],
-                              [0,0,0,1]])
-    
+                              [0,0,0,1]]))
+        print(frames[frame_index-1])
+        print(np.array([[math.cos(theta),-math.sin(theta)*math.cos(alpha),math.sin(theta)*math.sin(alpha),a*math.cos(theta)],
+                                  [math.sin(theta),math.cos(theta)*math.cos(alpha),-math.cos(theta)*math.sin(alpha),a*math.sin(theta)],
+                                  [0,math.sin(alpha),math.cos(alpha),d],
+                                  [0,0,0,1]]))
     print(frames)
     return frames
 
@@ -64,4 +68,4 @@ def end_effector(thetas):
     ee = [x,y,z,roll,pitch,yaw]
     return ee
 
-print(end_effector([0,0,0,0,0]))
+print(end_effector([90,0,0,0,0]))
