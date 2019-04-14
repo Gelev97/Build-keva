@@ -1004,6 +1004,14 @@ def detect_stack(edges, img, stack, stack_color_dict, area_of_previous_level):
         bottom_left = block_to_check[1]
         top_right = block_to_check[2]
         bottom_right = block_to_check[3]
+
+        img_display = img.copy()
+        cv.circle(img_display, top_left, 2, (255, 255, 0), 10)
+        cv.circle(img_display, bottom_left, 2, (255, 255, 0), 10)
+        cv.circle(img_display, top_right, 2, (255, 255, 0), 10)
+        cv.circle(img_display, bottom_right, 2, (255, 255, 0), 10)
+        cv.imshow('img', img_display)
+
         if(check_inside_color(top_left, bottom_left, top_right, bottom_right, img)):
             block.append(block_to_check)
 
@@ -1020,6 +1028,7 @@ def detect_stack(edges, img, stack, stack_color_dict, area_of_previous_level):
         vertexes = expand(vertexes)
         for block_check in block:
             if(block_check in result):
+
                 img_display = img.copy()
                 cv.circle(img_display, block_check[0], 2, (255, 255, 0), 10)
                 cv.circle(img_display, block_check[1], 2, (255, 255, 0), 10)
@@ -1028,6 +1037,7 @@ def detect_stack(edges, img, stack, stack_color_dict, area_of_previous_level):
                 cv.imshow('img', img_display)
                 cv.waitKey(0)
                 cv.destroyAllWindows()
+
                 remove_flag = 1
                 (x1, y1) = (vertexes[0][0], vertexes[0][1])
                 (x2, y2) = (vertexes[1][0], vertexes[1][1])
@@ -1290,10 +1300,10 @@ def main():
     # run pipeline
     [stack, stack_color_dict, area_of_previous_level] = pipeline(image_name1, stack, stack_color_dict, \
                                                                 area_of_previous_level, "stack_leve1.jpg")
-    [stack, stack_color_dict, area_of_previous_level] = pipeline(image_name2, stack, stack_color_dict,
-                                                                 area_of_previous_level, "stack_leve2.jpg")
-    [stack, stack_color_dict, area_of_previous_level] = pipeline(image_name3, stack, stack_color_dict,
-                                                                 area_of_previous_level, "stack_leve3.jpg")
-    [stack, stack_color_dict, area_of_previous_level] = pipeline(image_name4, stack, stack_color_dict,
-                                                                 area_of_previous_level, "stack_leve4.jpg")
+    # [stack, stack_color_dict, area_of_previous_level] = pipeline(image_name2, stack, stack_color_dict,
+    #                                                              area_of_previous_level, "stack_leve2.jpg")
+    # [stack, stack_color_dict, area_of_previous_level] = pipeline(image_name3, stack, stack_color_dict,
+    #                                                              area_of_previous_level, "stack_leve3.jpg")
+    # [stack, stack_color_dict, area_of_previous_level] = pipeline(image_name4, stack, stack_color_dict,
+    #                                                              area_of_previous_level, "stack_leve4.jpg")
 main()
