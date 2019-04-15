@@ -465,11 +465,9 @@ int set_angles_and_wait( int fd, int *angles )
 /**********************************************************************/
 
 int main( int argc, char **argv )
-{ 
-  system("./UscCmd --servo 1,6000");
-  /*
+{   
   int fd;
-  char *device = "/dev/hidraw0";
+  char *device = "/dev/hidraw2";
   int wlen;
   int errors = 0;
 
@@ -481,31 +479,45 @@ int main( int argc, char **argv )
   get_battery_voltage( fd );
 
   wait_for_response( fd );
+  
+  /*
   while(1){
       get_angles( fd );
 
     wait_for_response( fd );
   }
-
-
+  */
+  
   int angles_d[ 10 ];
   
   // elbow straight up, forearm horizontal
   angles_d[ 4 ] = 500;
   angles_d[ 5 ] = 513;
   angles_d[ 6 ] = 500;
-
+  system("./UscCmd --servo 5,3000");
   set_angles_and_wait( fd, angles_d );
 
+
   // straight up (roughly)
-  angles_d[ 4 ] = 167;
+  angles_d[ 4 ] = 697;
+  angles_d[ 5 ] = 550;
+  angles_d[ 6 ] = 439;
+  set_angles_and_wait( fd, angles_d );
+  
+  angles_d[ 4 ] = 697;
+  angles_d[ 5 ] = 570;
+  angles_d[ 6 ] = 439;
+  set_angles_and_wait(fd, angles_d);
+  
+  system("./UscCmd --servo 5,8000");
+  
+  angles_d[ 4 ] = 500;
   angles_d[ 5 ] = 513;
   angles_d[ 6 ] = 500;
-
-  set_angles_and_wait(fd, angles_d);
-
+  set_angles_and_wait( fd, angles_d );
+   
   close(fd);
-  */
+  
   return 0;
 }
 
