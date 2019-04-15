@@ -8,6 +8,18 @@ SPECIFIC_AREA = [488, 20, 488, 90, 755, 43, 757, 97]
 
 PARAM_LIST = "./Params/Stack_Param.txt"
 
+# Color space
+BLUE_MIN = np.array([98, 50, 20], np.uint8)
+BLUE_MAX = np.array([112, 255, 255], np.uint8)
+YELLOW_MIN = np.array([20, 50, 20], np.uint8)
+YELLOW_MAX = np.array([30, 255, 255], np.uint8)
+GREEN_MIN = np.array([30, 50, 20], np.uint8)
+GREEN_MAX = np.array([60, 255, 255], np.uint8)
+RED_MIN_LOW = np.array([0, 50, 20], np.uint8)
+RED_MAX_LOW = np.array([20, 255, 255], np.uint8)
+RED_MIN_HIGH = np.array([170, 50, 20], np.uint8)
+RED_MAX_HIGH = np.array([180, 255, 255], np.uint8)
+
 # Load Params
 param_groups = []
 text_file = open(PARAM_LIST, "r")
@@ -63,10 +75,8 @@ INSIDE_THRESHOLD = param_groups[18]
 
 # Check inside color
 CHECK_COLOR_RANGE = param_groups[19]
-SAME_COLOR_THRES = param_groups[20]
-DIFF_COLOR_THRES = param_groups[21]
-DIFF_AREA_THRES = param_groups[22]
-COLOR_MAJOR_RATE = param_groups[23]
+DIFF_AREA_THRES = param_groups[20]
+COLOR_MAJOR_RATE = param_groups[21]
 
 '''
 Edge Detection
@@ -678,75 +688,92 @@ def check_inside_color(top_left, bottom_left, top_right, bottom_right, img):
     pts = pts.reshape((-1, 1, 2))
     cv.fillConvexPoly(matrix, pts, (255))
 
-    # img_display = img.copy()
-    # cv.circle(img_display, top_left, 2, (255, 255, 0), 10)
-    # cv.circle(img_display, bottom_left, 2, (255, 255, 0), 10)
-    # cv.circle(img_display, top_right, 2, (255, 255, 0), 10)
-    # cv.circle(img_display, bottom_right, 2, (255, 255, 0), 10)
-    # cv.imshow('img_display', img_display)
-    # cv.waitKey(0)
-    # cv.destroyAllWindows()
-
     # find all these white pixels points
     list_of_points_indices = []
     for i in range(0, L):
         for j in range(0, H):
             if (matrix[i, j] != 0):
                 list_of_points_indices.append((i, j))
-    color_dict = dict()
+
+    qualified = 0
+
+    # Red
+    hsv_img = cv.cvtColor(img, cv.COLOR_BGR2HSV)
+    frame_threshed_1 = cv.inRange(hsv_img, RED_MIN_LOW, RED_MAX_LOW)
+    frame_threshed_2 = cv.inRange(hsv_img, RED_MIN_HIGH, RED_MAX_HIGH)
+    frame_threshed = frame_threshed_1 + frame_threshed_2
+
     # check whether this rectangle contains similar color
     for points_index in range(0,len(list_of_points_indices)):
         point = list_of_points_indices[points_index]
-        pixel = img[point[0], point[1]]
-        new_flag = 1
-        for color_key in color_dict:
-            error = math.sqrt((int(color_key[0]) - int(pixel[0])) ** 2 + \
-                (int(color_key[1]) - int(pixel[1])) ** 2 + (int(color_key[2]) - int(pixel[2])) ** 2)
-            if(error < SAME_COLOR_THRES):
-                new_flag = 0
-                color_dict[color_key] += 1
-        if(new_flag): color_dict[(pixel[0], pixel[1], pixel[2])] = 0
-    print(color_dict)
+        if(frame_threshed[point[0],point[1]] == 255):
+            qualified += 1
+    success_red = qualified/len(list_of_points_indices)
+    qualified = 0
+    # cv.imshow('frame_threshed', frame_threshed)
+    # cv.waitKey(0)
+    # cv.destroyAllWindows()
 
-    if(len(color_dict) > 1):
-        # check relation
-        major_color = 0
-        major_key = (0, 0, 0)
-        total_color = 0
-        for key in color_dict:
-            total_color += color_dict[key]
-            if (color_dict[key] > major_color):
-                major_color = color_dict[key]
-                major_key = key
-        if((major_color / total_color) > COLOR_MAJOR_RATE):
-            pixel = (int(major_key[0]), int(major_key[1]), int(major_key[2]))
-            pixel_avg = (pixel[0] + pixel[1] + pixel[2]) / 3.0
-            if (pixel_avg == 0): pixel_avg = 1;
-            pixel_normalized = (pixel[0] / pixel_avg, pixel[1] / pixel_avg, pixel[2] / pixel_avg)
-            if (pixel_normalized[0] < THRES and pixel_normalized[1] < THRES and pixel_normalized[2] < THRES):
-                return False
-            else:
-                print(True)
-                return True
-        else:
-            return False
-    else:
-        # Clear if the whole block is made of background color
-        for key in color_dict:
-            pixel = (int(key[0]), int(key[1]), int(key[2]))
-            pixel_avg = (pixel[0] + pixel[1] + pixel[2]) / 3.0
-            if (pixel_avg == 0): pixel_avg = 1;
-            pixel_normalized = (pixel[0] / pixel_avg, pixel[1] / pixel_avg, pixel[2] / pixel_avg)
-            if (pixel_normalized[0] < THRES and pixel_normalized[1] < THRES and pixel_normalized[2] < THRES):
-                return False
-        print(True)
+    # Blue
+    hsv_img = cv.cvtColor(img, cv.COLOR_BGR2HSV)
+    frame_threshed = cv.inRange(hsv_img, BLUE_MIN, BLUE_MAX)
+
+    # check whether this rectangle contains similar color
+    for points_index in range(0, len(list_of_points_indices)):
+        point = list_of_points_indices[points_index]
+        if (frame_threshed[point[0], point[1]] == 255):
+            qualified += 1
+    success_blue = qualified / len(list_of_points_indices)
+    qualified = 0
+    # cv.imshow('frame_threshed', frame_threshed)
+    # cv.waitKey(0)
+    # cv.destroyAllWindows()
+
+    # Yellow
+    hsv_img = cv.cvtColor(img, cv.COLOR_BGR2HSV)
+    frame_threshed = cv.inRange(hsv_img, YELLOW_MIN, YELLOW_MAX)
+
+    # check whether this rectangle contains similar color
+    for points_index in range(0, len(list_of_points_indices)):
+        point = list_of_points_indices[points_index]
+        if (frame_threshed[point[0], point[1]] == 255):
+            qualified += 1
+    success_yellow = qualified / len(list_of_points_indices)
+    qualified = 0
+    # cv.imshow('frame_threshed', frame_threshed)
+    # cv.waitKey(0)
+    # cv.destroyAllWindows()
+
+    # Green
+    hsv_img = cv.cvtColor(img, cv.COLOR_BGR2HSV)
+    frame_threshed = cv.inRange(hsv_img, GREEN_MIN, GREEN_MAX)
+
+    # check whether this rectangle contains similar color
+    for points_index in range(0, len(list_of_points_indices)):
+        point = list_of_points_indices[points_index]
+        if (frame_threshed[point[0], point[1]] == 255):
+            qualified += 1
+    success_green = qualified / len(list_of_points_indices)
+    # cv.imshow('frame_threshed', frame_threshed)
+    # cv.waitKey(0)
+    # cv.destroyAllWindows()
+
+    print("RED" + str(success_red))
+    print("BLUE" + str(success_blue))
+    print("GREEN" + str(success_green))
+    print("YELLOW" + str(success_yellow))
+    if(success_red > COLOR_MAJOR_RATE or  success_blue > COLOR_MAJOR_RATE or success_green > COLOR_MAJOR_RATE \
+        or success_yellow > COLOR_MAJOR_RATE):
+        print("TRUE")
         return True
+    return  False
 
 
 def clear_fake_block(block, img):
     result = []
     length = len(block)
     count = 0
+    prev_percentage = 0
     for intersections in block:
         lines = []
         line_test = []
@@ -826,16 +853,104 @@ def clear_fake_block(block, img):
             # cv.destroyAllWindows()
         if(len(line_test) == 4): result.append(intersections)
         count += 1
-        print(str(round(count/length*100)) + "%")
+        if(round(count/length*100) != prev_percentage):
+            print(str(round(count/length*100)) + "%")
+        prev_percentage = round(count/length*100)
     return result
 
-def expand(vertexes):
+
+def expand(vertexes, img):
     [top_left, bottom_left, top_right, bottom_right] = vertexes
     result = []
-    result.append((top_left[0] - RANGE_EXPAND, top_left[1] - RANGE_EXPAND))
-    result.append((bottom_left[0] - RANGE_EXPAND, bottom_left[1] + RANGE_EXPAND))
-    result.append((top_right[0] + RANGE_EXPAND, top_right[1] - RANGE_EXPAND))
-    result.append((bottom_right[0] + RANGE_EXPAND, bottom_right[1] + RANGE_EXPAND))
+
+    # Pad rectangles
+    L = img.shape[1]
+    H = img.shape[0]
+    matrix = np.zeros((L+RANGE_EXPAND*2, H+RANGE_EXPAND*2), dtype=np.uint8)
+    pts = np.array([top_left, top_right, bottom_right, bottom_left], np.int32)
+    pts = pts.reshape((-1, 1, 2))
+    cv.fillConvexPoly(matrix, pts, (255))
+    cv.line(matrix, (top_left[0], top_left[1]), (bottom_left[0], bottom_left[1]), (255), RANGE_EXPAND, cv.LINE_AA)
+    cv.line(matrix, (top_left[0], top_left[1]), (top_right[0], top_right[1]), (255), RANGE_EXPAND, cv.LINE_AA)
+    cv.line(matrix, (bottom_right[0], bottom_right[1]), (bottom_left[0], bottom_left[1]), (255), RANGE_EXPAND,cv.LINE_AA)
+    cv.line(matrix, (top_right[0], top_right[1]), (bottom_right[0], bottom_right[1]), (255), RANGE_EXPAND, cv.LINE_AA)
+
+    # Find lines
+    edges = cv.Canny(matrix, CANNY_EDGE_LOWER_THRES, CANNY_EDGE_UPPER_THRES)
+    linesP = cv.HoughLinesP(edges, 1, np.pi / 180, NUMBER_OF_INTERSECTION, None, MIN_LINE_LENGTH, MAX_LINE_GAP)
+    lines = []
+    edges_BGR = cv.cvtColor(edges, cv.COLOR_GRAY2BGR)
+    if linesP is not None:
+        for i in range(0, len(linesP)):
+            l = linesP[i][0]
+            l_extend = extend(l)
+            l_extend = list(l_extend)
+            lines.append(l_extend)
+            cv.line(edges_BGR, (l_extend[0], l_extend[1]), (l_extend[2], l_extend[3]), (255), 1, cv.LINE_AA)
+
+    # find intersections
+    intersections = []
+    for line in lines:
+        if (line[3] - line[1] == 0):
+            angle = 90
+        else:
+            angle = round(math.atan((line[2] - line[0]) / (line[3] - line[1])) * 180.0 / np.pi)
+        for line_to_compare in lines:
+            if(line != line_to_compare):
+                if (line_to_compare[3] - line_to_compare[1] == 0):
+                    angle_compare = 90
+                else:
+                    angle_compare = round(math.atan((line_to_compare[2] - line_to_compare[0]) / (line_to_compare[3] - line_to_compare[1])) * 180.0 / np.pi)
+                threshold_value = abs(angle - angle_compare)
+                if (threshold_value > 90 - PERPENDICULAR_THRES and threshold_value < 90 + PERPENDICULAR_THRES):
+                    intersection_result = intersectLines(line, line_to_compare)
+                    if(intersection_result[2] == 1):
+                        intersections.append((intersection_result[0], intersection_result[1]))
+
+    # Merge intersections
+    intersection_dict = dict()
+    for intersection in intersections:
+        new_flag = 1
+        for key in intersection_dict:
+            if(distance(key[0],intersection[0],key[1],intersection[1]) < 10):
+                new_flag = 0
+        if(new_flag == 1):
+            intersection_dict[intersection] = 0
+            result.append(intersection)
+
+    # sort it
+    result.sort(key=itemgetter(0))
+    left = [result[0], result[1]]
+    right = [result[2], result[3]]
+
+    if (left[0][1] > right[0][1] and left[0][1] > right[1][1] and \
+            left[1][1] > right[0][1] and left[1][1] > right[1][1]):
+        top_left = right[0]
+        top_right = right[1]
+        bottom_left = left[0]
+        bottom_right = left[1]
+    elif (left[0][1] < right[0][1] and left[0][1] < right[1][1] and \
+          left[1][1] < right[0][1] and left[1][1] < right[1][1]):
+        top_left = left[0]
+        top_right = left[1]
+        bottom_left = right[0]
+        bottom_right = right[1]
+    else:
+        if (left[0][1] > left[1][1]):
+            top_left = left[1]
+            bottom_left = left[0]
+        else:
+            top_left = left[0]
+            bottom_left = left[1]
+
+        if (right[0][1] > right[1][1]):
+            top_right = right[1]
+            bottom_right = right[0]
+        else:
+            top_right = right[0]
+            bottom_right = right[1]
+
+    result = [top_left, bottom_left, top_right, bottom_right]
     return result
 
 
@@ -868,6 +983,8 @@ def check(x1, y1, x2, y2, x3, y3, x4, y4, x, y):
 
     # Check if sum of A1, A2, A3
     # and A4 is same as A
+    print(A)
+    print(A1 + A2 + A3 + A4)
     if(abs(A - A1 - A2 - A3 - A4) < INSIDE_THRESHOLD):
         return True
     return False
@@ -894,18 +1011,64 @@ def add_color(top_left, bottom_left, top_right, bottom_right, img):
             if (matrix[i, j] != 0):
                 list_of_points_indices.append((i, j))
 
-    pixel_1 = 0
-    pixel_2 = 0
-    pixel_3 = 0
+    # determine its color
+    qualified = 0
+    # Red
+    hsv_img = cv.cvtColor(img, cv.COLOR_BGR2HSV)
+    frame_threshed_1 = cv.inRange(hsv_img, RED_MIN_LOW, RED_MAX_LOW)
+    frame_threshed_2 = cv.inRange(hsv_img, RED_MIN_HIGH, RED_MAX_HIGH)
+    frame_threshed = frame_threshed_1 + frame_threshed_2
+
     # check whether this rectangle contains similar color
-    for points_index in range(0,len(list_of_points_indices)):
+    for points_index in range(0, len(list_of_points_indices)):
         point = list_of_points_indices[points_index]
-        pixel = img[point[0], point[1]]
-        pixel_1 += int(pixel[0])
-        pixel_2 += int(pixel[1])
-        pixel_3 += int(pixel[2])
-    return (int(pixel_1/len(list_of_points_indices)), int(pixel_2/len(list_of_points_indices)), \
-                int(pixel_3/len(list_of_points_indices)))
+        if (frame_threshed[point[0], point[1]] == 255):
+            qualified += 1
+    success_red = qualified / len(list_of_points_indices)
+    qualified = 0
+
+    # Blue
+    hsv_img = cv.cvtColor(img, cv.COLOR_BGR2HSV)
+    frame_threshed = cv.inRange(hsv_img, BLUE_MIN, BLUE_MAX)
+
+    # check whether this rectangle contains similar color
+    for points_index in range(0, len(list_of_points_indices)):
+        point = list_of_points_indices[points_index]
+        if (frame_threshed[point[0], point[1]] == 255):
+            qualified += 1
+    success_blue = qualified / len(list_of_points_indices)
+    qualified = 0
+
+    # Yellow
+    hsv_img = cv.cvtColor(img, cv.COLOR_BGR2HSV)
+    frame_threshed = cv.inRange(hsv_img, YELLOW_MIN, YELLOW_MAX)
+
+    # check whether this rectangle contains similar color
+    for points_index in range(0, len(list_of_points_indices)):
+        point = list_of_points_indices[points_index]
+        if (frame_threshed[point[0], point[1]] == 255):
+            qualified += 1
+    success_yellow = qualified / len(list_of_points_indices)
+    qualified = 0
+
+    # Green
+    hsv_img = cv.cvtColor(img, cv.COLOR_BGR2HSV)
+    frame_threshed = cv.inRange(hsv_img, GREEN_MIN, GREEN_MAX)
+
+    # check whether this rectangle contains similar color
+    for points_index in range(0, len(list_of_points_indices)):
+        point = list_of_points_indices[points_index]
+        if (frame_threshed[point[0], point[1]] == 255):
+            qualified += 1
+    success_green = qualified / len(list_of_points_indices)
+
+    color = [success_red, success_blue, success_yellow, success_green]
+    max_color = color.index(max(color))
+    if(max_color == 0): return "RED"
+    elif(max_color == 1): return "BLUE"
+    elif(max_color == 2): return "YELLOW"
+    else: return "GREEN"
+
 
 '''
 Pipeline to find block
@@ -936,9 +1099,9 @@ def detect_stack(edges, img, stack, stack_color_dict, area_of_previous_level):
             extend_line_map_line[index_dict] = l
             index_dict += 1
             cv.line(edges_BGR, (l[0], l[1]), (l[2], l[3]), (0, 255, 0), 1, cv.LINE_AA)
-    cv.imshow('hough', edges_BGR)
-    cv.waitKey(0)
-    cv.destroyAllWindows()
+    # cv.imshow('hough', edges_BGR)
+    # cv.waitKey(0)
+    # cv.destroyAllWindows()
 
     # [(line_index, angle) : [line,line,line], ...]
     parallel_line_group = angle_approximation(lines)
@@ -999,18 +1162,21 @@ def detect_stack(edges, img, stack, stack_color_dict, area_of_previous_level):
 
     # Check the color of the block
     block = []
+
     for block_to_check in result:
         top_left = block_to_check[0]
         bottom_left = block_to_check[1]
         top_right = block_to_check[2]
         bottom_right = block_to_check[3]
 
-        img_display = img.copy()
-        cv.circle(img_display, top_left, 2, (255, 255, 0), 10)
-        cv.circle(img_display, bottom_left, 2, (255, 255, 0), 10)
-        cv.circle(img_display, top_right, 2, (255, 255, 0), 10)
-        cv.circle(img_display, bottom_right, 2, (255, 255, 0), 10)
-        cv.imshow('img', img_display)
+        # img_display = img.copy()
+        # cv.circle(img_display, top_left, 2, (255, 255, 0), 10)
+        # cv.circle(img_display, bottom_left, 2, (255, 255, 0), 10)
+        # cv.circle(img_display, top_right, 2, (255, 255, 0), 10)
+        # cv.circle(img_display, bottom_right, 2, (255, 255, 0), 10)
+        # cv.imshow('img', img_display)
+        # cv.waitKey(0)
+        # cv.destroyAllWindows()
 
         if(check_inside_color(top_left, bottom_left, top_right, bottom_right, img)):
             block.append(block_to_check)
@@ -1021,48 +1187,59 @@ def detect_stack(edges, img, stack, stack_color_dict, area_of_previous_level):
         for intersection in block:
             result.append(intersection)
         return result
+    print(block)
+
     result = block.copy()
     for intersections in stack:
+        # img_display = img.copy()
         vertexes = [intersections[0], intersections[1], intersections[2], intersections[3]]
         color_stack = stack_color_dict[(vertexes[0],vertexes[1],vertexes[2],vertexes[3])]
-        vertexes = expand(vertexes)
+        # cv.circle(img_display, intersections[0], 2, (0, 255, 255), 10)
+        # cv.circle(img_display, intersections[1], 2, (0, 255, 255), 10)
+        # cv.circle(img_display, intersections[2], 2, (0, 255, 255), 10)
+        # cv.circle(img_display, intersections[3], 2, (0, 255, 255), 10)
+        # cv.imshow('img', img_display)
+        # cv.waitKey(0)
+        # cv.destroyAllWindows()
+        vertexes = expand(vertexes,img)
         for block_check in block:
             if(block_check in result):
-
-                img_display = img.copy()
-                cv.circle(img_display, block_check[0], 2, (255, 255, 0), 10)
-                cv.circle(img_display, block_check[1], 2, (255, 255, 0), 10)
-                cv.circle(img_display, block_check[2], 2, (255, 255, 0), 10)
-                cv.circle(img_display, block_check[3], 2, (255, 255, 0), 10)
-                cv.imshow('img', img_display)
-                cv.waitKey(0)
-                cv.destroyAllWindows()
-
-                remove_flag = 1
-                (x1, y1) = (vertexes[0][0], vertexes[0][1])
-                (x2, y2) = (vertexes[1][0], vertexes[1][1])
-                (x3, y3) = (vertexes[2][0], vertexes[2][1])
-                (x4, y4) = (vertexes[3][0], vertexes[3][1])
+                # cv.circle(img_display, block_check[0], 2, (255, 255, 0), 10)
+                # cv.circle(img_display, block_check[1], 2, (255, 255, 0), 10)
+                # cv.circle(img_display, block_check[2], 2, (255, 255, 0), 10)
+                # cv.circle(img_display, block_check[3], 2, (255, 255, 0), 10)
+                # cv.imshow('img', img_display)
+                # cv.waitKey(0)
+                # cv.destroyAllWindows()
                 area_check = (area(block_check[0][0], block_check[0][1], block_check[1][0], block_check[1][1], \
-                                block_check[3][0], block_check[3][1]) + area(block_check[0][0], \
-                                block_check[0][1], block_check[2][0], block_check[2][1], \
-                                block_check[3][0], block_check[3][1]))
+                                block_check[3][0], block_check[3][1]) + area(block_check[0][0], block_check[0][1], \
+                                block_check[2][0], block_check[2][1],block_check[3][0], block_check[3][1]))
+
                 print(area_check, area_of_previous_level)
-                for vertex in block_check:
-                    (x,y) = vertex
-                    if(not check(x1, y1, x2, y2, x3, y3, x4, y4, x, y)):
-                        remove_flag = 0
-                if(remove_flag == 1 and block_check in result):
-                    color_block_check = add_color(block_check[0], block_check[1], \
-                                    block_check[2], block_check[3], img)
-                    # print(color_block_check)
-                    # print(color_stack)
-                    error = math.sqrt((color_stack[0] - color_block_check[0]) ** 2 + \
-                        (color_stack[1] - color_block_check[1]) ** 2 + (color_stack[2] - color_block_check[2]) ** 2)
-                    # print(error)
+                if (abs(area_check - area_of_previous_level) > DIFF_AREA_THRES):
+                    result.remove(block_check)
+                else:
+                    remove_flag = 1
+                    (x1, y1) = (vertexes[0][0], vertexes[0][1])
+                    (x2, y2) = (vertexes[1][0], vertexes[1][1])
+                    (x3, y3) = (vertexes[2][0], vertexes[2][1])
+                    (x4, y4) = (vertexes[3][0], vertexes[3][1])
+                    print("stack")
+                    print(x1, y1, x2, y2, x3, y3, x4, y4)
+
                     print(area_check, area_of_previous_level)
-                    if (error < DIFF_COLOR_THRES or abs(area_check - area_of_previous_level) > DIFF_AREA_THRES):
-                        result.remove(block_check)
+                    for vertex in block_check:
+                        (x,y) = vertex
+                        print("check point")
+                        print(x, y)
+                        if(not check(x1, y1, x2, y2, x3, y3, x4, y4, x, y)):
+                            remove_flag = 0
+                    if(remove_flag == 1 and block_check in result):
+                        color_block_check = add_color(block_check[0], block_check[1], \
+                                        block_check[2], block_check[3], img)
+                        print(color_block_check,color_stack)
+                        if(color_stack == color_block_check):
+                            result.remove(block_check)
     return result
 
 '''
@@ -1260,7 +1437,7 @@ def draw_result(img, block):
 '''
 Main function
 '''
-def pipeline(image_name, stack, stack_color_dict, area_of_previous_level, save_path):
+def pipeline(image_name, stack, stack_color_dict, area_of_previous_level, save_path, save_txt_path, altitude):
     # process images
     img = cv.imread(image_name)
 
@@ -1273,6 +1450,7 @@ def pipeline(image_name, stack, stack_color_dict, area_of_previous_level, save_p
     block = detect_stack(edges, img_show, stack, stack_color_dict, area_of_previous_level)
     for block_add in block:
         stack.append(block_add)
+        output_coordinates(block_add, save_txt_path, altitude)
         stack_color_dict[(block_add[0], block_add[1], block_add[2], block_add[3])] = \
             add_color(block_add[0], block_add[1], block_add[2], block_add[3], img_show)
         (x1, y1) = (block_add[0][0], block_add[0][1])
@@ -1284,6 +1462,41 @@ def pipeline(image_name, stack, stack_color_dict, area_of_previous_level, save_p
     draw_result(img_show, block)
     cv.imwrite(save_path, img_show)
     return [stack, stack_color_dict, area_of_this_level]
+
+def output_coordinates(intersections, save_txt_path, altitude):
+    result = dict()
+    index = 0
+    center = (round(sum(x for x, y in intersections) / 4.0), round(sum(y for x, y in intersections) / 4.0))
+    top_left = intersections[0]
+    bottom_left = intersections[1]
+    top_right = intersections[2]
+    bottom_right = intersections[3]
+
+    width = distance(top_left[0], bottom_left[0], top_left[1], bottom_left[1])
+    height = distance(top_left[0], top_right[0], top_left[1], top_right[1])
+
+    if (width > height):
+        if (bottom_left[1] - top_left[1] == 0):
+            roll = 90
+        else:
+            roll = round(math.atan((bottom_left[0] - top_left[0]) / (bottom_left[1] - top_left[1])) * 180.0 / np.pi)
+    else:
+        if (bottom_right[1] - top_right[1] == 0):
+            roll = 90
+        else:
+            roll = round(math.atan((top_left[0] - top_right[0]) / (top_left[1] - top_right[1])) * 180.0 / np.pi)
+    pitch = 0
+    yaw = 0
+    height = altitude
+    result[index] = [center, height, roll, pitch, yaw]
+    index += 1
+
+    save_file = open(save_txt_path, "a+")
+    save_file.write("new level\n")
+    for key in result:
+        save_file.write(str(key) + ":" + ','.join(map(str, result[key])) + "\n")
+    save_file.close()
+    return result
 
 def main():
     # get argument
@@ -1298,12 +1511,14 @@ def main():
     area_of_previous_level = 0
 
     # run pipeline
-    [stack, stack_color_dict, area_of_previous_level] = pipeline(image_name1, stack, stack_color_dict, \
-                                                                area_of_previous_level, "stack_leve1.jpg")
-    # [stack, stack_color_dict, area_of_previous_level] = pipeline(image_name2, stack, stack_color_dict,
-    #                                                              area_of_previous_level, "stack_leve2.jpg")
-    # [stack, stack_color_dict, area_of_previous_level] = pipeline(image_name3, stack, stack_color_dict,
-    #                                                              area_of_previous_level, "stack_leve3.jpg")
-    # [stack, stack_color_dict, area_of_previous_level] = pipeline(image_name4, stack, stack_color_dict,
-    #                                                              area_of_previous_level, "stack_leve4.jpg")
+    [stack, stack_color_dict, area_of_previous_level] = pipeline(image_name1, stack, stack_color_dict,
+                                                area_of_previous_level, "stack_level1.jpg", "stack.txt", 0.635)
+
+    [stack, stack_color_dict, area_of_previous_level] = pipeline(image_name2, stack, stack_color_dict,
+                                                area_of_previous_level, "stack_level2.jpg", "stack.txt", 0.635*2)
+
+    [stack, stack_color_dict, area_of_previous_level] = pipeline(image_name3, stack, stack_color_dict,
+                                                area_of_previous_level, "stack_level3.jpg", "stack.txt", 0.635*3)
+
+    pipeline(image_name4, stack, stack_color_dict,area_of_previous_level, "stack_level4.jpg", "stack.txt", 0.635*4)
 main()

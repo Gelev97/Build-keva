@@ -68,4 +68,4 @@ def end_effector(thetas):
     ee = [x,y,z,roll,pitch,yaw]
     return ee
 
-print(end_effector([90,0,0,0,0]))
+print(end_effector([0,0,0,0,0]))

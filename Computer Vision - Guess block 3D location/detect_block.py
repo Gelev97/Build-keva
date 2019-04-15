@@ -6,7 +6,7 @@ from operator import itemgetter
 
 SPECIFIC_AREA = [590, 30, 590, 80, 745, 53, 747, 87]
 
-PARAM_LIST = "./Params/TestMany_Param.txt"
+PARAM_LIST = "./Params/Test3_Param.txt"
 
 # Load Params
 param_groups = []
@@ -685,6 +685,7 @@ def clear_fake_block(block, img):
     result = []
     length = len(block)
     count = 0
+    prev_percentage = 0
     for intersections in block:
         lines = []
         line_test = []
@@ -764,7 +765,9 @@ def clear_fake_block(block, img):
         # cv.destroyAllWindows()
         if(len(line_test) == 4): result.append(intersections)
         count += 1
-        print(str(round(count/length*100)) + "%")
+        if (round(count / length * 100) != prev_percentage):
+            print(str(round(count / length * 100)) + "%")
+        prev_percentage = round(count / length * 100)
     return result
 
 '''
@@ -1049,6 +1052,43 @@ def draw_result(img, block):
     cv.waitKey(0)
     cv.destroyAllWindows()
 
+
+'''
+Pipeline
+'''
+def output_coordinates(block, save_path):
+    result = dict()
+    index = 0
+    for intersections in block:
+        center = (round(sum(x for x, y in intersections) / 4.0), round(sum(y for x, y in intersections) / 4.0))
+        top_left = intersections[0]
+        bottom_left = intersections[1]
+        top_right = intersections[2]
+        bottom_right = intersections[3]
+
+        width = distance(top_left[0], bottom_left[0], top_left[1], bottom_left[1])
+        height = distance(top_left[0], top_right[0], top_left[1], top_right[1])
+
+        if (width > height):
+            if (bottom_left[1] - top_left[1] == 0):
+                roll = 90
+            else:
+                roll = round(math.atan((bottom_left[0] - top_left[0]) / (bottom_left[1] - top_left[1])) * 180.0 / np.pi)
+        else:
+            if (bottom_right[1] - top_right[1] == 0):
+                roll = 90
+            else:
+                roll = round(math.atan((top_left[0] - top_right[0]) / (top_left[1] - top_right[1])) * 180.0 / np.pi)
+        pitch = 0
+        yaw = 0
+        height = 0
+        result[index] = [center, height, roll, pitch, yaw]
+        index += 1
+    save_file = open(save_path, "w")
+    for key in result:
+        save_file.write(str(key) + ":" + ','.join(map(str, result[key])) + "\n")
+    return result
+
 '''
 Main function
 '''
@@ -1062,6 +1102,8 @@ def main():
     #detect block and find their places
     block = detect_block(edges, img)
     draw_result(img, block)
-    cv.imwrite('test_many.png', img)
+    cv.imwrite("test_3.jpg", img)
+    # center, height, roll, pitch, yaw
+    output_coordinates(block,"test_3.txt")
 
 main()
