@@ -494,9 +494,9 @@ int main( int argc, char **argv )
   angles_d[ 4 ] = 500;
   angles_d[ 5 ] = 513;
   angles_d[ 6 ] = 500;
-  system("./UscCmd --servo 3,4000");
-  system("./UscCmd --servo 5,3000");
   set_angles_and_wait( fd, angles_d );
+  system("./UscCmd --servo 3,4000");
+  system("./UscCmd --servo 5,4000");
 
 
   // straight up (roughly)
@@ -521,8 +521,14 @@ int main( int argc, char **argv )
   angles_d[ 5 ] = 560;
   angles_d[ 6 ] = 258;
   set_angles_and_wait( fd, angles_d );
-  system("./UscCmd --servo 3,8000");
-  system("./UscCmd --servo 5,3000");
+  system("./UscCmd --servo 3,7500");
+  system("./UscCmd --servo 5,4000");
+  
+  angles_d[ 4 ] = 500;
+  angles_d[ 5 ] = 513;
+  angles_d[ 6 ] = 500;
+  set_angles_and_wait( fd, angles_d );
+  
   close(fd);
   
   return 0;
