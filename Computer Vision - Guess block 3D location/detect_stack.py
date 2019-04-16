@@ -1512,13 +1512,14 @@ def main():
 
     # run pipeline
     [stack, stack_color_dict, area_of_previous_level] = pipeline(image_name1, stack, stack_color_dict,
-                                                area_of_previous_level, "stack_level1.jpg", "stack.txt", 0.635)
+                                                area_of_previous_level, "stack3_level1.jpg", "stack3.txt", 0.7)
 
     [stack, stack_color_dict, area_of_previous_level] = pipeline(image_name2, stack, stack_color_dict,
-                                                area_of_previous_level, "stack_level2.jpg", "stack.txt", 0.635*2)
+                                                area_of_previous_level, "stack3_level2.jpg", "stack3.txt", 0.7*2)
 
     [stack, stack_color_dict, area_of_previous_level] = pipeline(image_name3, stack, stack_color_dict,
-                                                area_of_previous_level, "stack_level3.jpg", "stack.txt", 0.635*3)
+                                                area_of_previous_level, "stack3_level3.jpg", "stack3.txt", 0.7*3)
 
-    pipeline(image_name4, stack, stack_color_dict,area_of_previous_level, "stack_level4.jpg", "stack.txt", 0.635*4)
+    pipeline(image_name4, stack, stack_color_dict,area_of_previous_level, "stack3_level4.jpg", "stack3.txt", 0.7*4)
+
 main()

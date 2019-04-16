@@ -12,7 +12,7 @@ DOF = 5
 
 # DH PARAM
 a_arr = [0,LINK_2,LINK_3,0,0]
-alpha_arr = [-90,0,0,-90,0]
+alpha_arr = [90,0,0,-90,0]
 d_arr = [LINK_1,0,0,0,LINK_4]
 theta_arr = [0,0,0,0,0]
 
