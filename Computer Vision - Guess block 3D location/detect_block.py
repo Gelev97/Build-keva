@@ -1075,7 +1075,7 @@ def output_coordinates(block, save_path):
             else:
                 roll = round(math.atan((bottom_left[0] - top_left[0]) / (bottom_left[1] - top_left[1])) * 180.0 / np.pi)
         else:
-            if (bottom_right[1] - top_right[1] == 0):
+            if (top_left[1] - top_right[1] == 0):
                 roll = 90
             else:
                 roll = round(math.atan((top_left[0] - top_right[0]) / (top_left[1] - top_right[1])) * 180.0 / np.pi)
