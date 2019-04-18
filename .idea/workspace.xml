@@ -2,11 +2,7 @@
 <project version="4">
   <component name="ChangeListManager">
     <list default="true" id="c44b08b5-b55f-4503-a123-40ff5800eb1a" name="Default" comment="">
-      <change beforePath="$PROJECT_DIR$/.idea/Build-keva.iml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/Build-keva.iml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/.idea/misc.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/misc.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/Arm/Move_block/Kinematics.py" beforeDir="false" afterPath="$PROJECT_DIR$/Arm/Move_block/Kinematics.py" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/Computer Vision - Guess block 3D location/detect_stack.py" beforeDir="false" afterPath="$PROJECT_DIR$/Computer Vision - Guess block 3D location/detect_stack.py" afterDir="false" />
     </list>
     <option name="EXCLUDED_CONVERTED_TO_IGNORED" value="true" />
     <option name="SHOW_DIALOG" value="false" />
@@ -40,11 +36,20 @@
       <file pinned="false" current-in-tab="true">
         <entry file="file://$PROJECT_DIR$/Arm/Move_block/Kinematics.py">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="488">
-              <caret line="120" selection-start-line="120" selection-end-line="120" />
+            <state relative-caret-position="603">
+              <caret line="146" column="28" selection-start-line="146" selection-start-column="28" selection-end-line="146" selection-end-column="28" />
               <folding>
                 <element signature="e#0#18#0" expanded="true" />
               </folding>
+            </state>
+          </provider>
+        </entry>
+      </file>
+      <file pinned="false" current-in-tab="false">
+        <entry file="file://$PROJECT_DIR$/../anaconda3/envs/16264/lib/python3.7/site-packages/scipy/interpolate/_fitpack_impl.py">
+          <provider selected="true" editor-type-id="text-editor">
+            <state relative-caret-position="225">
+              <caret line="246" column="18" selection-start-line="246" selection-start-column="17" selection-end-line="246" selection-end-column="18" />
             </state>
           </provider>
         </entry>
@@ -415,12 +420,12 @@
       <workItem from="1555385652536" duration="16647000" />
       <workItem from="1555513628195" duration="12259000" />
       <workItem from="1555545553660" duration="656000" />
-      <workItem from="1555550918305" duration="6168000" />
+      <workItem from="1555550918305" duration="8170000" />
     </task>
     <servers />
   </component>
   <component name="TimeTrackingManager">
-    <option name="totallyTimeSpent" value="282298000" />
+    <option name="totallyTimeSpent" value="284300000" />
   </component>
   <component name="ToolWindowManager">
     <frame x="0" y="0" width="1280" height="800" extended-state="0" />
@@ -439,7 +444,7 @@
       <window_info anchor="bottom" id="Database Changes" order="7" show_stripe_button="false" />
       <window_info anchor="bottom" id="Terminal" order="8" />
       <window_info anchor="bottom" id="Event Log" order="9" sideWeight="0.50080776" side_tool="true" weight="0.32905984" />
-      <window_info anchor="bottom" id="Version Control" order="10" weight="0.32972974" />
+      <window_info anchor="bottom" id="Version Control" order="10" weight="0.32876712" />
       <window_info anchor="bottom" id="Python Console" order="11" />
       <window_info anchor="bottom" id="Concurrent Activities Diagram" order="12" weight="0.32948422" />
       <window_info anchor="right" id="Commander" order="0" weight="0.4" />
@@ -447,7 +452,7 @@
       <window_info anchor="right" content_ui="combo" id="Hierarchy" order="2" weight="0.25" />
       <window_info anchor="right" id="SciView" order="3" weight="0.6602103" />
       <window_info anchor="right" id="Database" order="4" weight="0.32982844" />
-      <window_info active="true" anchor="right" id="Run" order="5" sideWeight="0.49919224" visible="true" weight="0.38206786" />
+      <window_info anchor="right" id="Run" order="5" sideWeight="0.49919224" weight="0.33602583" />
     </layout>
     <layout-to-restore>
       <window_info content_ui="combo" id="Project" order="0" weight="0.20309906" />
@@ -481,10 +486,9 @@
     <SUITE FILE_PATH="coverage/Build_keva$detect_stack1.coverage" NAME="detect_stack1 Coverage Results" MODIFIED="1555457421969" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="coverage.py" COVERAGE_BY_TEST_ENABLED="true" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="$PROJECT_DIR$/Computer Vision - Guess block 3D location" />
     <SUITE FILE_PATH="coverage/Build_keva$detect_stack.coverage" NAME="detect_stack Coverage Results" MODIFIED="1555545872773" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="coverage.py" COVERAGE_BY_TEST_ENABLED="true" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="$PROJECT_DIR$/Computer Vision - Guess block 3D location" />
     <SUITE FILE_PATH="coverage/Build_keva$detect_block.coverage" NAME="detect_block Coverage Results" MODIFIED="1555338330727" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="coverage.py" COVERAGE_BY_TEST_ENABLED="true" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="$PROJECT_DIR$/Computer Vision - Guess block 3D location" />
-    <SUITE FILE_PATH="coverage/Build_keva$Kinematics.coverage" NAME="Kinematics Coverage Results" MODIFIED="1555600721275" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="coverage.py" COVERAGE_BY_TEST_ENABLED="true" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="$PROJECT_DIR$/Arm/Move_block" />
+    <SUITE FILE_PATH="coverage/Build_keva$Kinematics.coverage" NAME="Kinematics Coverage Results" MODIFIED="1555606135399" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="coverage.py" COVERAGE_BY_TEST_ENABLED="true" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="$PROJECT_DIR$/Arm/Move_block" />
   </component>
   <component name="editorHistoryManager">
-    <entry file="file://$PROJECT_DIR$/Computer Vision - Guess block 3D location/Params/Test1_3_Param.txt" />
     <entry file="file://$PROJECT_DIR$/Computer Vision - Guess block 3D location/test_3.png" />
     <entry file="file://$PROJECT_DIR$/Computer Vision - Guess block 3D location/Params/Test4_Param.txt">
       <provider selected="true" editor-type-id="text-editor">
@@ -640,10 +644,17 @@
         </state>
       </provider>
     </entry>
+    <entry file="file://$PROJECT_DIR$/../anaconda3/envs/16264/lib/python3.7/site-packages/scipy/interpolate/_fitpack_impl.py">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="225">
+          <caret line="246" column="18" selection-start-line="246" selection-start-column="17" selection-end-line="246" selection-end-column="18" />
+        </state>
+      </provider>
+    </entry>
     <entry file="file://$PROJECT_DIR$/Arm/Move_block/Kinematics.py">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="488">
-          <caret line="120" selection-start-line="120" selection-end-line="120" />
+        <state relative-caret-position="603">
+          <caret line="146" column="28" selection-start-line="146" selection-start-column="28" selection-end-line="146" selection-end-column="28" />
           <folding>
             <element signature="e#0#18#0" expanded="true" />
           </folding>

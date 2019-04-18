@@ -94,7 +94,7 @@ def inverse_kinematics(x,y,z,roll):
     bound = [[0, math.pi], [0, math.pi], [0, math.pi] \
         , [0, math.pi / 2], [-math.pi / 4, math.pi / 4]]
 
-    res = optimize.differential_evolution(func=error, args=(x, y, z, roll), bounds=bound)
+    res = optimize.differential_evolution(func=error, args=(x, y, z, roll), bounds=bound, disp=False)
     result = res.x
     return np.around(np.array(result), decimals=3)
 
@@ -119,9 +119,31 @@ def end_effector(thetas):
     # ee = [x,y,z,roll,pitch,yaw]
     return ee
 
-print(end_effector([0,math.pi/2,math.pi/2,0,0]))
-result = inverse_kinematics(50.0,20.0,52.1,0)
-print(result)
-print(end_effector(result))
+# Spline trajectory
+def create_trajecotry(current_position, goal_position):
+    x = np.array([current_position[0], goal_position[0]])
+    y = np.array([current_position[1], goal_position[1]])
+    z = np.array([current_position[2], goal_position[2]])
+    current_position = [x,y,z]
+
+    result = interpolate.splprep(current_position, s=0, k = 1)
+    x_i,y_i,z_i = interpolate.splev(np.linspace(0,1,10),result[0])
+    trajectory = np.zeros((len(x_i),3))
+    for index in range(0, len(x_i)):
+        trajectory[index] = [x_i[index], y_i[index], z_i[index]]
+    print(trajectory)
+    return trajectory
+
+# print(end_effector([0,math.pi/2,math.pi/2,0,0]))
+# result = inverse_kinematics(50.0,20.0,52.1,0)
+# print(result)
+# print(end_effector(result))
+trajecotry = create_trajecotry([0,0,0], [1,1,1])
+angle_group = []
+for waypoint in trajecotry:
+    result = inverse_kinematics(waypoint[0], waypoint[1], waypoint[2], 0)
+    angle_group.append(result)
+for angle in angle_group:
+    print(end_effector(angle))
 
 
