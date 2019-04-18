@@ -59,7 +59,7 @@ def forward_kinematics(thetas):
 
     # Calculate the Second frame
     theta = thetas[1]
-    frames[1] =  np.matmul(np.matmul(frames[0], trans_z(LINK_1+BASE_HEIGHT)), rotation_y(theta))
+    frames[1] =  np.matmul(np.matmul(frames[0], trans_z(LINK_1+BASE_HEIGHT)), rotation_y(-theta))
 
     # Calculate the third frame
     theta = thetas[2]
@@ -80,25 +80,23 @@ def forward_kinematics(thetas):
     return frames
 
 # Inverser Kinmatics
-def inverse_kinematics(goal_position, initial_theta):
-    def error_function(theta):
+def inverse_kinematics(x,y,z,roll):
+    def error(theta, x, y, z, roll):
+        goal_position = [x, y, z, roll]
         actual_pos = end_effector(theta)
-        actual_position = actual_pos[0:3]
-        err = sum((np.array(goal_position) - np.array(actual_position))**2)
+        actual_position = actual_pos[0:4]
+        # print(goal_position)
+        # err = np.sqrt(sum((np.array(goal_position) - np.array(actual_position)) ** 2))
+        err = np.sqrt(sum(((np.array(goal_position) - np.array(actual_position)) ** 2)))
         print(err)
-        return -err
+        return math.fabs(err)
 
-    def eqcon(theta):
-        actual_pos = end_effector(theta)
-        actual_position = actual_pos[0:3]
-        err = sum((np.array(goal_position) - np.array(actual_position))**2)
-        return np.array([err])
+    bound = [[0, math.pi], [0, math.pi], [0, math.pi] \
+        , [0, math.pi / 2], [-math.pi / 4, math.pi / 4]]
 
-    bound = [[-math.pi*2,math.pi*2],[-math.pi*2,math.pi*2],[-math.pi*2,math.pi*2]\
-             ,[-math.pi*2,math.pi*2],[-math.pi*2,math.pi*2]]
-
-    res = optimize.fmin_slsqp(error_function, x0 = initial_theta)
-    print(res)
+    res = optimize.differential_evolution(func=error, args=(x, y, z, roll), bounds=bound)
+    result = res.x
+    return np.around(np.array(result), decimals=3)
 
 # Returns [x; y; theta] for the end effector given a set of joint angles.
 def end_effector(thetas):
@@ -112,77 +110,18 @@ def end_effector(thetas):
     y = H_0_ee[1,3]
     z = H_0_ee[2,3]
     roll = round(math.atan2(H_0_ee[1, 0], H_0_ee[0, 0]),3)
-    pitch = -round(math.asin(H_0_ee[2, 0]),3)
-    yaw = round(math.atan2(H_0_ee[2, 1], H_0_ee[2, 2]),3)
+
     # Pack them up nicely.
-    ee = [x,y,z,roll,pitch,yaw]
+    ee = [x, y, z, roll]
+
+    # pitch = -round(math.asin(H_0_ee[2, 0]),3)
+    # yaw = round(math.atan2(H_0_ee[2, 1], H_0_ee[2, 2]),3)
+    # ee = [x,y,z,roll,pitch,yaw]
     return ee
 
-# print(end_effector([math.pi/2,0,-math.pi/2,0,0]))
-# print(inverse_kinematics([1,1,0], [0,0,0,0,0]))
+print(end_effector([0,math.pi/2,math.pi/2,0,0]))
+result = inverse_kinematics(50.0,20.0,52.1,0)
+print(result)
+print(end_effector(result))
 
-def transform(theta):
-    theta_c = np.matmul(theta, np.array([[1, 1, 1], [1, 1, 1], [1, 1, 1], [1, 1, 1], [1, 1, 1]]))
-    theta_c = np.matmul(theta_c, np.array([[1, 1, 1], [1, 1, 1], [1, 1, 1]]))
-    theta_c = np.matmul(theta_c, np.array([[1, 1, 1], [1, 1, 1], [1, 1, 1]]))
-    theta_c = np.matmul(theta_c, np.array([[1, 1, 1], [1, 1, 1], [1, 1, 1]]))
-    return theta_c
-def ha(theta,x,y,z):
-    def fun(theta,x,y,z):
-        """
-        Arguments:
-        d     - A list of two elements, where d[0] represents x and d[1] represents y
-                 in the following equation.
-        sign - A multiplier for f.  Since we want to optimize it, and the scipy
-               optimizers can only minimize functions, we need to multiply it by
-               -1 to achieve the desired solution
-        Returns:
-        2*x*y + 2*x - x**2 - 2*y**2
-
-        """
-        # x = d[0]
-        # y = d[1]
-        # print(d)
-        # # print(2 * x * y + 2 * x - x ** 2 - 2 * y ** 2)
-        # return -1*(2 * x * y + 2 * x - x ** 2 - 2 * y ** 2)
-        # print(theta)
-        goal_position = [x,y,z]
-        theta_c = transform(theta)
-        # print(theta_c)
-        # actual_pos = end_effector(theta)
-        # actual_position = actual_pos[0:3]
-        # print(goal_position)
-        # err = np.sqrt(sum((np.array(goal_position) - np.array(actual_position)) ** 2))
-        err = np.sqrt(sum((np.array(goal_position) - np.array(theta_c)) ** 2))
-        print(err)
-        print(theta)
-        return math.fabs(err)
-
-    res = optimize.fmin_slsqp(func = fun, x0 = theta, args = (x,y,z))
-    # print(res)
-    # print(res[0])
-# print(end_effector([1,1,1,1,1]))
-print(ha([0,0,0,3,4],2,4,10))
-# print(ha([-1.0,1.0]))
-
-# def inv_kin(self, xy):
-#     def distance_to_default(q, *args):
-#         # weights found with trial and error, get some wrist bend, but not much
-#         weight = [1, 1, 1.3]
-#         return np.sqrt(np.sum([(qi - q0i) ** 2 * wi
-#                                for qi, q0i, wi in zip(q, self.q0, weight)]))
-#
-#     def x_constraint(q, xy):
-#         x = (self.L[0] * np.cos(q[0]) + self.L[1] * np.cos(q[0] + q[1]) +
-#              self.L[2] * np.cos(np.sum(q))) - xy[0]
-#         return x
-#
-#     def y_constraint(q, xy):
-#         y = (self.L[0] * np.sin(q[0]) + self.L[1] * np.sin(q[0] + q[1]) +
-#              self.L[2] * np.sin(np.sum(q))) - xy[1]
-#         return y
-#
-#     return scipy.optimize.fmin_slsqp(func=distance_to_default,
-#                                      x0=self.q, eqcons=[x_constraint, y_constraint],
-#                                      args=[xy], iprint=0)  # iprint=0 suppresses output
 
