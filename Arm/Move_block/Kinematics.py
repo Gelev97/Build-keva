@@ -88,13 +88,14 @@ def inverse_kinematics(x,y,z,roll):
         # print(goal_position)
         # err = np.sqrt(sum((np.array(goal_position) - np.array(actual_position)) ** 2))
         err = np.sqrt(sum(((np.array(goal_position) - np.array(actual_position)) ** 2)))
-        print(err)
+        # print(err)
         return math.fabs(err)
 
     bound = [[0, math.pi], [0, math.pi], [0, math.pi] \
         , [0, math.pi / 2], [-math.pi / 4, math.pi / 4]]
 
-    res = optimize.differential_evolution(func=error, args=(x, y, z, roll), bounds=bound, disp=False)
+    # res = optimize.differential_evolution(func=error, args=(x, y, z, roll), bounds=bound, disp=False)
+    res = optimize.differential_evolution(func=error, args=(x, y, z, roll), bounds=bound)
     result = res.x
     return np.around(np.array(result), decimals=3)
 
@@ -106,9 +107,9 @@ def end_effector(thetas):
 
     # Extract the components of the end_effector position and
     # orientation.
-    x = H_0_ee[0,3]
-    y = H_0_ee[1,3]
-    z = H_0_ee[2,3]
+    x = round(H_0_ee[0,3],3)
+    y = round(H_0_ee[1,3],3)
+    z = round(H_0_ee[2,3],3)
     roll = round(math.atan2(H_0_ee[1, 0], H_0_ee[0, 0]),3)
 
     # Pack them up nicely.
@@ -140,9 +141,16 @@ def create_trajecotry(current_position, goal_position):
 # print(end_effector(result))
 trajecotry = create_trajecotry([0,0,0], [1,1,1])
 angle_group = []
+count = 0
+prev_percentage = 0
+length = len(trajecotry)
 for waypoint in trajecotry:
     result = inverse_kinematics(waypoint[0], waypoint[1], waypoint[2], 0)
     angle_group.append(result)
+    count += 1
+    if (round(count / length * 100) != prev_percentage):
+        print(str(round(count / length * 100)) + "%")
+    prev_percentage = round(count / length * 100)
 for angle in angle_group:
     print(end_effector(angle))
 
