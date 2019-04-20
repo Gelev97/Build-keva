@@ -1099,9 +1099,9 @@ def detect_stack(edges, img, stack, stack_color_dict, area_of_previous_level):
             extend_line_map_line[index_dict] = l
             index_dict += 1
             cv.line(edges_BGR, (l[0], l[1]), (l[2], l[3]), (0, 255, 0), 1, cv.LINE_AA)
-    # cv.imshow('hough', edges_BGR)
-    # cv.waitKey(0)
-    # cv.destroyAllWindows()
+    cv.imshow('hough', edges_BGR)
+    cv.waitKey(0)
+    cv.destroyAllWindows()
 
     # [(line_index, angle) : [line,line,line], ...]
     parallel_line_group = angle_approximation(lines)
@@ -1187,7 +1187,6 @@ def detect_stack(edges, img, stack, stack_color_dict, area_of_previous_level):
         for intersection in block:
             result.append(intersection)
         return result
-    print(block)
 
     result = block.copy()
     for intersections in stack:
@@ -1429,9 +1428,9 @@ def draw_result(img, block):
         cv.circle(img, intersections[1], 2, (255, 0, 0), 10)
         cv.circle(img, intersections[2], 2, (255, 0, 0), 10)
         cv.circle(img, intersections[3], 2, (255, 0, 0), 10)
-    # cv.imshow('draw_result', img)
-    # cv.waitKey(0)
-    # cv.destroyAllWindows()
+    cv.imshow('draw_result', img)
+    cv.waitKey(0)
+    cv.destroyAllWindows()
 
 
 '''
@@ -1514,27 +1513,11 @@ def main():
     # run pipeline
     [stack, stack_color_dict, area_of_previous_level] = pipeline(image_name1, stack, stack_color_dict,
                                                 area_of_previous_level, "stack_level1.jpg", "stack.txt", 0.7)
-    print(stack)
-    print(stack_color_dict)
-    print(area_of_previous_level)
     [stack, stack_color_dict, area_of_previous_level] = pipeline(image_name2, stack, stack_color_dict,
                                                 area_of_previous_level, "stack_level2.jpg", "stack.txt", 0.7*2)
-    print(stack)
-    print(stack_color_dict)
-    print(area_of_previous_level)
     [stack, stack_color_dict, area_of_previous_level] = pipeline(image_name3, stack, stack_color_dict,
                                                 area_of_previous_level, "stack_level3.jpg", "stack.txt", 0.7*3)
-    print(stack)
-    print(stack_color_dict)
-    print(area_of_previous_level)
     pipeline(image_name4, stack, stack_color_dict,area_of_previous_level, "stack_level4.jpg", "stack.txt", 0.7*4)
-    print(stack)
-    print(stack_color_dict)
-    print(area_of_previous_level)
 main()
 
-# [[(741, 307), (726, 469), (778, 308), (761, 469)], [(410, 204), (275, 309), (432, 232), (300, 334)], [(396, 663), (396, 696), (547, 662), (547, 694)], [(509, 306), (503, 467), (542, 306), (538, 467)], [(411, 304), (412, 467), (458, 305), (450, 467)], [(175, 304), (182, 468), (212, 305), (219, 468)], [(618, 436), (508, 552), (642, 460), (529, 574)], [(400, 48), (400, 87), (576, 49), (573, 89)], [(175, 281), (182, 468), (212, 284), (218, 468)]]
-#
-# [[(196, 298), (198, 332), (370, 298), (370, 332)], [(631, 297), (628, 332), (801, 297), (798, 331)], [(528, 298), (526, 462), (561, 298), (556, 462)], [(446, 297), (446, 459), (476, 297), (474, 460)], [(422, 534), (421, 690), (453, 534), (455, 689)], [(417, 49), (418, 229), (453, 47), (452, 229)], [(564, 44), (559, 229), (598, 43), (590, 229)], [(534, 534), (532, 688), (575, 534), (570, 687)], [(201, 432), (202, 464), (370, 432), (370, 464)], [(621, 429), (620, 462), (787, 432), (785, 463)]]
-# {((196, 298), (198, 332), (370, 298), (370, 332)): 'GREEN', ((631, 297), (628, 332), (801, 297), (798, 331)): 'GREEN', ((528, 298), (526, 462), (561, 298), (556, 462)): 'GREEN', ((446, 297), (446, 459), (476, 297), (474, 460)): 'GREEN', ((422, 534), (421, 690), (453, 534), (455, 689)): 'GREEN', ((417, 49), (418, 229), (453, 47), (452, 229)): 'GREEN', ((564, 44), (559, 229), (598, 43), (590, 229)): 'GREEN', ((534, 534), (532, 688), (575, 534), (570, 687)): 'GREEN', ((201, 432), (202, 464), (370, 432), (370, 464)): 'GREEN', ((621, 429), (620, 462), (787, 432), (785, 463)): 'GREEN'}
-# 5579.15
+
