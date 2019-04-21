@@ -479,7 +479,7 @@ int main( int argc, char **argv )
   get_battery_voltage( fd );
 
   wait_for_response( fd );
-  
+
   /*
   while(1){
       get_angles( fd );
@@ -489,8 +489,7 @@ int main( int argc, char **argv )
   */
   
   int angles_d[ 10 ];
-  
-  // elbow straight up, forearm horizontal
+  /*
   angles_d[ 4 ] = 500;
   angles_d[ 5 ] = 513;
   angles_d[ 6 ] = 500;
@@ -498,8 +497,6 @@ int main( int argc, char **argv )
   system("./UscCmd --servo 3,4000");
   system("./UscCmd --servo 5,4000");
 
-
-  // straight up (roughly)
   angles_d[ 4 ] = 697;
   angles_d[ 5 ] = 550;
   angles_d[ 6 ] = 439;
@@ -523,12 +520,55 @@ int main( int argc, char **argv )
   set_angles_and_wait( fd, angles_d );
   system("./UscCmd --servo 3,7500");
   system("./UscCmd --servo 5,4000");
+  */
   
   angles_d[ 4 ] = 500;
   angles_d[ 5 ] = 513;
   angles_d[ 6 ] = 500;
   set_angles_and_wait( fd, angles_d );
-  
+  angles_d[ 6 ] = 531;
+  angles_d[ 5 ] = 540;
+  angles_d[ 4 ] = 715;
+  system("./UscCmd --servo 1,5510");
+  set_angles_and_wait( fd, angles_d );
+  /*
+  angles_d[ 6 ] = 518;
+  angles_d[ 5 ] = 533;
+  angles_d[ 4 ] = 783;
+  set_angles_and_wait( fd, angles_d );
+  angles_d[ 6 ] = 504;
+  angles_d[ 5 ] = 530;
+  angles_d[ 4 ] = 785;
+  set_angles_and_wait( fd, angles_d );
+  angles_d[ 6 ] = 490;
+  angles_d[ 5 ] = 528;
+  angles_d[ 4 ] = 785;
+  set_angles_and_wait( fd, angles_d );
+  angles_d[ 6 ] = 475;
+  angles_d[ 5 ] = 525;
+  angles_d[ 4 ] = 788;
+  set_angles_and_wait( fd, angles_d );
+  angles_d[ 6 ] = 459;
+  angles_d[ 5 ] = 524;
+  angles_d[ 4 ] = 787;
+  set_angles_and_wait( fd, angles_d );
+  angles_d[ 6 ] = 442;
+  angles_d[ 5 ] = 522;
+  angles_d[ 4 ] = 789;
+  set_angles_and_wait( fd, angles_d );
+  angles_d[ 6 ] = 424;
+  angles_d[ 5 ] = 516;
+  angles_d[ 4 ] = 802;
+  set_angles_and_wait( fd, angles_d );
+  angles_d[ 6 ] = 407;
+  angles_d[ 5 ] = 516;
+  angles_d[ 4 ] = 800;
+  set_angles_and_wait( fd, angles_d );
+  angles_d[ 6 ] = 389;
+  angles_d[ 5 ] = 517;
+  angles_d[ 4 ] = 797;
+  set_angles_and_wait( fd, angles_d );
+  */
   close(fd);
   
   return 0;

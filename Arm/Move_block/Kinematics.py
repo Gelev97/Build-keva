@@ -8,7 +8,7 @@ import math
 BASE_HEIGHT = 6.3
 LINK_1 = 3.1
 LINK_2 = 42.7
-LINK_3 = 45
+LINK_3 = 43
 LINK_4 = 10
 
 # Helper Rotation Matrix
@@ -80,22 +80,22 @@ def forward_kinematics(thetas):
     return frames
 
 # Inverser Kinmatics
-def inverse_kinematics(x,y,z,roll):
-    def error(theta, x, y, z, roll):
-        goal_position = [x, y, z, roll]
+def inverse_kinematics(x,y,z):
+    def error(theta, x, y, z):
+        goal_position = [x, y, z]
         actual_pos = end_effector(theta)
-        actual_position = actual_pos[0:4]
+        actual_position = actual_pos[0:3]
         # print(goal_position)
         # err = np.sqrt(sum((np.array(goal_position) - np.array(actual_position)) ** 2))
         err = np.sqrt(sum(((np.array(goal_position) - np.array(actual_position)) ** 2)))
         # print(err)
         return math.fabs(err)
 
-    bound = [[0, math.pi], [0, math.pi], [0, math.pi] \
+    bound = [[-math.pi/2, math.pi/2], [0, math.pi], [0, math.pi] \
         , [0, math.pi / 2], [-math.pi / 4, math.pi / 4]]
 
     # res = optimize.differential_evolution(func=error, args=(x, y, z, roll), bounds=bound, disp=False)
-    res = optimize.differential_evolution(func=error, args=(x, y, z, roll), bounds=bound)
+    res = optimize.differential_evolution(func=error, args=(x, y, z), bounds=bound)
     result = res.x
     return np.around(np.array(result), decimals=3)
 
@@ -135,17 +135,26 @@ def create_trajecotry(current_position, goal_position):
     print(trajectory)
     return trajectory
 
-# print(end_effector([0,math.pi/2,math.pi/2,0,0]))
-# result = inverse_kinematics(50.0,20.0,52.1,0)
-# print(result)
-# print(end_effector(result))
-trajecotry = create_trajecotry([0,0,0], [1,1,1])
+# Encoder transform
+def encoder_transform(angle_group):
+    result = []
+    for angle in angle_group:
+        tmp = []   
+        tmp.append(int((angle[0]/math.pi*180+ 90)*4.16 + 15))
+        tmp.append(860 - int((angle[1]/math.pi*180)*4))
+        tmp.append(int((angle[2]/math.pi*180)*4)+162)
+        tmp.append(6600 - int((angle[3]/math.pi*180)*40))
+        result.append(tmp)
+    print(result)
+    return result
+
+trajecotry = create_trajecotry([25.5,17.3,5], [25.5,0,5])
 angle_group = []
 count = 0
 prev_percentage = 0
 length = len(trajecotry)
 for waypoint in trajecotry:
-    result = inverse_kinematics(waypoint[0], waypoint[1], waypoint[2], 0)
+    result = inverse_kinematics(waypoint[0], waypoint[1], waypoint[2])
     angle_group.append(result)
     count += 1
     if (round(count / length * 100) != prev_percentage):
@@ -153,5 +162,10 @@ for waypoint in trajecotry:
     prev_percentage = round(count / length * 100)
 for angle in angle_group:
     print(end_effector(angle))
+    print(angle/math.pi*180)
+    
+encoder_transform(angle_group)
+
+
 
 
