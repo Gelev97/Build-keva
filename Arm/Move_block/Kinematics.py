@@ -1,7 +1,6 @@
 import numpy as np
 from scipy import interpolate
 from scipy import optimize
-
 import math
 
 # All units in cm
@@ -139,32 +138,43 @@ def create_trajecotry(current_position, goal_position):
 def encoder_transform(angle_group):
     result = []
     for angle in angle_group:
-        tmp = []   
+        tmp = []
         tmp.append(int((angle[0]/math.pi*180+ 90)*4.16 + 15))
         tmp.append(860 - int((angle[1]/math.pi*180)*4))
         tmp.append(int((angle[2]/math.pi*180)*4)+162)
         tmp.append(6600 - int((angle[3]/math.pi*180)*40))
+        tmp.append(-1)
+        tmp.append(-1)
         result.append(tmp)
     print(result)
     return result
 
-trajecotry = create_trajecotry([25.5,17.3,5], [25.5,0,5])
-angle_group = []
-count = 0
-prev_percentage = 0
-length = len(trajecotry)
-for waypoint in trajecotry:
-    result = inverse_kinematics(waypoint[0], waypoint[1], waypoint[2])
-    angle_group.append(result)
-    count += 1
-    if (round(count / length * 100) != prev_percentage):
-        print(str(round(count / length * 100)) + "%")
-    prev_percentage = round(count / length * 100)
-for angle in angle_group:
-    print(end_effector(angle))
-    print(angle/math.pi*180)
-    
-encoder_transform(angle_group)
+# Pipeline
+def pipline_position_encoder(start_position, end_position):
+    # create trajectory
+    trajecotry = create_trajecotry(start_position, end_position)
+
+    # Calculate Inverse Kinematics
+    angle_group = []
+    count = 0
+    prev_percentage = 0
+    length = len(trajecotry)
+    for waypoint in trajecotry:
+        result = inverse_kinematics(waypoint[0], waypoint[1], waypoint[2])
+        angle_group.append(result)
+        count += 1
+        if (round(count / length * 100) != prev_percentage):
+            print(str(round(count / length * 100)) + "%")
+        prev_percentage = round(count / length * 100)
+
+    # Check result
+    for angle in angle_group:
+        print(end_effector(angle))
+
+    # Change to encoder value
+    return encoder_transform(angle_group)
+
+
 
 
 

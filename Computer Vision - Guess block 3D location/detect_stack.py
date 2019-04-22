@@ -6,7 +6,7 @@ from operator import itemgetter
 
 SPECIFIC_AREA = [488, 20, 488, 90, 755, 43, 757, 97]
 
-PARAM_LIST = "./Params/Stack3_Param.txt"
+PARAM_LIST = "./Params/Stack_Param.txt"
 
 # Color space
 BLUE_MIN = np.array([98, 50, 20], np.uint8)
@@ -1099,9 +1099,9 @@ def detect_stack(edges, img, stack, stack_color_dict, area_of_previous_level):
             extend_line_map_line[index_dict] = l
             index_dict += 1
             cv.line(edges_BGR, (l[0], l[1]), (l[2], l[3]), (0, 255, 0), 1, cv.LINE_AA)
-    cv.imshow('hough', edges_BGR)
-    cv.waitKey(0)
-    cv.destroyAllWindows()
+    # cv.imshow('hough', edges_BGR)
+    # cv.waitKey(0)
+    # cv.destroyAllWindows()
 
     # [(line_index, angle) : [line,line,line], ...]
     parallel_line_group = angle_approximation(lines)
@@ -1448,6 +1448,7 @@ def pipeline(image_name, stack, stack_color_dict, area_of_previous_level, save_p
     area_of_this_level = 0
     save_file = open(save_txt_path, "a+")
     save_file.write("new level\n")
+    save_file.close()
     block = detect_stack(edges, img_show, stack, stack_color_dict, area_of_previous_level)
     for block_add in block:
         stack.append(block_add)
@@ -1512,12 +1513,12 @@ def main():
 
     # run pipeline
     [stack, stack_color_dict, area_of_previous_level] = pipeline(image_name1, stack, stack_color_dict,
-                                                area_of_previous_level, "stack_level1.jpg", "stack.txt", 0.7)
+                                                area_of_previous_level, "stack_level1.jpg", "stack3.txt", 0.7)
     [stack, stack_color_dict, area_of_previous_level] = pipeline(image_name2, stack, stack_color_dict,
-                                                area_of_previous_level, "stack_level2.jpg", "stack.txt", 0.7*2)
+                                                area_of_previous_level, "stack_level2.jpg", "stack3.txt", 0.7*2)
     [stack, stack_color_dict, area_of_previous_level] = pipeline(image_name3, stack, stack_color_dict,
-                                                area_of_previous_level, "stack_level3.jpg", "stack.txt", 0.7*3)
-    pipeline(image_name4, stack, stack_color_dict,area_of_previous_level, "stack_level4.jpg", "stack.txt", 0.7*4)
+                                                area_of_previous_level, "stack_level3.jpg", "stack3.txt", 0.7*3)
+    pipeline(image_name4, stack, stack_color_dict,area_of_previous_level, "stack_level4.jpg", "stack3.txt", 0.7*4)
 main()
 
 

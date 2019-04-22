@@ -144,7 +144,7 @@ void init_hidraw( char *device, int *pfd )
       printf( "[ timestamp ] hid-generic ... hiddev96,hidraw2: ... [MyUSB_HID LOBOT] on ...\n" );
       printf( " The hidrawX tells you which device is actually in use\n\n" );
     }
-  
+
   /* Get Physical Location */
   res = ioctl(fd, HIDIOCGRAWPHYS(256), buf);
   if (res < 0)
@@ -410,7 +410,7 @@ char SET_ANGLES[ N_SET_ANGLES ] = {
   0x02,
   0x6,
   0x0,
-  0x02  
+  0x02
 };
 
 /**********************************************************************/
@@ -447,7 +447,7 @@ int set_angles_and_wait( int fd, int *angles )
   set_angles( fd, angles );
 
   sleep( 2 );
-  
+
   get_angles( fd );
 
   for ( count = 1; ; count++ )
@@ -464,15 +464,12 @@ int set_angles_and_wait( int fd, int *angles )
 /**********************************************************************/
 /**********************************************************************/
 
-int main( int argc, char **argv )
+int main( int argc, char **argv)
 {   
   int fd;
-  char *device = "/dev/hidraw2";
+//  char *device = "/dev/hidraw2";
   int wlen;
   int errors = 0;
-
-  if (argc > 1)
-    device = argv[1];
 
   init_hidraw( device, &fd );
 
@@ -487,8 +484,47 @@ int main( int argc, char **argv )
     wait_for_response( fd );
   }
   */
-  
+
+  int index = 0;
   int angles_d[ 10 ];
+
+  for(index = 1;index <= argc-1;index=index+6){
+     if(strcmp(argv[index],"-1") != 0){
+        angles_d[6] = atoi(argv[index]);
+        printf("%d\n", angles_d[6]);
+     }
+     if(strcmp(argv[index+1],"-1") != 0){
+        angles_d[5] = atoi(argv[index+1]);
+        printf("%d\n", angles_d[5]);
+     }
+     if(strcmp(argv[index+2],"-1") != 0){
+        angles_d[4] = atoi(argv[index+2]);
+        printf("%d\n", angles_d[4]);
+     }
+     if(strcmp(argv[index+3],"-1") != 0){
+        char final[500];
+        strcpy(final,"./UscCmd --servo 1,");
+        strcat(final, argv[index+3]);
+        printf("%s\n", final);
+        system(final);
+     }
+     if(strcmp(argv[index+4],"-1") != 0){
+        char final[500];
+        strcpy(final,"./UscCmd --servo 3,");
+        strcat(final, argv[index+4]);
+        printf("%s\n", final);
+        system(final);
+     }
+     if(strcmp(argv[index+5],"-1") != 0){
+        char final[500];
+        strcpy(final,"./UscCmd --servo 5,");
+        strcat(final, argv[index+5]);
+        printf("%s\n", final);
+        system(final);
+     }
+     set_angles_and_wait(fd,angles_d);
+  }
+
   /*
   angles_d[ 4 ] = 500;
   angles_d[ 5 ] = 513;
