@@ -2,15 +2,13 @@
 <project version="4">
   <component name="ChangeListManager">
     <list default="true" id="c44b08b5-b55f-4503-a123-40ff5800eb1a" name="Default" comment="">
-      <change afterPath="$PROJECT_DIR$/Computer Vision - Guess block 3D location/result/Stack/stack2/stack_result.txt" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/Final/RPC.py" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/Arm/Move_block/Kinematics.py" beforeDir="false" afterPath="$PROJECT_DIR$/Arm/Move_block/Kinematics.py" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/Arm/Move_block/Pipeline.py" beforeDir="false" afterPath="$PROJECT_DIR$/Arm/Move_block/Pipeline.py" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/Arm/Move_block/xarm2" beforeDir="false" afterPath="$PROJECT_DIR$/Arm/Move_block/xarm2" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/Arm/Move_block/xarm2.c" beforeDir="false" afterPath="$PROJECT_DIR$/Arm/Move_block/xarm2.c" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/Computer Vision - Guess block 3D location/detect_stack.py" beforeDir="false" afterPath="$PROJECT_DIR$/Computer Vision - Guess block 3D location/detect_stack.py" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/gazebo/gazebo_spawn.py" beforeDir="false" afterPath="$PROJECT_DIR$/gazebo/gazebo_spawn.py" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/stack_result.txt" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/Final/Kinematics.py" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/Final/Main.py" beforeDir="false" afterPath="$PROJECT_DIR$/Final/Main.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/Final/Pipeline.py" beforeDir="false" afterPath="$PROJECT_DIR$/Final/Pipeline.py" afterDir="false" />
     </list>
     <option name="EXCLUDED_CONVERTED_TO_IGNORED" value="true" />
     <option name="SHOW_DIALOG" value="false" />
@@ -42,10 +40,22 @@
   <component name="FileEditorManager">
     <leaf SIDE_TABS_SIZE_LIMIT_KEY="300">
       <file pinned="false" current-in-tab="false">
-        <entry file="file://$PROJECT_DIR$/Arm/Move_block/Pipeline.py">
+        <entry file="file://$PROJECT_DIR$/Final/RPC.py">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="690">
-              <caret line="46" selection-start-line="46" selection-end-line="46" />
+            <state relative-caret-position="783">
+              <caret line="67" selection-start-line="67" selection-end-line="67" />
+              <folding>
+                <element signature="e#1#19#0" expanded="true" />
+              </folding>
+            </state>
+          </provider>
+        </entry>
+      </file>
+      <file pinned="false" current-in-tab="false">
+        <entry file="file://$PROJECT_DIR$/Final/Pipeline.py">
+          <provider selected="true" editor-type-id="text-editor">
+            <state relative-caret-position="315">
+              <caret line="21" column="43" lean-forward="true" selection-start-line="21" selection-start-column="43" selection-end-line="21" selection-end-column="43" />
               <folding>
                 <element signature="e#0#17#0" expanded="true" />
               </folding>
@@ -54,21 +64,12 @@
         </entry>
       </file>
       <file pinned="false" current-in-tab="true">
-        <entry file="file://$PROJECT_DIR$/Arm/Move_block/xarm2.c">
+        <entry file="file://$PROJECT_DIR$/Final/Main.py">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="524">
-              <caret line="519" column="40" selection-start-line="519" selection-start-column="40" selection-end-line="519" selection-end-column="40" />
-            </state>
-          </provider>
-        </entry>
-      </file>
-      <file pinned="false" current-in-tab="false">
-        <entry file="file://$PROJECT_DIR$/gazebo/gazebo_spawn.py">
-          <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="510">
-              <caret line="34" lean-forward="true" selection-start-line="34" selection-end-line="34" />
+            <state relative-caret-position="648">
+              <caret line="66" column="24" selection-start-line="66" selection-start-column="24" selection-end-line="66" selection-end-column="24" />
               <folding>
-                <element signature="e#0#12#0" expanded="true" />
+                <element signature="e#0#37#0" expanded="true" />
               </folding>
             </state>
           </provider>
@@ -114,6 +115,7 @@
       <find>%</find>
       <find>WIDTH_HEIGHT_DIST_MAX</find>
       <find>MAX_LINE_LENGTH</find>
+      <find>RPC</find>
     </findStrings>
   </component>
   <component name="Git.Settings">
@@ -145,9 +147,12 @@
         <option value="$PROJECT_DIR$/stack_result.txt" />
         <option value="$PROJECT_DIR$/Computer Vision - Guess block 3D location/Coordinates/Stack1/stack1.txt" />
         <option value="$PROJECT_DIR$/gazebo/gazebo_spawn.py" />
+        <option value="$PROJECT_DIR$/Arm/Move_block/xarm2.c" />
         <option value="$PROJECT_DIR$/Arm/Move_block/Kinematics.py" />
         <option value="$PROJECT_DIR$/Arm/Move_block/Pipeline.py" />
-        <option value="$PROJECT_DIR$/Arm/Move_block/xarm2.c" />
+        <option value="$PROJECT_DIR$/Final/RPC.py" />
+        <option value="$PROJECT_DIR$/Final/Pipeline.py" />
+        <option value="$PROJECT_DIR$/Final/Main.py" />
       </list>
     </option>
   </component>
@@ -174,13 +179,7 @@
             <path>
               <item name="Build-keva" type="b2602c69:ProjectViewProjectNode" />
               <item name="Build-keva" type="462c0819:PsiDirectoryNode" />
-              <item name="Arm" type="462c0819:PsiDirectoryNode" />
-            </path>
-            <path>
-              <item name="Build-keva" type="b2602c69:ProjectViewProjectNode" />
-              <item name="Build-keva" type="462c0819:PsiDirectoryNode" />
-              <item name="Arm" type="462c0819:PsiDirectoryNode" />
-              <item name="Move_block" type="462c0819:PsiDirectoryNode" />
+              <item name="Final" type="462c0819:PsiDirectoryNode" />
             </path>
           </expand>
           <select />
@@ -221,7 +220,7 @@
       </list>
     </option>
   </component>
-  <component name="RunManager" selected="Python.Pipeline">
+  <component name="RunManager" selected="Python.RPC">
     <configuration name="Kinematics" type="PythonConfigurationType" factoryName="Python" temporary="true">
       <module name="Build-keva" />
       <option name="INTERPRETER_OPTIONS" value="" />
@@ -258,6 +257,28 @@
       <option name="ADD_SOURCE_ROOTS" value="true" />
       <EXTENSION ID="PythonCoverageRunConfigurationExtension" runner="coverage.py" />
       <option name="SCRIPT_NAME" value="$PROJECT_DIR$/Arm/Move_block/Pipeline.py" />
+      <option name="PARAMETERS" value="" />
+      <option name="SHOW_COMMAND_LINE" value="false" />
+      <option name="EMULATE_TERMINAL" value="false" />
+      <option name="MODULE_MODE" value="false" />
+      <option name="REDIRECT_INPUT" value="false" />
+      <option name="INPUT_FILE" value="" />
+      <method v="2" />
+    </configuration>
+    <configuration name="RPC" type="PythonConfigurationType" factoryName="Python" temporary="true">
+      <module name="Build-keva" />
+      <option name="INTERPRETER_OPTIONS" value="" />
+      <option name="PARENT_ENVS" value="true" />
+      <envs>
+        <env name="PYTHONUNBUFFERED" value="1" />
+      </envs>
+      <option name="SDK_HOME" value="" />
+      <option name="WORKING_DIRECTORY" value="$PROJECT_DIR$/Final" />
+      <option name="IS_MODULE_SDK" value="true" />
+      <option name="ADD_CONTENT_ROOTS" value="true" />
+      <option name="ADD_SOURCE_ROOTS" value="true" />
+      <EXTENSION ID="PythonCoverageRunConfigurationExtension" runner="coverage.py" />
+      <option name="SCRIPT_NAME" value="$PROJECT_DIR$/Final/RPC.py" />
       <option name="PARAMETERS" value="" />
       <option name="SHOW_COMMAND_LINE" value="false" />
       <option name="EMULATE_TERMINAL" value="false" />
@@ -354,44 +375,22 @@
       <option name="INPUT_FILE" value="" />
       <method v="2" />
     </configuration>
-    <configuration name="edge" type="PythonConfigurationType" factoryName="Python" temporary="true">
-      <module name="Build-keva" />
-      <option name="INTERPRETER_OPTIONS" value="" />
-      <option name="PARENT_ENVS" value="true" />
-      <envs>
-        <env name="PYTHONUNBUFFERED" value="1" />
-      </envs>
-      <option name="SDK_HOME" value="$PROJECT_DIR$/../anaconda3/envs/16264/bin/python3.6" />
-      <option name="WORKING_DIRECTORY" value="$PROJECT_DIR$/Computer Vision - Guess block 3D location" />
-      <option name="IS_MODULE_SDK" value="false" />
-      <option name="ADD_CONTENT_ROOTS" value="true" />
-      <option name="ADD_SOURCE_ROOTS" value="true" />
-      <EXTENSION ID="PythonCoverageRunConfigurationExtension" runner="coverage.py" />
-      <option name="SCRIPT_NAME" value="$PROJECT_DIR$/Computer Vision - Guess block 3D location/edge.py" />
-      <option name="PARAMETERS" value="&quot;test.jpg&quot;" />
-      <option name="SHOW_COMMAND_LINE" value="false" />
-      <option name="EMULATE_TERMINAL" value="false" />
-      <option name="MODULE_MODE" value="false" />
-      <option name="REDIRECT_INPUT" value="false" />
-      <option name="INPUT_FILE" value="" />
-      <method v="2" />
-    </configuration>
     <list>
       <item itemvalue="Python.block" />
       <item itemvalue="Python.detect_block" />
       <item itemvalue="Python.detect_stack" />
-      <item itemvalue="Python.edge" />
       <item itemvalue="Python.Kinematics" />
       <item itemvalue="Python.detect_stack1" />
       <item itemvalue="Python.Pipeline" />
+      <item itemvalue="Python.RPC" />
     </list>
     <recent_temporary>
       <list>
+        <item itemvalue="Python.RPC" />
+        <item itemvalue="Python.Kinematics" />
         <item itemvalue="Python.Pipeline" />
         <item itemvalue="Python.detect_stack" />
-        <item itemvalue="Python.Kinematics" />
         <item itemvalue="Python.detect_stack1" />
-        <item itemvalue="Python.edge" />
       </list>
     </recent_temporary>
   </component>
@@ -452,12 +451,16 @@
       <workItem from="1555644195780" duration="129000" />
       <workItem from="1555650382250" duration="5796000" />
       <workItem from="1555895968641" duration="11462000" />
-      <workItem from="1555910570464" duration="5339000" />
+      <workItem from="1555910570464" duration="5435000" />
+      <workItem from="1555944364719" duration="201000" />
+      <workItem from="1555945372553" duration="4000" />
+      <workItem from="1556034392950" duration="3000" />
+      <workItem from="1556477246731" duration="4906000" />
     </task>
     <servers />
   </component>
   <component name="TimeTrackingManager">
-    <option name="totallyTimeSpent" value="308400000" />
+    <option name="totallyTimeSpent" value="313610000" />
   </component>
   <component name="ToolWindowManager">
     <frame x="67" y="17" width="1853" height="1062" extended-state="6" />
@@ -465,7 +468,7 @@
     <layout>
       <window_info id="Structure" order="0" side_tool="true" weight="0.25" />
       <window_info id="Favorites" order="1" side_tool="true" />
-      <window_info active="true" content_ui="combo" id="Project" order="2" visible="true" weight="0.1925844" />
+      <window_info active="true" content_ui="combo" id="Project" order="2" visible="true" weight="0.20143884" />
       <window_info anchor="bottom" id="Message" order="0" />
       <window_info anchor="bottom" id="Find" order="1" weight="0.32972974" />
       <window_info anchor="bottom" id="Debug" order="2" weight="0.3520548" />
@@ -491,30 +494,14 @@
     <option name="version" value="1" />
   </component>
   <component name="com.intellij.coverage.CoverageDataManagerImpl">
-    <SUITE FILE_PATH="coverage/Build_keva$Kinematics.coverage" NAME="Kinematics Coverage Results" MODIFIED="1555725722324" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="coverage.py" COVERAGE_BY_TEST_ENABLED="true" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="$PROJECT_DIR$/Arm/Move_block" />
+    <SUITE FILE_PATH="coverage/Build_keva$Kinematics.coverage" NAME="Kinematics Coverage Results" MODIFIED="1556477940490" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="coverage.py" COVERAGE_BY_TEST_ENABLED="true" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="$PROJECT_DIR$/Arm/Move_block" />
     <SUITE FILE_PATH="coverage/Build_keva$detect_stack1.coverage" NAME="detect_stack1 Coverage Results" MODIFIED="1555457421969" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="coverage.py" COVERAGE_BY_TEST_ENABLED="true" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="$PROJECT_DIR$/Computer Vision - Guess block 3D location" />
     <SUITE FILE_PATH="coverage/Build_keva$detect_block.coverage" NAME="detect_block Coverage Results" MODIFIED="1555338330727" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="coverage.py" COVERAGE_BY_TEST_ENABLED="true" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="$PROJECT_DIR$/Computer Vision - Guess block 3D location" />
     <SUITE FILE_PATH="coverage/Build_keva$detect_stack.coverage" NAME="detect_stack Coverage Results" MODIFIED="1555901281590" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="coverage.py" COVERAGE_BY_TEST_ENABLED="true" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="$PROJECT_DIR$/Computer Vision - Guess block 3D location" />
     <SUITE FILE_PATH="coverage/Build_keva$Pipeline.coverage" NAME="Pipeline Coverage Results" MODIFIED="1555915293145" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="coverage.py" COVERAGE_BY_TEST_ENABLED="true" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="$PROJECT_DIR$/Arm/Move_block" />
+    <SUITE FILE_PATH="coverage/Build_keva$RPC.coverage" NAME="RPC Coverage Results" MODIFIED="1556488101399" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="coverage.py" COVERAGE_BY_TEST_ENABLED="true" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="$PROJECT_DIR$/Final" />
   </component>
   <component name="editorHistoryManager">
-    <entry file="file://$PROJECT_DIR$/Computer Vision - Guess block 3D location/Params/TestAlign_Param.txt">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="150">
-          <caret line="10" column="16" selection-start-line="10" selection-start-column="16" selection-end-line="10" selection-end-column="16" />
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/Computer Vision - Guess block 3D location/parallel.jpg" />
-    <entry file="file://$PROJECT_DIR$/Computer Vision - Guess block 3D location/Params/TestAlign2_Param.txt">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="150">
-          <caret line="10" column="16" selection-start-line="10" selection-start-column="16" selection-end-line="10" selection-end-column="16" />
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/Computer Vision - Guess block 3D location/img_2.png" />
-    <entry file="file://$PROJECT_DIR$/Computer Vision - Guess block 3D location/img_1.png" />
     <entry file="file://$PROJECT_DIR$/Computer Vision - Guess block 3D location/Params/TestMany_Param.txt">
       <provider selected="true" editor-type-id="text-editor">
         <state relative-caret-position="30">
@@ -647,40 +634,72 @@
         </state>
       </provider>
     </entry>
-    <entry file="file://$PROJECT_DIR$/Arm/Move_block/Kinematics.py">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="333">
-          <caret line="146" column="22" selection-start-line="146" selection-start-column="22" selection-end-line="146" selection-end-column="22" />
-          <folding>
-            <element signature="e#0#18#0" expanded="true" />
-          </folding>
-        </state>
-      </provider>
-    </entry>
     <entry file="file://$PROJECT_DIR$/gazebo/gazebo_spawn.py">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="510">
-          <caret line="34" lean-forward="true" selection-start-line="34" selection-end-line="34" />
+        <state relative-caret-position="420">
+          <caret line="34" selection-start-line="34" selection-end-line="34" />
           <folding>
             <element signature="e#0#12#0" expanded="true" />
           </folding>
         </state>
       </provider>
     </entry>
+    <entry file="file://$PROJECT_DIR$/Arm/Move_block/xarm2.c">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="868">
+          <caret line="519" column="40" selection-start-line="519" selection-start-column="40" selection-end-line="519" selection-end-column="40" />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/Arm/Move_block/Kinematics.py">
+      <provider selected="true" editor-type-id="text-editor" />
+    </entry>
     <entry file="file://$PROJECT_DIR$/Arm/Move_block/Pipeline.py">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="690">
-          <caret line="46" selection-start-line="46" selection-end-line="46" />
+        <state>
+          <caret column="10" selection-start-column="10" selection-end-column="10" />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/Final/MaestroControlCenter">
+      <provider selected="true" editor-type-id="text-editor" />
+    </entry>
+    <entry file="file://$PROJECT_DIR$/Final/detect_block.py">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="-11446">
+          <folding>
+            <element signature="e#0#18#0" expanded="true" />
+          </folding>
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/Final/Pipeline.py">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="315">
+          <caret line="21" column="43" lean-forward="true" selection-start-line="21" selection-start-column="43" selection-end-line="21" selection-end-column="43" />
           <folding>
             <element signature="e#0#17#0" expanded="true" />
           </folding>
         </state>
       </provider>
     </entry>
-    <entry file="file://$PROJECT_DIR$/Arm/Move_block/xarm2.c">
+    <entry file="file://$PROJECT_DIR$/Final/RPC.py">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="524">
-          <caret line="519" column="40" selection-start-line="519" selection-start-column="40" selection-end-line="519" selection-end-column="40" />
+        <state relative-caret-position="783">
+          <caret line="67" selection-start-line="67" selection-end-line="67" />
+          <folding>
+            <element signature="e#1#19#0" expanded="true" />
+          </folding>
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/Final/Main.py">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="648">
+          <caret line="66" column="24" selection-start-line="66" selection-start-column="24" selection-end-line="66" selection-end-column="24" />
+          <folding>
+            <element signature="e#0#37#0" expanded="true" />
+          </folding>
         </state>
       </provider>
     </entry>

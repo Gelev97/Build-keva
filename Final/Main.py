@@ -4,12 +4,14 @@ import cv2
 import imutils
 import time
 import math
+import socket
 
 import recordXY
 import detect_block
 import findXY
 import Pipeline
-import Kinematics
+import RPC
+
 
 def Caliberate_camera(vs):
     recordXY.caliberate(vs)
@@ -41,9 +43,19 @@ def transfer_to_real(block_pixel_position):
     return result
 
 def main():
+    # start socket
+    TCP_IP = '192.168.0.139'
+    TCP_PORT = 2002
+    print('Socket Information: %s:%d' % (TCP_IP, TCP_PORT))
+    s = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
+    s.connect((TCP_IP, TCP_PORT))
+    time.sleep(1e-3)
+
+    # start camera
     #vs = VideoStream(src=0).start()
     #time.sleep(2.0)
 
+    # calibration and find block
     #Caliberate_camera(vs)
     #block_pixel_position = detect_block_grab(vs)
     #block_real_position = transfer_to_real(block_pixel_position)
@@ -51,10 +63,17 @@ def main():
     #print(block_pixel_position)
     #print(block_real_position)
     position = [(18.601009864224885, -21.158336929758949), 0, -37, 0, 0]
-    traj= Kinematics.pipline_position_encoder([25.5, 17.3, 5], [25.5, 0, 5])
+
+    # Inverse Kinematics
+    traj = RPC.pipline_position_encoder([25.5, 17.3, 5], [25.5, 0, 5], s)
     print(traj)
-    #traj= Kinematics.pipline_position_encoder([18.60, -21.583, 10, 0, 0, 0],[18.60, -11.583, 10, 0, 0, 0])
+    #traj = RPC.pipline_position_encoder([18.60, -21.583, 10, 0, 0, 0],[18.60, -11.583, 10, 0, 0, 0])
     #print(traj)
+
+    s.close()
+    # vs.stop()
+    print("Socket close.")
+    print("Camera close.")
 main()
     
     

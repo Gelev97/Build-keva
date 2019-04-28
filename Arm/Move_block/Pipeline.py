@@ -1,4 +1,4 @@
-import Kinematics
+import RPC
 import subprocess
 
 HOME_POSITION = [0,0,0]
