@@ -31,7 +31,6 @@ def encoder_transform(angle_group):
         tmp.append(-1)
         tmp.append(-1)
         result.append(tmp)
-    print(result)
     return result
 
 

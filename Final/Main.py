@@ -3,7 +3,6 @@ import numpy as np
 import cv2
 import imutils
 import time
-import math
 import socket
 
 import recordXY
@@ -44,7 +43,7 @@ def transfer_to_real(block_pixel_position):
 
 def main():
     # start socket
-    TCP_IP = '192.168.0.139'
+    TCP_IP = '128.237.215.125'
     TCP_PORT = 2002
     print('Socket Information: %s:%d' % (TCP_IP, TCP_PORT))
     s = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
@@ -62,18 +61,17 @@ def main():
     #vs.stop()
     #print(block_pixel_position)
     #print(block_real_position)
-    position = [(18.601009864224885, -21.158336929758949), 0, -37, 0, 0]
 
     # Inverse Kinematics
     traj = RPC.pipline_position_encoder([25.5, 17.3, 5], [25.5, 0, 5], s)
     print(traj)
-    #traj = RPC.pipline_position_encoder([18.60, -21.583, 10, 0, 0, 0],[18.60, -11.583, 10, 0, 0, 0])
-    #print(traj)
+    Pipeline.C_execute([traj])
 
     s.close()
     # vs.stop()
     print("Socket close.")
     print("Camera close.")
+
 main()
     
     

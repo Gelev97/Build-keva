@@ -488,7 +488,6 @@ int main( int argc, char **argv)
   
   int index = 0;
   int angles_d[ 10 ];
-  /*
   for(index = 1;index <= argc-1;index=index+6){
      if(strcmp(argv[index],"-1") != 0){
         angles_d[6] = atoi(argv[index]);
@@ -502,13 +501,13 @@ int main( int argc, char **argv)
         angles_d[4] = atoi(argv[index+2]);
         printf("%d\n", angles_d[4]);
      }
-     if(strcmp(argv[index+3],"-1") != 0){
-        char final[500];
-        strcpy(final,"./UscCmd --servo 1,");
-        strcat(final, argv[index+3]);
-        printf("%s\n", final);
-        system(final);
-     }
+//     if(strcmp(argv[index+3],"-1") != 0){
+//        char final[500];
+//        strcpy(final,"./UscCmd --servo 1,");
+//        strcat(final, argv[index+3]);
+//        printf("%s\n", final);
+//        system(final);
+//     }
      if(strcmp(argv[index+4],"-1") != 0){
         char final[500];
         strcpy(final,"./UscCmd --servo 3,");
@@ -525,85 +524,8 @@ int main( int argc, char **argv)
      }
      set_angles_and_wait(fd,angles_d);
   }
-  */
-  
-  /*
-  angles_d[ 4 ] = 500;
-  angles_d[ 5 ] = 513;
-  angles_d[ 6 ] = 500;
-  set_angles_and_wait( fd, angles_d );
-  system("./UscCmd --servo 3,4000");
-  system("./UscCmd --servo 5,4000");
 
-  angles_d[ 4 ] = 697;
-  angles_d[ 5 ] = 550;
-  angles_d[ 6 ] = 439;
-  set_angles_and_wait( fd, angles_d );
-  
-  angles_d[ 4 ] = 697;
-  angles_d[ 5 ] = 570;
-  angles_d[ 6 ] = 439;
-  set_angles_and_wait(fd, angles_d);
-  
-  system("./UscCmd --servo 5,6000");
 
-  angles_d[ 4 ] = 500;
-  angles_d[ 5 ] = 513;
-  angles_d[ 6 ] = 500;
-  set_angles_and_wait( fd, angles_d );
-  
-  angles_d[ 4 ] = 684;
-  angles_d[ 5 ] = 560;
-  angles_d[ 6 ] = 258;
-  set_angles_and_wait( fd, angles_d );
-  system("./UscCmd --servo 3,7500");
-  system("./UscCmd --servo 5,4000");
-  */
-  
-  angles_d[ 4 ] = 500;
-  angles_d[ 5 ] = 513;
-  angles_d[ 6 ] = 500;
-  set_angles_and_wait( fd, angles_d );
-  angles_d[ 6 ] = 521;
-  angles_d[ 5 ] = 540;
-  angles_d[ 4 ] = 715;
-  set_angles_and_wait( fd, angles_d );
-  angles_d[ 6 ] = 518;
-  angles_d[ 5 ] = 569;
-  angles_d[ 4 ] = 687;
-  set_angles_and_wait( fd, angles_d );
-  angles_d[ 6 ] = 505;
-  angles_d[ 5 ] = 536;
-  angles_d[ 4 ] = 719;
-  set_angles_and_wait( fd, angles_d );
-  angles_d[ 6 ] = 490;
-  angles_d[ 5 ] = 520;
-  angles_d[ 4 ] = 745;
-  set_angles_and_wait( fd, angles_d );
-  angles_d[ 6 ] = 475;
-  angles_d[ 5 ] = 533;
-  angles_d[ 4 ] = 724;
-  set_angles_and_wait( fd, angles_d );
-  angles_d[ 6 ] = 459;
-  angles_d[ 5 ] = 525;
-  angles_d[ 4 ] = 733;
-  set_angles_and_wait( fd, angles_d );
-  angles_d[ 6 ] = 442;
-  angles_d[ 5 ] = 543;
-  angles_d[ 4 ] = 717;
-  set_angles_and_wait( fd, angles_d );
-  angles_d[ 6 ] = 425;
-  angles_d[ 5 ] = 519;
-  angles_d[ 4 ] = 739;
-  set_angles_and_wait( fd, angles_d );
-  angles_d[ 6 ] = 407;
-  angles_d[ 5 ] = 532;
-  angles_d[ 4 ] = 727;
-  set_angles_and_wait( fd, angles_d );
-  angles_d[ 6 ] = 389;
-  angles_d[ 5 ] = 512;
-  angles_d[ 4 ] = 751;
-  set_angles_and_wait( fd, angles_d );
   close(fd);
   
   return 0;

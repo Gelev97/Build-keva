@@ -43,7 +43,6 @@ def C_execute(commands):
         for element_group in command:
             for element in element_group:
                 final.append(str(element))
+        print(final)
         subprocess.call(["./xarm2"] + final)
 
-#result = classical_combi([25.5, 17.3, 5], [25.5, 0, 5])
-#C_execute(result)
