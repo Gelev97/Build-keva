@@ -10,6 +10,7 @@ import detect_block
 import findXY
 import Pipeline
 import RPC
+import ball_reasoning
 
 
 def Caliberate_camera(vs):
@@ -38,8 +39,20 @@ def detect_block_grab(vs):
 def transfer_to_real(block_pixel_position):
     result = dict()
     for key in range(len(block_pixel_position)):
-        result[key] = findXY.find(block_pixel_position[key])
+        result[key] = findXY.find_dict(block_pixel_position[key])
     return result
+
+def detect_ball(vs):
+    ball_image_poses = ball_reasoning.ballReason(vs)
+    result = []
+    for i in range(len(ball_image_poses)):
+        if(ball_image_poses[i] == None):
+            result.append(None)
+        else:
+            image_pos = list(ball_image_poses[i])
+            result.append(findXY.find_list(image_pos))
+    return result
+        
 
 def main():
     # start socket
@@ -51,8 +64,8 @@ def main():
     time.sleep(1e-3)
 
     # start camera
-    #vs = VideoStream(src=0).start()
-    #time.sleep(2.0)
+    vs = VideoStream(src=0).start()
+    time.sleep(2.0)
 
     # calibration and find block
     #Caliberate_camera(vs)
@@ -63,12 +76,16 @@ def main():
     #print(block_real_position)
 
     # Inverse Kinematics
-    traj = RPC.pipline_position_encoder([25.5, 17.3, 5], [25.5, 0, 5], s)
+    traj = RPC.pipline_position_encoder([25.5, 17.3, 10], [25.5, 0, 10], s)
     print(traj)
-    Pipeline.C_execute([traj])
-
-    s.close()
-    # vs.stop()
+    #commands = Pipeline.classical_combi([25.5, 17.3, 1], [25.5, 0, 1], s)
+    #print(commands)
+    #Pipeline.C_execute(commands)
+    
+    #ball_position = detect_ball(vs)
+    #print(ball_position)
+    #s.close()
+    vs.stop()
     print("Socket close.")
     print("Camera close.")
 

@@ -11,7 +11,7 @@ def create_trajecotry(current_position, goal_position):
     current_position = [x, y, z]
 
     result = interpolate.splprep(current_position, s=0, k=1)
-    x_i, y_i, z_i = interpolate.splev(np.linspace(0, 1, 10), result[0])
+    x_i, y_i, z_i = interpolate.splev(np.linspace(0, 1, 5), result[0])
     trajectory = np.zeros((len(x_i), 3))
     for index in range(0, len(x_i)):
         trajectory[index] = [x_i[index], y_i[index], z_i[index]]

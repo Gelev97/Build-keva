@@ -467,7 +467,7 @@ int set_angles_and_wait( int fd, int *angles )
 int main( int argc, char **argv)
 {   
   int fd;
-  char *device = "/dev/hidraw2";
+  char *device = "/dev/hidraw0";
   int wlen;
   int errors = 0;
 
@@ -488,18 +488,19 @@ int main( int argc, char **argv)
   
   int index = 0;
   int angles_d[ 10 ];
+  
   for(index = 1;index <= argc-1;index=index+6){
-     if(strcmp(argv[index],"-1") != 0){
-        angles_d[6] = atoi(argv[index]);
-        printf("%d\n", angles_d[6]);
+     if(strcmp(argv[index+2],"-1") != 0){
+        printf("%d\n", atoi(argv[index+2]));
+        angles_d[4] = atoi(argv[index+2]);
      }
      if(strcmp(argv[index+1],"-1") != 0){
-        angles_d[5] = atoi(argv[index+1]);
-        printf("%d\n", angles_d[5]);
+        printf("%d\n", atoi(argv[index+1]));
+        angles_d[5] = atoi(argv[index+1])-10;
      }
-     if(strcmp(argv[index+2],"-1") != 0){
-        angles_d[4] = atoi(argv[index+2]);
-        printf("%d\n", angles_d[4]);
+     if(strcmp(argv[index],"-1") != 0){
+        printf("%d\n", atoi(argv[index]));
+        angles_d[6] = atoi(argv[index]);
      }
 //     if(strcmp(argv[index+3],"-1") != 0){
 //        char final[500];
@@ -522,7 +523,9 @@ int main( int argc, char **argv)
         printf("%s\n", final);
         system(final);
      }
-     set_angles_and_wait(fd,angles_d);
+     if(strcmp(argv[index+2],"-1") != 0 && strcmp(argv[index+1],"-1") != 0 && strcmp(argv[index],"-1") != 0){
+       set_angles_and_wait(fd,angles_d);
+     }
   }
 
 
