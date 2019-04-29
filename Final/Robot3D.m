@@ -75,7 +75,6 @@
             function err = my_error_function(theta)   
               actual_pos = robot.end_effector(theta);
               actual_position = actual_pos(1:3);
-              goal_position = goal_position(1:3);
               err = (goal_position - actual_position).^2;
               err = sum(err);
             end
@@ -91,6 +90,24 @@
             goal_angles = wrapToPi(goal_angles);
         end
 
+         function goal_angles = numerical_IK_roll(robot, goal_position, initial_theta)
+            function err = my_error_function(theta)
+              actual_pos = robot.end_effector(theta);
+              actual_position = actual_pos(1:3);
+              err = (goal_position - actual_position).^2;
+              err = sum(err);
+            end
+
+            % Actually run the optimization to generate the angles to get us (close) to
+            % the goal.
+            % Set joint limit for better performance
+            lb = [-pi/2, 0, 0, 0, -pi/4];
+            ub = [pi/2, pi, pi, pi/2, pi/4];
+
+            %Final goal_angles
+            goal_angles = fmincon( @ my_error_function,initial_theta,[],[],[],[],lb,ub);
+            goal_angles = wrapToPi(goal_angles);
+        end
 
         %% Shorthand for returning the forward kinematics.
         function fk = fk(robot, thetas)
