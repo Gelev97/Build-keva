@@ -36,7 +36,7 @@ def caliberate(vs):
         # resize the frame, blur it, and convert it to the HSV
         # color space
         frame = imutils.resize(frame, width=1600)
-        frame = frame[0:frame.shape[0]-300,300:1200]
+        frame = frame[0:frame.shape[0]-300,330:1200]
         x = 466
         y = 84
         cv2.circle(frame, (x, y), 3, (0, 255, 0))

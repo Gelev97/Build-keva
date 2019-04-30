@@ -2,10 +2,10 @@ import RPC
 import subprocess
 
 
-HOME_POSITION = [20,-15,10]
-LOWER_HEIGHT_GRAB = 13
+HOME_POSITION = [20,-15,20]
+LOWER_HEIGHT_GRAB = 12
 LOWER_HEIGHT_PUT = 15
-HEIGHT_ADJUST = 19
+HEIGHT_ADJUST = 20
 
 # Go back to Home
 def back_home(current_position, s):
@@ -19,7 +19,7 @@ def start_home(goal_position, s):
 def grab(current_position, s, roll):
     trajectory_grab = RPC.pipline_position_encoder_roll(current_position, [current_position[0],current_position[1],LOWER_HEIGHT_GRAB], roll, s)
     open_gripper = [-1,-1,-1,-1,-1,4000]
-    close_gripper = [-1,-1,-1,-1,-1,6000]
+    close_gripper = [-1,-1,-1,-1,-1,7000]
     return [open_gripper] + trajectory_grab + [close_gripper]
 
 # Go PUT the block

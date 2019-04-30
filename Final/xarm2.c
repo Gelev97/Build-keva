@@ -467,7 +467,7 @@ int set_angles_and_wait( int fd, int *angles )
 int main( int argc, char **argv)
 {   
   int fd;
-  char *device = "/dev/hidraw0";
+  char *device = "/dev/hidraw2";
   int wlen;
   int errors = 0;
 
@@ -490,6 +490,27 @@ int main( int argc, char **argv)
   int angles_d[ 10 ];
   
   for(index = 1;index <= argc-1;index=index+6){
+     if(strcmp(argv[index+4],"-1") != 0){
+        char final[500];
+        strcpy(final,"./UscCmd --servo 3,");
+        strcat(final, argv[index+4]);
+        printf("%s\n", final);
+        system(final);
+     }
+     if(strcmp(argv[index+3],"-1") != 0){
+        char final[500];
+        strcpy(final,"./UscCmd --servo 1,");
+        strcat(final, argv[index+3]);
+        printf("%s\n", final);
+        system(final);
+     }
+     if(strcmp(argv[index+5],"-1") != 0){
+        char final[500];
+        strcpy(final,"./UscCmd --servo 5,");
+        strcat(final, argv[index+5]);
+        printf("%s\n", final);
+        system(final);
+     }
      if(strcmp(argv[index+2],"-1") != 0){
         printf("%d\n", atoi(argv[index+2]));
         angles_d[4] = atoi(argv[index+2]);
@@ -501,28 +522,6 @@ int main( int argc, char **argv)
      if(strcmp(argv[index],"-1") != 0){
         printf("%d\n", atoi(argv[index]));
         angles_d[6] = atoi(argv[index]);
-     }
-     if(strcmp(argv[index+3],"-1") != 0){
-        char final[500];
-        strcpy(final,"./Usc
-        Cmd --servo 1,");
-        strcat(final, argv[index+3]);
-        printf("%s\n", final);
-        system(final);
-     }
-     if(strcmp(argv[index+4],"-1") != 0){
-        char final[500];
-        strcpy(final,"./UscCmd --servo 3,");
-        strcat(final, argv[index+4]);
-        printf("%s\n", final);
-        system(final);
-     }
-     if(strcmp(argv[index+5],"-1") != 0){
-        char final[500];
-        strcpy(final,"./UscCmd --servo 5,");
-        strcat(final, argv[index+5]);
-        printf("%s\n", final);
-        system(final);
      }
      if(strcmp(argv[index+2],"-1") != 0 && strcmp(argv[index+1],"-1") != 0 && strcmp(argv[index],"-1") != 0){
        set_angles_and_wait(fd,angles_d);
