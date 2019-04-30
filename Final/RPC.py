@@ -22,14 +22,37 @@ def create_trajecotry(current_position, goal_position):
 # Encoder transform
 def encoder_transform(angle_group):
     result = []
+    servo_1 = 0
+    servo_3 = 0
     for angle in angle_group:
         tmp = []
         tmp.append(int((angle[0] / math.pi * 180 + 90) * 4.16 + 15))
         tmp.append(860 - int((angle[1] / math.pi * 180) * 4))
         tmp.append(int((angle[2] / math.pi * 180) * 4) + 162)
-        tmp.append(6600 - int((angle[3] / math.pi * 180) * 40))
+
+        if(angle[3] != -1):
+            servo_1 = 6000 - int((angle[3] / math.pi * 180) * 40)
+            if(servo_1 < 4000):
+                tmp.append(4000)
+            else:
+                tmp.append(servo_1)
+        else:
+            tmp.append(-1)
+
+        print("servo4" + str(angle[4]))
+        if (angle[4] != -1):
+            servo_3 = 4000 + int(((angle[4]+math.pi/2) / math.pi * 180) * 40)
+            if (servo_3 < 4000):
+                tmp.append(4000)
+            elif (servo_3 > 8000):
+                tmp.append(8000)
+            else:
+                tmp.append(servo_3)
+        else:
+            tmp.append(-1)
+
         tmp.append(-1)
-        tmp.append(-1)
+
         result.append(tmp)
     return result
 
@@ -43,9 +66,8 @@ def pipline_position_encoder(start_position, end_position, s):
     angle_group = []
     previous_theta = [0,0,0,0,0]
     for waypoint in trajecotry:
-        tx_data = '%f,%f,%f,%f,%d,%d,%d,%d' % (waypoint[0], waypoint[1], waypoint[2], previous_theta[0], \
-                                                  previous_theta[1], previous_theta[2], previous_theta[3],\
-                                                  previous_theta[4])
+        tx_data = '%f,%f,%f,%d,%d,%d' % (waypoint[0], waypoint[1], waypoint[2], previous_theta[0], \
+                                         previous_theta[1], previous_theta[2])
         s.send(tx_data.encode())
 
         # Recieve from socket (wait here)
@@ -56,11 +78,14 @@ def pipline_position_encoder(start_position, end_position, s):
 
         print(rx_data)  # print-out
         string_theta = rx_data.split(",")
-        theta = [float(string_theta[0]),float(string_theta[1]),float(string_theta[2]),float(string_theta[3])\
-                   ,float(string_theta[4])]
+        theta = [float(string_theta[0]),float(string_theta[1]),float(string_theta[2])]
+        previous_theta = theta
+        theta.append(-1)
+        theta.append(-1)
+        theta.append(-1)
         print(theta)
         angle_group.append(theta)
-        previous_theta = theta
+
 
     # Change to encoder value
     return encoder_transform(angle_group)
@@ -71,11 +96,10 @@ def pipline_position_encoder_roll(start_position, end_position, roll, s):
 
     # Calculate Inverse Kinematics
     angle_group = []
-    previous_theta = [0,0,0,0,0]
+    previous_theta = [0,0,0]
     for waypoint in trajecotry:
-        tx_data = '%f,%f,%f,%f,%d,%d,%d,%d,%d' % (waypoint[0], waypoint[1], waypoint[2], roll, previous_theta[0], \
-                                                  previous_theta[1], previous_theta[2], previous_theta[3],\
-                                                  previous_theta[4])
+        tx_data = '%f,%f,%f,%d,%d,%d' % (waypoint[0], waypoint[1], waypoint[2], previous_theta[0], \
+                                                  previous_theta[1], previous_theta[2])
         s.send(tx_data.encode())
 
         # Recieve from socket (wait here)
@@ -86,11 +110,11 @@ def pipline_position_encoder_roll(start_position, end_position, roll, s):
 
         print(rx_data)  # print-out
         string_theta = rx_data.split(",")
-        theta = [float(string_theta[0]),float(string_theta[1]),float(string_theta[2]),float(string_theta[3])\
-                   ,float(string_theta[4])]
-        print(theta)
-        angle_group.append(theta)
+        theta = [float(string_theta[0]),float(string_theta[1]),float(string_theta[2])]
         previous_theta = theta
+        theta.append(float(string_theta[1]) + math.pi/2 - float(string_theta[2]))
+        theta.append(roll-float(string_theta[0]))
+        angle_group.append(theta)
 
     # Change to encoder value
     return encoder_transform(angle_group)

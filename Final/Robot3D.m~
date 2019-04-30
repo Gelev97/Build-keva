@@ -50,7 +50,7 @@
         end
 
         function frames = forward_kinematics(robot, thetas)
-            frames = zeros(4,4,4);
+            frames = zeros(4,4,6);
             
             theta = thetas(1);
             frames(:,:,1) = robot.rotation_z(theta);
@@ -75,7 +75,7 @@
             % the goal.
             % Set joint limit for better performance
             lb = [-pi/2, 0, 0];
-            ub = [pi/2, pi, pi];
+            ub = [pi/2, pi, pi, pi/2, pi/2];
             
             %Final goal_angles
             goal_angles = fmincon( @ my_error_function,initial_theta,[],[],[],[],lb,ub);

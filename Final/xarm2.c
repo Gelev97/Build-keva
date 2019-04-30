@@ -502,13 +502,14 @@ int main( int argc, char **argv)
         printf("%d\n", atoi(argv[index]));
         angles_d[6] = atoi(argv[index]);
      }
-//     if(strcmp(argv[index+3],"-1") != 0){
-//        char final[500];
-//        strcpy(final,"./UscCmd --servo 1,");
-//        strcat(final, argv[index+3]);
-//        printf("%s\n", final);
-//        system(final);
-//     }
+     if(strcmp(argv[index+3],"-1") != 0){
+        char final[500];
+        strcpy(final,"./Usc
+        Cmd --servo 1,");
+        strcat(final, argv[index+3]);
+        printf("%s\n", final);
+        system(final);
+     }
      if(strcmp(argv[index+4],"-1") != 0){
         char final[500];
         strcpy(final,"./UscCmd --servo 3,");
