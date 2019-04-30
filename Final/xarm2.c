@@ -462,6 +462,18 @@ int set_angles_and_wait( int fd, int *angles )
 }
 
 /**********************************************************************/
+// open loop scailing
+
+int scale(int desire_angle, int current_angle)
+{
+   if(desire_angle<
+
+    angles_d[4] -= 1;
+   if(atoi(argv[index+2]) > angles_4) angles_d[4] += 1;
+   if(atoi)
+}
+
+/**********************************************************************/
 /**********************************************************************/
 
 int main( int argc, char **argv)
