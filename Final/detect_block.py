@@ -801,6 +801,7 @@ def detect(edges, img):
     cv.imshow('hough', edges_BGR)
     cv.waitKey(0)
     cv.destroyAllWindows()
+    cv.imwrite("hough.jpg", edges_BGR)
 
     # [(line_index, angle) : [line,line,line], ...]
     parallel_line_group = angle_approximation(lines)
@@ -1050,6 +1051,7 @@ def draw_result(img, block):
     cv.imshow('draw_result', img)
     cv.waitKey(0)
     cv.destroyAllWindows()
+    cv.imwrite("detected.jpg", img)
 
 
 '''
@@ -1083,6 +1085,9 @@ def output_coordinates(block):
         height = 0
         result[index] = [center, height, roll, pitch, yaw]
         index += 1
+    save_file = open("block.txt", "w")
+    for key in result:
+        save_file.write(str(key) + ":" + ','.join(map(str, result[key])) + "\n")
     return result
 
 

@@ -33,6 +33,7 @@ def detect_block_grab(vs):
             break
     
     [img, threshold, blur, edges] = detect_block.find_edge(frame)
+    cv2.imwrite("original.jpg", img)
     #detect_block.show_edge(img, threshold, blur, edges)
     block = detect_block.detect(edges, img)
     detect_block.draw_result(img, block)

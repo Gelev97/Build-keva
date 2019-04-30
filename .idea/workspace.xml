@@ -2,10 +2,13 @@
 <project version="4">
   <component name="BookmarkManager">
     <bookmark url="file://$PROJECT_DIR$/Final/RPC.m" line="16" />
-    <bookmark url="file://$PROJECT_DIR$/Final/Main.py" line="45" mnemonic="9" />
+    <bookmark url="file://$PROJECT_DIR$/Final/Main.py" line="46" mnemonic="9" />
   </component>
   <component name="ChangeListManager">
     <list default="true" id="c44b08b5-b55f-4503-a123-40ff5800eb1a" name="Default" comment="">
+      <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/Final/Main.py" beforeDir="false" afterPath="$PROJECT_DIR$/Final/Main.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/Final/detect_block.py" beforeDir="false" afterPath="$PROJECT_DIR$/Final/detect_block.py" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/Final/xarm2.c" beforeDir="false" afterPath="$PROJECT_DIR$/Final/xarm2.c" afterDir="false" />
     </list>
     <option name="EXCLUDED_CONVERTED_TO_IGNORED" value="true" />
@@ -40,7 +43,7 @@
       <file pinned="false" current-in-tab="false">
         <entry file="file://$PROJECT_DIR$/Final/RPC.py">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="783">
+            <state relative-caret-position="653">
               <caret line="120" selection-start-line="120" selection-end-line="120" />
               <folding>
                 <element signature="e#1#19#0" expanded="true" />
@@ -49,16 +52,16 @@
           </provider>
         </entry>
       </file>
-      <file pinned="false" current-in-tab="true">
+      <file pinned="false" current-in-tab="false">
         <entry file="file://$PROJECT_DIR$/Final/xarm2.c">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="418">
-              <caret line="470" column="4" selection-start-line="470" selection-start-column="4" selection-end-line="470" selection-end-column="4" />
+            <state relative-caret-position="3">
+              <caret line="510" column="4" lean-forward="true" selection-start-line="510" selection-start-column="4" selection-end-line="510" selection-end-column="4" />
             </state>
           </provider>
         </entry>
       </file>
-      <file pinned="false" current-in-tab="false">
+      <file pinned="false" current-in-tab="true">
         <entry file="file://$PROJECT_DIR$/Final/Pipeline.py">
           <provider selected="true" editor-type-id="text-editor">
             <state relative-caret-position="45">
@@ -73,8 +76,8 @@
       <file pinned="false" current-in-tab="false">
         <entry file="file://$PROJECT_DIR$/Final/Main.py">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="1440">
-              <caret line="107" column="4" selection-start-line="107" selection-start-column="4" selection-end-line="107" selection-end-column="4" />
+            <state relative-caret-position="348">
+              <caret line="35" column="4" selection-start-line="35" selection-start-column="4" selection-end-line="35" selection-end-column="36" />
               <folding>
                 <element signature="e#0#37#0" expanded="true" />
               </folding>
@@ -160,14 +163,15 @@
         <option value="$PROJECT_DIR$/Final/test.c" />
         <option value="$PROJECT_DIR$/Final/Robot3D.m" />
         <option value="$PROJECT_DIR$/Final/RPC.m" />
-        <option value="$PROJECT_DIR$/Final/Main.py" />
         <option value="$PROJECT_DIR$/Final/Pipeline.py" />
         <option value="$PROJECT_DIR$/Final/RPC.py" />
         <option value="$PROJECT_DIR$/Final/xarm2.c" />
+        <option value="$PROJECT_DIR$/Final/Main.py" />
+        <option value="$PROJECT_DIR$/Final/detect_block.py" />
       </list>
     </option>
   </component>
-  <component name="ProjectFrameBounds" extendedState="6">
+  <component name="ProjectFrameBounds" fullScreen="true">
     <option name="x" value="67" />
     <option name="y" value="98" />
     <option name="width" value="918" />
@@ -471,19 +475,20 @@
       <workItem from="1556540259343" duration="1185000" />
       <workItem from="1556571148399" duration="7104000" />
       <workItem from="1556613960254" duration="716000" />
+      <workItem from="1556645232541" duration="633000" />
     </task>
     <servers />
   </component>
   <component name="TimeTrackingManager">
-    <option name="totallyTimeSpent" value="324639000" />
+    <option name="totallyTimeSpent" value="325272000" />
   </component>
   <component name="ToolWindowManager">
-    <frame x="67" y="17" width="1853" height="1062" extended-state="6" />
+    <frame x="0" y="0" width="1280" height="800" extended-state="6" />
     <editor active="true" />
     <layout>
       <window_info id="Structure" order="0" side_tool="true" weight="0.25" />
       <window_info id="Favorites" order="1" side_tool="true" />
-      <window_info content_ui="combo" id="Project" order="2" weight="0.19628432" />
+      <window_info active="true" content_ui="combo" id="Project" order="2" visible="true" weight="0.19628432" />
       <window_info anchor="bottom" id="Message" order="0" />
       <window_info anchor="bottom" id="Find" order="1" weight="0.32972974" />
       <window_info anchor="bottom" id="Debug" order="2" weight="0.3520548" />
@@ -533,17 +538,16 @@
     <option name="version" value="1" />
   </component>
   <component name="com.intellij.coverage.CoverageDataManagerImpl">
-    <SUITE FILE_PATH="coverage/Build_keva$Kinematics.coverage" NAME="Kinematics Coverage Results" MODIFIED="1556477940490" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="coverage.py" COVERAGE_BY_TEST_ENABLED="true" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="$PROJECT_DIR$/Arm/Move_block" />
     <SUITE FILE_PATH="coverage/Build_keva$detect_stack1.coverage" NAME="detect_stack1 Coverage Results" MODIFIED="1555457421969" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="coverage.py" COVERAGE_BY_TEST_ENABLED="true" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="$PROJECT_DIR$/Computer Vision - Guess block 3D location" />
+    <SUITE FILE_PATH="coverage/Build_keva$Main.coverage" NAME="Main Coverage Results" MODIFIED="1556590794579" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="coverage.py" COVERAGE_BY_TEST_ENABLED="true" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="$PROJECT_DIR$/Final" />
     <SUITE FILE_PATH="coverage/Build_keva$detect_stack.coverage" NAME="detect_stack Coverage Results" MODIFIED="1555901281590" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="coverage.py" COVERAGE_BY_TEST_ENABLED="true" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="$PROJECT_DIR$/Computer Vision - Guess block 3D location" />
     <SUITE FILE_PATH="coverage/Build_keva$detect_block.coverage" NAME="detect_block Coverage Results" MODIFIED="1555338330727" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="coverage.py" COVERAGE_BY_TEST_ENABLED="true" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="$PROJECT_DIR$/Computer Vision - Guess block 3D location" />
+    <SUITE FILE_PATH="coverage/Build_keva$Kinematics.coverage" NAME="Kinematics Coverage Results" MODIFIED="1556477940490" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="coverage.py" COVERAGE_BY_TEST_ENABLED="true" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="$PROJECT_DIR$/Arm/Move_block" />
     <SUITE FILE_PATH="coverage/Build_keva$Pipeline.coverage" NAME="Pipeline Coverage Results" MODIFIED="1555915293145" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="coverage.py" COVERAGE_BY_TEST_ENABLED="true" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="$PROJECT_DIR$/Arm/Move_block" />
     <SUITE FILE_PATH="coverage/Build_keva$RPC.coverage" NAME="RPC Coverage Results" MODIFIED="1556491236283" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="coverage.py" COVERAGE_BY_TEST_ENABLED="true" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="$PROJECT_DIR$/Final" />
-    <SUITE FILE_PATH="coverage/Build_keva$Main.coverage" NAME="Main Coverage Results" MODIFIED="1556590794579" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="coverage.py" COVERAGE_BY_TEST_ENABLED="true" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="$PROJECT_DIR$/Final" />
     <SUITE FILE_PATH="coverage/Build_keva$Pipeline__1_.coverage" NAME="Pipeline (1) Coverage Results" MODIFIED="1556492305979" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="coverage.py" COVERAGE_BY_TEST_ENABLED="true" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="$PROJECT_DIR$/Final" />
   </component>
   <component name="editorHistoryManager">
-    <entry file="file://$PROJECT_DIR$/Computer Vision - Guess block 3D location/stack_leve1.jpg" />
     <entry file="file://$PROJECT_DIR$/Computer Vision - Guess block 3D location/pictures/stack1_level3.JPG">
       <provider selected="true" editor-type-id="images" />
     </entry>
@@ -686,15 +690,6 @@
     <entry file="file://$PROJECT_DIR$/Final/MaestroControlCenter">
       <provider selected="true" editor-type-id="text-editor" />
     </entry>
-    <entry file="file://$PROJECT_DIR$/Final/detect_block.py">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="-11446">
-          <folding>
-            <element signature="e#0#18#0" expanded="true" />
-          </folding>
-        </state>
-      </provider>
-    </entry>
     <entry file="file://$PROJECT_DIR$/Final/test.c">
       <provider selected="true" editor-type-id="text-editor">
         <state>
@@ -721,10 +716,47 @@
     </entry>
     <entry file="file://$PROJECT_DIR$/Final/RPC.py">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="783">
+        <state relative-caret-position="653">
           <caret line="120" selection-start-line="120" selection-end-line="120" />
           <folding>
             <element signature="e#1#19#0" expanded="true" />
+          </folding>
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/Final/xarm2.c">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="3">
+          <caret line="510" column="4" lean-forward="true" selection-start-line="510" selection-start-column="4" selection-end-line="510" selection-end-column="4" />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/detect_block.py">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="327">
+          <caret line="1088" column="80" lean-forward="true" selection-start-line="1086" selection-start-column="4" selection-end-line="1088" selection-end-column="80" />
+          <folding>
+            <element signature="e#0#18#0" expanded="true" />
+          </folding>
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/Final/Main.py">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="348">
+          <caret line="35" column="4" selection-start-line="35" selection-start-column="4" selection-end-line="35" selection-end-column="36" />
+          <folding>
+            <element signature="e#0#37#0" expanded="true" />
+          </folding>
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/Final/detect_block.py">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="290">
+          <caret line="803" column="21" selection-start-line="803" selection-start-column="21" selection-end-line="803" selection-end-column="21" />
+          <folding>
+            <element signature="e#0#18#0" expanded="true" />
           </folding>
         </state>
       </provider>
@@ -736,23 +768,6 @@
           <folding>
             <element signature="e#0#10#0" expanded="true" />
           </folding>
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/Final/Main.py">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="1440">
-          <caret line="107" column="4" selection-start-line="107" selection-start-column="4" selection-end-line="107" selection-end-column="4" />
-          <folding>
-            <element signature="e#0#37#0" expanded="true" />
-          </folding>
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/Final/xarm2.c">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="418">
-          <caret line="470" column="4" selection-start-line="470" selection-start-column="4" selection-end-line="470" selection-end-column="4" />
         </state>
       </provider>
     </entry>

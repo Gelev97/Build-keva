@@ -466,11 +466,21 @@ int set_angles_and_wait( int fd, int *angles )
 
 int scale(int desire_angle, int current_angle)
 {
-   if(desire_angle<
+   int difference = 0;
+   if(desire_angle < current_angle){
+        difference = current_angle - desire_angle;
+        if(difference < 2) return -1;
+        else if(difference < 5) return -2;
+        else if(difference < 7) return -3;
+        else return -4;
+   }else{
+        difference = desire_angle - current_angle;
+        if(difference < 2) return 1;
+        else if(difference < 5) return 2;
+        else if(difference < 7) return 3;
+        else return 4;
+   }
 
-    angles_d[4] -= 1;
-   if(atoi(argv[index+2]) > angles_4) angles_d[4] += 1;
-   if(atoi)
 }
 
 /**********************************************************************/
@@ -569,13 +579,16 @@ int main( int argc, char **argv)
       flag_6 = abs(atoi(argv[index]) - angles_6);
       
       while(flag_4 > 1 || flag_5 > 1  || flag_6 > 1 ){
-          if(atoi(argv[index+2]) < angles_4) angles_d[4] -= 1;
-          if(atoi(argv[index+2]) > angles_4) angles_d[4] += 1;
-          if(atoi(argv[index+1]) < angles_5) angles_d[5] -= 1;
-          if(atoi(argv[index+1]) > angles_5) angles_d[5] += 1;
-          if(atoi(argv[index]) < angles_6) angles_d[6] -= 1;
-          if(atoi(argv[index]) > angles_6) angles_d[6] += 1;
-          
+          if(abs(atoi(argv[index+2]) - angles_4) > 1){
+             angles_d[4] += scale(atoi(argv[index+2]),angles_4);
+          }
+          if(abs(atoi(argv[index+1]) - angles_5) > 1){
+             angles_d[5] += scale(atoi(argv[index+1]),angles_5);
+          }
+          if(abs(atoi(argv[index]) - angles_6) > 1){
+             angles_d[6] += scale(atoi(argv[index]),angles_6);
+          }
+
           set_angles_and_wait(fd,angles_d);
           get_angles( fd );
           for ( count = 1; ; count++ ){
