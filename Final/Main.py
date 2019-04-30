@@ -53,7 +53,7 @@ def inverse_kinematics(block_real_position, s):
         else:
             grab_roll = grab_position[2] 
         grab_roll = grab_roll/180*math.pi
-        grab_position = [grab_position[0][0]-5.5,grab_position[0][1]-0.5,1]
+        grab_position = [grab_position[0][0]-4.5,grab_position[0][1]-0.5,1]
         put_position = block_put_position[put_index]
         put_roll = put_position[3]
         put_position = put_position[0:3]
@@ -86,7 +86,7 @@ def main():
     s = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
     s.connect((TCP_IP, TCP_PORT))
     time.sleep(1e-3)
-    
+    '''
     # start camera
     vs = VideoStream(src=0).start()
     time.sleep(2.0)
@@ -97,10 +97,14 @@ def main():
     block_real_position = transfer_to_real(block_pixel_position)
     print(block_pixel_position)
     print(block_real_position)
-    
+    '''
     # Inverse Kinematics
-    inverse_kinematics(block_real_position,s)
-
+    # inverse_kinematics(block_real_position,s)
+    HOME_POSITION = [20,-15,20]
+    roll = -math.pi/2
+    traj = RPC.pipline_position_encoder_roll(HOME_POSITION, [20/1.15,-20/0.975,20], roll, s)
+    traj = RPC.pipline_position_encoder_roll([20/1.15,-20/0.975,20], [20/1.15,-20/0.975,12], roll, s)
+    Pipeline.C_execute([traj])
     #ball_position = detect_ball(vs)
     #print(ball_position)
 

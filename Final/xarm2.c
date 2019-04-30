@@ -470,6 +470,15 @@ int main( int argc, char **argv)
   char *device = "/dev/hidraw2";
   int wlen;
   int errors = 0;
+  int angles_4 = 0;
+  int angles_5 = 0;
+  int angles_6 = 0;
+  unsigned char buf[80];
+  int count = 0;
+  int rdlen;
+  int flag_4 = -100;
+  int flag_5 = -100;
+  int flag_6 = -100;
 
   init_hidraw( device, &fd );
 
@@ -484,6 +493,7 @@ int main( int argc, char **argv)
     wait_for_response( fd );
   }
   */
+  
 
   
   int index = 0;
@@ -517,7 +527,7 @@ int main( int argc, char **argv)
      }
      if(strcmp(argv[index+1],"-1") != 0){
         printf("%d\n", atoi(argv[index+1]));
-        angles_d[5] = atoi(argv[index+1])-10;
+        angles_d[5] = atoi(argv[index+1]);
      }
      if(strcmp(argv[index],"-1") != 0){
         printf("%d\n", atoi(argv[index]));
@@ -525,6 +535,56 @@ int main( int argc, char **argv)
      }
      if(strcmp(argv[index+2],"-1") != 0 && strcmp(argv[index+1],"-1") != 0 && strcmp(argv[index],"-1") != 0){
        set_angles_and_wait(fd,angles_d);
+       get_angles( fd );
+       
+       for ( count = 1; ; count++ ){
+          if ( (count%1000) == 0 ) printf( "wfr: Waiting for xarm response %d msec. This should not happen\n\n", count );
+          
+          rdlen = read(fd, buf, sizeof(buf) - 1);
+          
+          if (rdlen > 0){
+              angles_4= buf[ 6 ] + (buf[ 7 ] << 8);
+              angles_5 = buf[ 9 ] + (buf[ 10 ] << 8);
+              angles_6 = buf[ 12 ] + (buf[ 13 ] << 8);
+              printf("4:%d,5:%d,6:%d\n",angles_4, angles_5, angles_6);
+              break;
+          }
+          usleep( 1000 ); // sleep for a millisecond
+       }
+       
+      flag_4 = abs(atoi(argv[index+2]) - angles_4);
+      flag_5 = abs(atoi(argv[index+1]) - angles_5);
+      flag_6 = abs(atoi(argv[index]) - angles_6);
+      
+      while(flag_4 > 1 || flag_5 > 1  || flag_6 > 1 ){
+          if(atoi(argv[index+2]) < angles_4) angles_d[4] -= 1;
+          if(atoi(argv[index+2]) > angles_4) angles_d[4] += 1;
+          if(atoi(argv[index+1]) < angles_5) angles_d[5] -= 1;
+          if(atoi(argv[index+1]) > angles_5) angles_d[5] += 1;
+          if(atoi(argv[index]) < angles_6) angles_d[6] -= 1;
+          if(atoi(argv[index]) > angles_6) angles_d[6] += 1;
+          
+          set_angles_and_wait(fd,angles_d);
+          get_angles( fd );
+          for ( count = 1; ; count++ ){
+            if ( (count%1000) == 0 ) printf( "wfr: Waiting for xarm response %d msec. This should not happen\n\n", count );
+            
+            rdlen = read(fd, buf, sizeof(buf) - 1);
+            
+            if (rdlen > 0){
+                angles_4= buf[ 6 ] + (buf[ 7 ] << 8);
+                angles_5 = buf[ 9 ] + (buf[ 10 ] << 8);
+                angles_6 = buf[ 12 ] + (buf[ 13 ] << 8);
+                printf("4:%d,5:%d,6:%d\n",angles_4, angles_5, angles_6);
+                break;
+            }
+            usleep( 1000 ); // sleep for a millisecond
+          }
+          flag_4 = abs(atoi(argv[index+2]) - angles_4);
+          flag_5 = abs(atoi(argv[index+1]) - angles_5);
+          flag_6 = abs(atoi(argv[index]) - angles_6);
+          
+       }
      }
   }
 
