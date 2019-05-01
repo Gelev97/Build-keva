@@ -256,37 +256,19 @@ void get_angles( int fd )
 
 int parse_read_angles( unsigned char buf[] )
 {
-  if ( buf[ 2 ] != 0x0C )
-    {
-      printf( "bad read_angles response 1: 0x%x\n", buf[ 2 ] );
-      return 0;
-    }
-  if ( buf[ 4 ] != 0x03 )
-    {
-      printf( "bad read_angles response 2: 0x%x\n", buf[ 4 ] );
-      return 0;
-    }
   if ( buf[ 5 ] != 0x04 )
     {
       printf( "bad read_angles response 4: 0x%x\n", buf[ 5 ] );
       return 0;
     }
   angles[ 4 ] = buf[ 6 ] + (buf[ 7 ] << 8);
-  if ( buf[ 8 ] != 0x05 )
+  if ( buf[ 8 ] != 0x06 )
     {
       printf( "bad read_angles response 5: 0x%x\n", buf[ 8 ] );
       return 0;
     }
-  angles[ 5 ] = buf[ 9 ] + (buf[ 10 ] << 8);
-  if ( buf[ 11 ] != 0x06 )
-    {
-      printf( "bad read_angles response 6: 0x%x\n", buf[ 11 ] );
-      return 0;
-    }
-  angles[ 6 ] = buf[ 12 ] + (buf[ 13 ] << 8);
-  printf( "angles: 3: %d; 4: %d; 5: %d; 6: %d (%d)\n",
-	  angles[3], angles[4], angles[5], angles[6], read_angles_pending );
-  read_angles_pending = 0;
+  angles[ 6 ] = buf[ 9 ] + (buf[ 10 ] << 8);
+  printf("4: %d; 6: %d\n", angles[4], angles[6]);
   return 1;
 }
 
@@ -489,13 +471,13 @@ int main( int argc, char **argv)
   int wlen;
   int errors = 0;
   int angles_4 = 0;
-  int angles_5 = 0;
   int angles_6 = 0;
   unsigned char buf[80];
   int count = 0;
   int rdlen;
   int flag_4 = -100;
   int flag_6 = -100;
+  int index = 0;
 
   init_hidraw( device, &fd );
 
@@ -511,11 +493,8 @@ int main( int argc, char **argv)
   }
   */
   
-
-  
-  int index = 0;
   int angles_d[ 10 ];
-  
+
   for(index = 1;index <= argc-1;index=index+6){
      if(strcmp(argv[index+4],"-1") != 0){
         char final[500];
@@ -559,10 +538,10 @@ int main( int argc, char **argv)
           if ( (count%1000) == 0 ) printf( "wfr: Waiting for xarm response %d msec. This should not happen\n\n", count );
           
           rdlen = read(fd, buf, sizeof(buf) - 1);
-          
+            
           if (rdlen > 0){
               angles_4= buf[ 6 ] + (buf[ 7 ] << 8);
-              angles_6 = buf[ 12 ] + (buf[ 13 ] << 8);
+              angles_6 = buf[ 9 ] + (buf[ 10 ] << 8);
               printf("4:%d,6:%d\n",angles_4, angles_6);
               break;
           }
@@ -580,7 +559,7 @@ int main( int argc, char **argv)
              angles_d[6] += scale(atoi(argv[index]),angles_6);
           }
           
-          printf("write 4:%d,5:%d,6:%d\n",angles_d[4], angles_d[5], angles_d[6]);
+          printf("write 4:%d, 6:%d\n",angles_d[4], angles_d[6]);
           set_angles_and_wait(fd,angles_d);
           get_angles( fd );
           for ( count = 1; ; count++ ){
@@ -590,7 +569,7 @@ int main( int argc, char **argv)
             
             if (rdlen > 0){
                 angles_4= buf[ 6 ] + (buf[ 7 ] << 8);
-                angles_6 = buf[ 12 ] + (buf[ 13 ] << 8);
+                angles_6 = buf[ 9 ] + (buf[ 10 ] << 8);
                 printf("read 4:%d,6:%d\n",angles_4, angles_6);
                 break;
             }

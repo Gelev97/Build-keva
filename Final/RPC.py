@@ -40,19 +40,21 @@ def encoder_transform(angle_group):
     for angle in angle_group:
         tmp = []
         tmp.append(int((angle[0] / math.pi * 180 + 90) * 4.16 + 15))
-        tmp.append(860 - int((angle[1] / math.pi * 180) * 4))
+        tmp.append(866 - int((angle[1] / math.pi * 180) * 4.08))
         tmp.append(int((angle[2] / math.pi * 180) * 4) + 162)
-
+        print(angle[3])
         if(angle[3] != -1):
-            servo_1 = 6000 - int((angle[3] / math.pi * 180) * 40)
+            servo_1 = 9600 - int((angle[3] / math.pi * 180) * 40)
             if(servo_1 < 4000):
                 tmp.append(4000)
+            elif(servo_1 > 8000):
+                tmp.append(8000)
             else:
                 tmp.append(servo_1)
         else:
             tmp.append(-1)
 
-        print("servo4" + str(angle[4]))
+        print("servo3" + str(angle[4]))
         if (angle[4] != -1):
             servo_3 = 4000 + int(((angle[4]+math.pi/2) / math.pi * 180) * 40)
             if (servo_3 < 4000):
@@ -125,7 +127,7 @@ def pipline_position_encoder_roll(start_position, end_position, roll, s):
         string_theta = rx_data.split(",")
         theta = [float(string_theta[0]),float(string_theta[1]),float(string_theta[2])]
         previous_theta = theta
-        theta.append(float(string_theta[1]) + math.pi/2 - float(string_theta[2]))
+        theta.append(float(string_theta[1]) + 80/180*math.pi - float(string_theta[2]))
         theta.append(roll-float(string_theta[0]))
         angle_group.append(theta)
 
