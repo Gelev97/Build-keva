@@ -4,7 +4,7 @@ import math
 
 HOME_POSITION = [20,-15,20]
 LOWER_HEIGHT_GRAB = 12
-LOWER_HEIGHT_PUT = 15
+LOWER_HEIGHT_PUT = 18
 HEIGHT_ADJUST = 20
 HIGHER_HEIGHT_PUT = 30
 
@@ -63,7 +63,7 @@ def classical_combi(grab_position, put_position, roll_grab, roll_put, s):
     grab_put = RPC.pipline_position_encoder(grab_position, put_position, s)
     put_trajectory = put(put_position, s, roll_put)
     put_back = RPC.pipline_position_encoder([put_position[0],put_position[1],LOWER_HEIGHT_PUT],put_position, s)
-    home_2 = back_home([put_position[0], put_position[1], LOWER_HEIGHT_PUT], s)
+    home_2 = back_home(put_position, s)
 
     result = (home_1, grab_trajectory, grab_back, grab_put, put_trajectory, put_back, home_2)
     return result

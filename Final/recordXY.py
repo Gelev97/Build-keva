@@ -43,6 +43,7 @@ def caliberate(vs):
         h,  w = frame.shape[:2]
         copy = frame.copy()
         cv2.imshow("test", frame)
+        cv2.imwrite("before_calibrate.jpg", frame)
         
         k = cv2.waitKey(1)
     
@@ -66,6 +67,7 @@ def caliberate(vs):
                 img = cv2.drawChessboardCorners(frame, (chesscol,chessrow), corners2,ret)
                 cv2.imshow('img%d'%(img_counter),img)
                 cv2.waitKey(50)
+                cv2.imwrite("calibrate.jpg", img)
                 img_counter += 1
     
     obj0 = objpoints[0].tolist()[0][:2]
