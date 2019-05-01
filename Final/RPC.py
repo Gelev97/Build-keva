@@ -11,13 +11,26 @@ def create_trajecotry(current_position, goal_position):
     current_position = [x, y, z]
 
     result = interpolate.splprep(current_position, s=0, k=1)
-    x_i, y_i, z_i = interpolate.splev(np.linspace(0, 1, 7), result[0])
+    x_i, y_i, z_i = interpolate.splev(np.linspace(0, 1, 2), result[0])
     trajectory = np.zeros((len(x_i), 3))
     for index in range(0, len(x_i)):
         trajectory[index] = [x_i[index], y_i[index], z_i[index]]
     print(trajectory)
     return trajectory
 
+def create_trajecotry_roll(current_position, goal_position):
+    x = np.array([current_position[0], goal_position[0]])
+    y = np.array([current_position[1], goal_position[1]])
+    z = np.array([current_position[2], goal_position[2]])
+    current_position = [x, y, z]
+
+    result = interpolate.splprep(current_position, s=0, k=1)
+    x_i, y_i, z_i = interpolate.splev(np.linspace(0, 1, 5), result[0])
+    trajectory = np.zeros((len(x_i), 3))
+    for index in range(0, len(x_i)):
+        trajectory[index] = [x_i[index], y_i[index], z_i[index]]
+    print(trajectory)
+    return trajectory
 
 # Encoder transform
 def encoder_transform(angle_group):
@@ -92,7 +105,7 @@ def pipline_position_encoder(start_position, end_position, s):
 
 def pipline_position_encoder_roll(start_position, end_position, roll, s):
     # create trajectory
-    trajecotry = create_trajecotry(start_position, end_position)
+    trajecotry = create_trajecotry_roll(start_position, end_position)
 
     # Calculate Inverse Kinematics
     angle_group = []
