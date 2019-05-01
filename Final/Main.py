@@ -82,7 +82,7 @@ def detect_ball(vs):
 def main():
     # start socket
     
-    TCP_IP = '128.237.174.21'
+    TCP_IP = '128.237.202.173'
     TCP_PORT = 2002
     print('Socket Information: %s:%d' % (TCP_IP, TCP_PORT))
     s = socket.socket(socket.AF_INET, socket.SOCK_STREAM)

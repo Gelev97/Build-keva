@@ -1,6 +1,6 @@
 % Open Socket
 ip = '0.0.0.0';
-port = 2000;
+port = 2002;
 fprintf('Socket openning @%s:%d ... ',ip,port);
 t = tcpip(ip, port, 'NetworkRole','server');
 fopen(t);
