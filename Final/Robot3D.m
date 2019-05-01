@@ -3,7 +3,7 @@
         BASE_HEIGHT = 6.3;
         LINK_1 = 3.1;
         LINK_2 = 42.7;
-        LINK_3 = 43;
+        LINK_3 = 41;
     end
     
     methods
