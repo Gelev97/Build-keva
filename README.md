@@ -24,3 +24,4 @@ Project Period : 2019.02 - 2019.05
    - gazebo_spawn.py - run it to build certain stacks in GAZEBO
 
 Demo Video : https://www.youtube.com/watch?v=66fQwPqM1F8&ab_channel=GeRuohai
+Simulation Video : https://www.youtube.com/watch?v=vQ-UaYS_w0o&feature=youtu.be&ab_channel=GeRuohai
