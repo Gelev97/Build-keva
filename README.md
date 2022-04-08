@@ -1,5 +1,7 @@
 Build-keva
 
+Project Period : 2019.02 - 2019.05
+
 1. Arm 
  - Maestro - control wrist
  - Xarm - control arm
@@ -20,3 +22,5 @@ Build-keva
    - Use ROS and GAZEBO to do simulation
    - empty_world - predefined world model
    - gazebo_spawn.py - run it to build certain stacks in GAZEBO
+
+Demo Video : https://www.youtube.com/watch?v=66fQwPqM1F8&ab_channel=GeRuohai
